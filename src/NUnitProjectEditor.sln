@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectEditor", "editor\ProjectEditor.csproj", "{ED57DCEC-3C16-4A90-BD3C-4D5BE5AD70FB}"
