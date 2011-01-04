@@ -35,7 +35,6 @@ namespace NUnit.ProjectEditor
             this.model = model;
             this.view = view;
 
-            this.model.ProjectChanged += new CommandDelegate(model_Changed);
             view.Changed += new EventHandler(view_Changed);
         }
 
@@ -51,15 +50,6 @@ namespace NUnit.ProjectEditor
         }
 
         #region Event Handlers
-
-        void model_Changed()
-        {
-            // TODO: This triggers a second round of events - but should not.
-            // It may be resolved after we convert all model events to originate
-            // in ProjectModel.
-            view.Text = model.XmlText;
-            view.Exception = model.Exception;
-        }
 
         void view_Changed(object sender, EventArgs e)
         {

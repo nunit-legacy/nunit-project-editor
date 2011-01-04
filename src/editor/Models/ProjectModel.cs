@@ -308,6 +308,8 @@ namespace NUnit.ProjectEditor
 
             if (ProjectCreated != null)
                 ProjectCreated();
+
+            hasUnsavedChanges = false;
         }
 
         public void CloseProject()
@@ -323,7 +325,8 @@ namespace NUnit.ProjectEditor
                 System.Text.Encoding.UTF8);
             writer.Formatting = Formatting.Indented;
 
-            WriteXmlTo(writer);
+            xmlDoc.WriteTo(writer);
+            writer.Close();
 
             hasUnsavedChanges = false;
         }
@@ -396,19 +399,11 @@ namespace NUnit.ProjectEditor
         public void Save()
         {
             xmlText = this.ToXml();
-            StreamWriter writer = new StreamWriter(
-                ProjectPathFromFile(projectPath), 
-                false,
-                System.Text.Encoding.UTF8);
-            writer.Write(xmlText);
-            writer.Close();
 
-            //XmlTextWriter writer = new XmlTextWriter(
-            //    ProjectPathFromFile(projectPath),
-            //    System.Text.Encoding.UTF8);
-            //writer.Formatting = Formatting.Indented;
-
-            //WriteXmlTo(writer);
+            using (StreamWriter writer = new StreamWriter(ProjectPathFromFile(projectPath), false, System.Text.Encoding.UTF8))
+            {
+                writer.Write(xmlText);
+            }
 
             hasUnsavedChanges = false;
         }
@@ -422,76 +417,14 @@ namespace NUnit.ProjectEditor
         public string ToXml()
         {
             StringWriter buffer = new StringWriter();
-            XmlTextWriter writer = new XmlTextWriter(buffer);
-            writer.Formatting = Formatting.Indented;
 
-            WriteXmlTo(writer);
+            using (XmlTextWriter writer = new XmlTextWriter(buffer))
+            {
+                writer.Formatting = Formatting.Indented;
+                xmlDoc.WriteTo(writer);
+            }
 
             return buffer.ToString();
-        }
-
-        public void WriteXmlTo(XmlTextWriter writer)
-        {
-#if !XML_DOC_WRITER
-            xmlDoc.WriteTo(writer);
-            writer.Close();
-#else
-            writer.WriteStartElement("NUnitProject");
-
-            string basePath = this.BasePath;
-
-            if (Configs.Count > 0 || basePath != null || AutoConfig ||
-                ProcessModel != ProcessModel.Default || DomainUsage != DomainUsage.Default)
-            {
-                writer.WriteStartElement("Settings");
-                if (Configs.Count > 0)
-                    writer.WriteAttributeString("activeconfig", ActiveConfigName);
-                if (basePath != null)
-                    writer.WriteAttributeString("appbase", basePath);
-                if (AutoConfig)
-                    writer.WriteAttributeString("attr", "true");
-                if (ProcessModel != ProcessModel.Default)
-                    writer.WriteAttributeString("processModel", ProcessModel.ToString());
-                if (DomainUsage != DomainUsage.Default)
-                    writer.WriteAttributeString("domainUsage", DomainUsage.ToString());
-                writer.WriteEndElement();
-            }
-
-            foreach (ProjectConfig config in Configs)
-            {
-                writer.WriteStartElement("Config");
-                writer.WriteAttributeString("name", config.Name);
-
-                string appbase = config.BasePath;
-                if (appbase != null)
-                    writer.WriteAttributeString("appbase", appbase);
-
-                string configFile = config.ConfigurationFile;
-                if (configFile != null && configFile != DefaultConfigurationFile)
-                    writer.WriteAttributeString("configfile", config.ConfigurationFile);
-
-                if (config.BinPathType == BinPathType.Manual)
-                    writer.WriteAttributeString("binpath", config.PrivateBinPath);
-                else
-                    writer.WriteAttributeString("binpathtype", config.BinPathType.ToString());
-
-                if (config.RuntimeFramework != null)
-                    writer.WriteAttributeString("runtimeFramework", config.RuntimeFramework.ToString());
-
-                foreach (string assembly in config.Assemblies)
-                {
-                    writer.WriteStartElement("assembly");
-                    writer.WriteAttributeString("path", assembly);
-                    writer.WriteEndElement();
-                }
-
-                writer.WriteEndElement();
-            }
-
-            writer.WriteEndElement();
-
-            writer.Close();
-#endif
         }
 
         #endregion
