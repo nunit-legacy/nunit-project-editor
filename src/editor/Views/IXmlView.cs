@@ -25,12 +25,31 @@ using System;
 
 namespace NUnit.ProjectEditor
 {
+    /// <summary>
+    /// IXmlView is the interface implemented by the XmlView
+    /// and consumed by the XmlPresenter.
+    /// </summary>
     public interface IXmlView
     {
+        /// <summary>
+        /// Event signaled when the xml text has changed
+        /// </summary>
         event EventHandler Changed;
 
+        /// <summary>
+        /// Gets or sets the visibility of the view
+        /// </summary>
         bool Visible { get; set; }
+
+        /// <summary>
+        /// Gets or sets the XML text
+        /// </summary>
         string Text { get; set; }
+
+        /// <summary>
+        /// Sets an exception arising in validating
+        /// the XmlText.
+        /// </summary>
         Exception Exception { set; }
     }
 }

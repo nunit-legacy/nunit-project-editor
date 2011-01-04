@@ -28,21 +28,35 @@ namespace NUnit.ProjectEditor
 {
     public partial class XmlView : UserControl, IXmlView
     {
+        /// <summary>
+        /// Event signaled when the xml text has changed
+        /// </summary>
         public event EventHandler Changed;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public XmlView()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Gets or sets the XML text
+        /// </summary>
         public override string Text
         {
             get { return richTextBox1.Text; }
             set { richTextBox1.Text = value; }
         }
 
+        /// <summary>
+        /// Sets an exception arising in validating
+        /// the XmlText.
+        /// </summary>
         public Exception Exception
         {
+            // TODO: Is this doing too much for a view?
             set
             {
                 if (value != null)
