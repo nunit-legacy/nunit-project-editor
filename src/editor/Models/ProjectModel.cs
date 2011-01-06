@@ -138,8 +138,8 @@ namespace NUnit.ProjectEditor
         public string XmlText
         {
             get { return xmlText; }
-            set 
-            { 
+            set
+            {
                 xmlText = value;
                 projectUpdateState = ProjectUpdateState.XmlTextHasChanges;
             }
@@ -529,6 +529,74 @@ namespace NUnit.ProjectEditor
         {
             if (settingsNode != null)
                 XmlHelper.RemoveAttribute(settingsNode, name);
+        }
+
+        #endregion
+    }
+
+    public class XmlModel : IXmlModel
+    {
+        #region Events
+
+        public EventHandler Changed;
+
+        #endregion
+
+        #region Instance Fields
+
+        /// <summary>
+        /// The original text from which the project was loaded.
+        /// Updated from the doc when the xml view is displayed
+        /// and from the view when the user edits it.
+        /// </summary>
+        string xmlText;
+
+        /// <summary>
+        /// The XmlDocument representing the loaded project. It
+        /// is generated from the text when the project is loaded
+        /// unless an exception is thrown. It is modified as the
+        /// user makes changes.
+        /// </summary>
+        //XmlDocument xmlDoc;
+
+        /// <summary>
+        /// An exception thrown when trying to build the xml
+        /// document from the xml text.
+        /// </summary>
+        Exception exception;
+
+        #endregion
+
+        #region Properties
+
+        public string XmlText
+        {
+            get { return xmlText; }
+            set
+            {
+                xmlText = value;
+                FireChangedEvent();
+            }
+        }
+
+        public Exception Exception
+        {
+            get { return exception; }
+            set
+            {
+                exception = value;
+                FireChangedEvent();
+            }
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        private void FireChangedEvent()
+        {
+            if (Changed != null)
+                Changed(this, EventArgs.Empty);
         }
 
         #endregion

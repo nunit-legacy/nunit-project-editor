@@ -25,9 +25,26 @@ using System;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IMessageBoxCreator
+    public interface IConfigurationEditorView
     {
-        bool AskYesNoQuestion(string question);
-        bool AskYesNoQuestion(string question, string caption);
+        string[] ConfigList { set; }
+        string ActiveConfigName { set; }
+
+        string SelectedConfig { get;  set; }
+
+        bool AddConfigEnabled { set; }
+        bool RenameConfigEnabled { set; }
+        bool RemoveConfigEnabled { set; }
+        bool MakeActiveEnabled { set; }
+
+        string GetNewNameForRename(string oldName);
+        bool GetAddConfigData(ref AddConfigData data);
     }
+
+    public struct AddConfigData
+    {
+        public string ConfigToCreate;
+        public string ConfigToCopy;
+    }
+
 }

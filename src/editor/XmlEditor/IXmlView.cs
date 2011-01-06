@@ -22,35 +22,31 @@
 // ***********************************************************************
 
 using System;
-using System.Windows.Forms;
 
 namespace NUnit.ProjectEditor
 {
-    public class MessageBoxCreator : IMessageBoxCreator
+    /// <summary>
+    /// IXmlView is the interface implemented by the XmlView
+    /// and consumed by the XmlPresenter.
+    /// </summary>
+    public interface IXmlView
     {
-        string defaultCaption;
+        XmlPresenter Presenter { get; set; }
 
-        #region Constructor
+        /// <summary>
+        /// Gets or sets the visibility of the view
+        /// </summary>
+        bool Visible { get; set; }
 
-        public MessageBoxCreator(string defaultCaption)
-        {
-            this.defaultCaption = defaultCaption;
-        }
+        /// <summary>
+        /// Gets or sets the XML text
+        /// </summary>
+        string Text { get; set; }
 
-        #endregion
-
-        #region IMessageBoxCreator Members
-
-        public bool AskYesNoQuestion(string question)
-        {
-            return AskYesNoQuestion(question, defaultCaption);
-        }
-
-        public bool AskYesNoQuestion(string question, string caption)
-        {
-            return MessageBox.Show(question, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
-        }
-
-        #endregion
+        /// <summary>
+        /// Sets an exception arising in validating
+        /// the XmlText.
+        /// </summary>
+        Exception Exception { set; }
     }
 }

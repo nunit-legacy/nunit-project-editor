@@ -29,20 +29,11 @@ namespace NUnit.ProjectEditor
 {
     public delegate void CommandDelegate();
 
-    public interface IPropertyView : INotifyPropertyChanged
+    public interface IPropertyView
     {
-        #region Events
-
-        event CommandDelegate BrowseForProjectBase;
-        event CommandDelegate BrowseForConfigBase;
-        event CommandDelegate EditConfigs;
-        event CommandDelegate AddAssembly;
-        event CommandDelegate RemoveAssembly;
-        event CommandDelegate BrowseForAssembly;
-
-        #endregion
-
         #region Properties
+
+        PropertyPresenter Presenter { get; set; }
 
         string ProjectPath { get; set; }
         string ProjectBase { get; set; }
@@ -91,9 +82,7 @@ namespace NUnit.ProjectEditor
 
         #region Methods
 
-        string BrowseForFolder(string message, string initialPath);
-        string GetAssemblyPath();
-        void ErrorMessage(string property, string message);
+        void SetErrorMessage(string property, string message);
 
         #endregion
     }

@@ -38,7 +38,7 @@ namespace NUnit.ProjectEditor.Tests
 
         private IProjectModel model;
         private IPropertyView view;
-        private IMessageBoxCreator mbox;
+        private IDialogManager dialogHandler;
         private PropertyPresenter presenter;
 
         [SetUp]
@@ -50,15 +50,10 @@ namespace NUnit.ProjectEditor.Tests
             model.CreateNewProject();
             model.Configs.Add("Debug");
             view = mocks.Stub<IPropertyView>();
-            mbox = mocks.DynamicMock<MessageBoxCreator>("Editor");
+            dialogHandler = mocks.DynamicMock<DialogManager>("Editor");
 
             mocks.ReplayAll();
-            presenter = new PropertyPresenter(model, view, mbox);
-        }
-
-        private void RaisePropertyChangedEvent(string name)
-        {
-            view.Raise(x => x.PropertyChanged += null, view, new PropertyChangedEventArgs(name));
+            presenter = new PropertyPresenter(model, view, dialogHandler);
         }
 
         [Test]
@@ -83,21 +78,15 @@ namespace NUnit.ProjectEditor.Tests
         }
 
         [Test]
-        public void PresenterSubscribesToPropertyChanges()
-        {
-            view.AssertWasCalled(x => x.PropertyChanged += Arg<PropertyChangedEventHandler>.Is.Anything);
-        }
-
-        [Test]
         public void WhenProjectModelIsChangedDomainUsageOptionsChanged()
         {
             view.ProcessModel = "Single";
-            RaisePropertyChangedEvent("ProcessModel");
+            presenter.OnPropertyChange("ProcessModel");
             Assert.That(view.DomainUsageOptions, Is.EqualTo(
                 new string[] { "Default", "Single", "Multiple" }));
 
             view.ProcessModel = "Multiple";
-            RaisePropertyChangedEvent("ProcessModel");
+            presenter.OnPropertyChange("ProcessModel");
             Assert.That(view.DomainUsageOptions, Is.EqualTo(
                 new string[] { "Default", "Single" }));
         }
@@ -106,7 +95,7 @@ namespace NUnit.ProjectEditor.Tests
         public void ChangingProcessModelUpdatesProject()
         {
             view.ProcessModel = "Multiple";
-            RaisePropertyChangedEvent("ProcessModel");
+            presenter.OnPropertyChange("ProcessModel");
             Assert.That(model.ProcessModel, Is.EqualTo(ProcessModel.Multiple));
         }
 
@@ -114,7 +103,7 @@ namespace NUnit.ProjectEditor.Tests
         public void ChangingDomainUsageUpdatesProject()
         {
             view.DomainUsage = "Multiple";
-            RaisePropertyChangedEvent("DomainUsage");
+            presenter.OnPropertyChange("DomainUsage");
             Assert.That(model.DomainUsage, Is.EqualTo(DomainUsage.Multiple));
         }
 
@@ -122,7 +111,7 @@ namespace NUnit.ProjectEditor.Tests
         public void ChangingProjectBaseUpdatesProject()
         {
             view.ProjectBase = "test.nunit";
-            RaisePropertyChangedEvent("ProjectBase");
+            presenter.OnPropertyChange("ProjectBase");
             Assert.That(model.BasePath, Is.EqualTo("test.nunit"));
         }
 
@@ -134,7 +123,7 @@ namespace NUnit.ProjectEditor.Tests
             view.SelectedConfig = 0;
             view.Runtime = "Mono";
             view.RuntimeVersion = "1.1.4322";
-            RaisePropertyChangedEvent("Runtime");
+            presenter.OnPropertyChange("Runtime");
             RuntimeFramework framework = model.Configs[0].RuntimeFramework;
             Assert.That(framework.Runtime, Is.EqualTo(RuntimeType.Mono));
             Assert.That(framework.ClrVersion, Is.EqualTo(new Version("1.1.4322")));
@@ -145,7 +134,7 @@ namespace NUnit.ProjectEditor.Tests
         {
             view.Runtime = "Mono";
             view.RuntimeVersion = "1.1.4322";
-            RaisePropertyChangedEvent("RuntimeVersion");
+            presenter.OnPropertyChange("RuntimeVersion");
             RuntimeFramework framework = model.Configs[0].RuntimeFramework;
             Assert.That(framework.Runtime, Is.EqualTo(RuntimeType.Mono));
             Assert.That(framework.ClrVersion, Is.EqualTo(new Version(1, 1, 4322)));

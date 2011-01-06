@@ -29,19 +29,17 @@ namespace NUnit.ProjectEditor
     {
         #region Instance Variables
 
-        private IProjectModel model;
+        private IPropertyModel model;
         private IConfigurationEditorView view;
 
         #endregion
 
         #region Constructor
 
-        public ConfigurationEditor(IProjectModel model, IConfigurationEditorView view)
+        public ConfigurationEditor(IPropertyModel model, IConfigurationEditorView view)
         {
             this.model = model;
             this.view = view;
-
-            view.SelectedConfigChanged += new EventHandler(view_SelectedConfigChanged);
 
             UpdateConfigList();
         }
@@ -81,7 +79,6 @@ namespace NUnit.ProjectEditor
 
         public void RenameConfig()
         {
-            string[] configList = model.ConfigNames;
             string oldName = view.SelectedConfig;
 
             string newName = view.GetNewNameForRename(oldName);
@@ -107,11 +104,7 @@ namespace NUnit.ProjectEditor
             UpdateConfigList();
         }
 
-        #endregion
-
-        #region Other UI Event Handlers
-
-        void view_SelectedConfigChanged(object sender, EventArgs e)
+        public void SelectedConfigChanged()
         {
             string selectedConfig = view.SelectedConfig;
 

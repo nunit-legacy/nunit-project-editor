@@ -22,43 +22,17 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IProjectModel : IPropertyModel, IXmlModel
+    public interface IDialogManager
     {
-        #region Events
+        bool AskYesNoQuestion(string question);
+        bool AskYesNoQuestion(string question, string caption);
 
-        event CommandDelegate ProjectCreated;
-        event CommandDelegate ProjectClosed;
-        event CommandDelegate ProjectChanged;
+        string GetFileOpenPath(string title, string filter, string initialDirectory);
+        string GetSaveAsPath(string title, string filter);
 
-        #endregion
-
-        #region Properties
-
-        string Name { get; }
-
-        bool HasUnsavedChanges { get; }
-        bool IsValid { get; }
-
-        #endregion
-
-        #region Methods
-
-        void CreateNewProject();
-        void OpenProject(string fileName);
-        void CloseProject();
-        void SaveProject();
-        void SaveProject(string fileName);
-
-        void SynchronizeModel();
-
-        void LoadXml(string xmlText);
-        string ToXml();
-
-        #endregion
+        string GetFolderPath(string message, string initialPath);
     }
 }

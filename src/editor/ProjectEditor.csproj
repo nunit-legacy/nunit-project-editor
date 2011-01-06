@@ -12,6 +12,7 @@
     <AssemblyName>nunit-editor</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>App.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,32 +46,40 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigurationEditor\AddConfigurationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigurationEditor\ConfigurationEditor.cs" />
+    <Compile Include="ConfigurationEditor\ConfigurationEditorView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigurationEditor\IConfigurationEditorView.cs" />
+    <Compile Include="ConfigurationEditor\RenameConfigurationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IProjectView.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogManager\IDialogManager.cs" />
+    <Compile Include="DialogManager\DialogManager.cs" />
     <Compile Include="Models\AssemblyList.cs" />
     <Compile Include="Models\IProjectModel.cs" />
     <Compile Include="Models\ConfigList.cs" />
     <Compile Include="Models\XmlHelper.cs" />
-    <Compile Include="Presenters\ConfigurationEditor.cs" />
-    <Compile Include="Presenters\PropertyPresenter.cs" />
-    <Compile Include="Presenters\XmlPresenter.cs" />
-    <Compile Include="Views\AddConfigurationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\ConfigurationEditorView.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Models\DomainUsage.cs" />
-    <Compile Include="Views\IConfigurationEditorView.cs" />
-    <Compile Include="Views\IMessageBoxCreator.cs" />
-    <Compile Include="Views\IProjectView.cs" />
-    <Compile Include="Views\IPropertyView.cs" />
-    <Compile Include="Views\IXmlView.cs" />
-    <Compile Include="Views\MainForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="PropertyEditor\IPropertyModel.cs" />
+    <Compile Include="PropertyEditor\IPropertyView.cs" />
+    <Compile Include="PropertyEditor\PropertyPresenter.cs" />
+    <Compile Include="PropertyEditor\PropertyView.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="PropertyEditor\PropertyView.Designer.cs">
+      <DependentUpon>PropertyView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Presenters\ProjectPresenter.cs" />
     <Compile Include="PathUtils.cs" />
     <Compile Include="Models\ProcessModel.cs" />
     <Compile Include="Program.cs" />
@@ -84,16 +93,24 @@
       <DependentUpon>AboutBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\AddConfigurationDialog.resx">
+    <EmbeddedResource Include="ConfigurationEditor\AddConfigurationDialog.resx">
       <DependentUpon>AddConfigurationDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\ConfigurationEditorView.resx">
+    <EmbeddedResource Include="ConfigurationEditor\ConfigurationEditorView.resx">
       <DependentUpon>ConfigurationEditorView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\MainForm.resx">
+    <EmbeddedResource Include="ConfigurationEditor\RenameConfigurationDialog.resx">
+      <DependentUpon>RenameConfigurationDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PropertyEditor\PropertyView.resx">
+      <DependentUpon>PropertyView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -101,15 +118,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\PropertyView.resx">
-      <DependentUpon>PropertyView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\RenameConfigurationDialog.resx">
-      <DependentUpon>RenameConfigurationDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\XmlView.resx">
+    <EmbeddedResource Include="XmlEditor\XmlView.resx">
       <DependentUpon>XmlView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -127,26 +136,24 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Views\MessageBoxCreator.cs" />
-    <Compile Include="Views\PropertyView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\PropertyView.Designer.cs">
-      <DependentUpon>PropertyView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RenameConfigurationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Models\RuntimeFramework.cs" />
     <Compile Include="Models\VSProject.cs" />
     <Compile Include="Models\VSProjectConfig.cs" />
     <Compile Include="Models\VSProjectConfigCollection.cs" />
-    <Compile Include="Views\XmlView.cs">
+    <Compile Include="ProjectEditor.cs" />
+    <Compile Include="XmlEditor\IXmlModel.cs" />
+    <Compile Include="XmlEditor\IXmlView.cs" />
+    <Compile Include="XmlEditor\XmlPresenter.cs" />
+    <Compile Include="XmlEditor\XmlView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\XmlView.Designer.cs">
+    <Compile Include="XmlEditor\XmlView.Designer.cs">
       <DependentUpon>XmlView.cs</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App.ico" />
+    <Content Include="ToDo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

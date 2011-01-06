@@ -225,35 +225,12 @@
             // 
             // propertyView
             // 
-            this.propertyView.ActiveConfigName = "";
-            this.propertyView.AddAssemblyEnabled = true;
-            this.propertyView.ApplicationBase = "";
-            this.propertyView.AssemblyPath = "";
             this.propertyView.BackColor = System.Drawing.SystemColors.Control;
-            this.propertyView.BinPathType = NUnit.ProjectEditor.BinPathType.None;
             this.propertyView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.propertyView.ConfigurationFile = "";
             this.propertyView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyView.DomainUsage = "Default";
-            this.propertyView.DomainUsageOptions = new string[] {
-        "Default"};
             this.propertyView.Location = new System.Drawing.Point(0, 0);
             this.propertyView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.propertyView.Name = "propertyView";
-            this.propertyView.PrivateBinPath = "";
-            this.propertyView.PrivateBinPathEnabled = true;
-            this.propertyView.ProcessModel = "Default";
-            this.propertyView.ProcessModelOptions = new string[] {
-        "Default"};
-            this.propertyView.ProjectBase = "";
-            this.propertyView.ProjectPath = "";
-            this.propertyView.RemoveAssemblyEnabled = true;
-            this.propertyView.Runtime = "Any";
-            this.propertyView.RuntimeOptions = new string[] {
-        "Any"};
-            this.propertyView.RuntimeVersion = "";
-            this.propertyView.RuntimeVersionOptions = new string[0];
-            this.propertyView.SelectedConfig = -1;
             this.propertyView.Size = new System.Drawing.Size(586, 401);
             this.propertyView.TabIndex = 0;
             this.propertyView.Visible = false;

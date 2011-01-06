@@ -25,37 +25,20 @@ using System;
 
 namespace NUnit.ProjectEditor
 {
-    public class XmlPresenter
+    public interface IPropertyModel
     {
-        private IProjectModel model;
-        private IXmlView view;
+        #region Properties
 
-        public XmlPresenter(IProjectModel model, IXmlView view)
-        {
-            this.model = model;
-            this.view = view;
+        string ProjectPath { get; set; }
+        string BasePath { get; set; }
+        bool AutoConfig { get; set; }
+        string ActiveConfigName { get; set; }
 
-            view.Changed += new EventHandler(view_Changed);
-        }
+        ProcessModel ProcessModel { get; set; }
+        DomainUsage DomainUsage { get; set; }
 
-        public void LoadViewFromModel()
-        {
-            view.Text = model.XmlText;
-            view.Exception = model.Exception;
-        }
-
-        public void UpdateModelFromView()
-        {
-            model.XmlText = view.Text;
-        }
-
-        #region Event Handlers
-
-        void view_Changed(object sender, EventArgs e)
-        {
-            // TODO: Validation goes here
-            model.XmlText = view.Text;
-        }
+        ConfigList Configs { get; }
+        string[] ConfigNames { get; }
 
         #endregion
     }

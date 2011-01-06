@@ -33,9 +33,6 @@ namespace NUnit.ProjectEditor
     /// </summary>
     public interface IProjectView
     {
-        event EventHandler SelectedViewChanging;
-        event EventHandler SelectedViewChanged;
-
         IPropertyView PropertyView { get; }
         IXmlView XmlView { get; }
 
@@ -43,9 +40,6 @@ namespace NUnit.ProjectEditor
 
         bool CloseCommandEnabled { set; }
         bool SaveCommandsEnabled { set; }
-
-        string GetOpenPath();
-        string GetSaveAsPath();
     }
 
     public enum SelectedView

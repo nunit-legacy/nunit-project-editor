@@ -35,40 +35,39 @@ namespace NUnit.ProjectEditor
     /// the menu commands from the top-level view and coordinates 
     /// changes in the two different submodels.
     /// </summary>
-    public class ProjectPresenter
+    public class ProjectEditor
     {
         private IProjectView view;
         private IProjectModel model;
-        private IMessageBoxCreator mbox;
+        private IDialogManager dialogManager;
 
         private PropertyPresenter propertyPresenter;
         private XmlPresenter xmlPresenter;
 
         #region Constructor
 
-        public ProjectPresenter(IProjectModel model, IProjectView view, IMessageBoxCreator mbox)
+        public ProjectEditor(IProjectModel model, IProjectView view, IDialogManager dialogHandler)
         {
             this.model = model;
             this.view = view;
-            this.mbox = mbox;
+            this.dialogManager = dialogHandler;
 
-            // Set up handlers for the view
-            view.SelectedViewChanging += new EventHandler(view_SelectedViewChanging);
-            view.SelectedViewChanged += new EventHandler(view_SelectedViewChanged);
-            
             // Set up handlers for model events
             model.ProjectCreated += new CommandDelegate(OnProjectCreated);
             model.ProjectClosed += new CommandDelegate(OnProjectClosed);
         }
 
-        void view_SelectedViewChanging(object sender, EventArgs e)
+        public bool ValidateActiveViewChange()
         {
-            view.SaveCommandsEnabled = false;
             model.SynchronizeModel();
-            view.SaveCommandsEnabled = true; // Won't be executed if an exception is thrown
+            if (model.IsValid)
+                return true;
+
+            view.SaveCommandsEnabled = false;
+            return false;
         }
 
-        void view_SelectedViewChanged(object sender, EventArgs e)
+        public void ActiveViewChanged()
         {
             switch (view.SelectedView)
             {
@@ -95,7 +94,11 @@ namespace NUnit.ProjectEditor
 
         public void OpenProject()
         {
-            string path = view.GetOpenPath();
+            string path = dialogManager.GetFileOpenPath(
+                "Open Project", 
+                "Test Projects (*.nunit)|*.nunit",
+                null);
+
             if (path != null)
             {
                 model.OpenProject(path);
@@ -107,7 +110,7 @@ namespace NUnit.ProjectEditor
         public void CloseProject()
         {
             if (model.HasUnsavedChanges &&
-                mbox.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", model.Name)))
+                dialogManager.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", model.Name)))
                     SaveProject();
 
             model.CloseProject();
@@ -129,7 +132,10 @@ namespace NUnit.ProjectEditor
 
         public void SaveProjectAs()
         {
-            string path = view.GetSaveAsPath();
+            string path = dialogManager.GetSaveAsPath(
+                "Save As",
+                "Test Projects (*.nunit)|*.nunit");
+
             if (path != null)
             {
                 model.SaveProject(path);
@@ -147,8 +153,10 @@ namespace NUnit.ProjectEditor
             view.XmlView.Text = model.XmlText;
 
             view.PropertyView.Visible = true;
-            propertyPresenter = new PropertyPresenter(model, view.PropertyView, mbox);
+            propertyPresenter = new PropertyPresenter(model, view.PropertyView, dialogManager);
+            view.PropertyView.Presenter = propertyPresenter;
             xmlPresenter = new XmlPresenter(model, view.XmlView);
+            view.XmlView.Presenter = xmlPresenter;
 
             propertyPresenter.LoadViewFromModel();
         }

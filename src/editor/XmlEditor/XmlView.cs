@@ -28,10 +28,7 @@ namespace NUnit.ProjectEditor
 {
     public partial class XmlView : UserControl, IXmlView
     {
-        /// <summary>
-        /// Event signaled when the xml text has changed
-        /// </summary>
-        public event EventHandler Changed;
+        #region Constructor
 
         /// <summary>
         /// Constructor
@@ -40,6 +37,12 @@ namespace NUnit.ProjectEditor
         {
             InitializeComponent();
         }
+
+        #endregion
+
+        #region IXmlView Members
+
+        public XmlPresenter Presenter { get; set ; }
 
         /// <summary>
         /// Gets or sets the XML text
@@ -82,16 +85,16 @@ namespace NUnit.ProjectEditor
             }
         }
 
-        //private void richTextBox1_TextChanged(object sender, EventArgs e)
-        //{
-        //    if (this.Changed != null)
-        //        this.Changed(this, EventArgs.Empty);
-        //}
+        #endregion
+
+        #region Event Handlers
 
         private void richTextBox1_Validated(object sender, EventArgs e)
         {
-            if (this.Changed != null)
-                this.Changed(this, EventArgs.Empty);
+            if (Presenter != null)
+                Presenter.OnXmlChange();
         }
+
+        #endregion
     }
 }

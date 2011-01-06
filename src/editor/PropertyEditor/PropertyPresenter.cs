@@ -36,31 +36,20 @@ namespace NUnit.ProjectEditor
     /// </summary>
     public class PropertyPresenter
     {
-        private IProjectModel model;
+        private IPropertyModel model;
         private IPropertyView view;
-        private IMessageBoxCreator mbox;
+        private IDialogManager dialogHandler;
 
-        public PropertyPresenter(IProjectModel model, IPropertyView view, IMessageBoxCreator mbox)
+        public PropertyPresenter(IPropertyModel model, IPropertyView view, IDialogManager dialogHandler)
         {
             this.model = model;
             this.view = view;
-            this.mbox = mbox;
+            this.dialogHandler = dialogHandler;
 
             SetProcessModelOptions();
             SetDomainUsageOptions();
             SetRuntimeOptions();
             SetRuntimeVersionOptions();
-
-            view.BrowseForProjectBase += new CommandDelegate(BrowseForProjectBase);
-            view.BrowseForConfigBase += new CommandDelegate(BrowseForConfigBase);
-            view.EditConfigs += new CommandDelegate(EditConfigs);
-            view.AddAssembly += new CommandDelegate(AddAssembly);
-            view.RemoveAssembly += new CommandDelegate(RemoveAssembly);
-            view.BrowseForAssembly += new CommandDelegate(BrowseForAssembly);
-
-            view.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChange);
-
-            //model.ProjectCreated += new CommandDelegate(LoadViewFromModel);
         }
 
         public void LoadViewFromModel()
@@ -77,17 +66,15 @@ namespace NUnit.ProjectEditor
             view.ConfigList = model.ConfigNames;
         }
 
-        #region Command Event Handlers
-
-        private void BrowseForProjectBase()
+        public void BrowseForProjectBase()
         {
             string message = "Select ApplicationBase for the model as a whole.";
-            string projectBase = view.BrowseForFolder(message, view.ProjectBase);
+            string projectBase = dialogHandler.GetFolderPath(message, view.ProjectBase);
             if (projectBase != null && projectBase != model.BasePath)
                 view.ProjectBase = model.BasePath = projectBase;
         }
 
-        private void BrowseForConfigBase()
+        public void BrowseForConfigBase()
         {
             string message = string.Format(
                 "Select ApplicationBase for the {0} configuration, if different from the model as a whole.",
@@ -96,12 +83,12 @@ namespace NUnit.ProjectEditor
             if (initialFolder == string.Empty)
                 initialFolder = view.ProjectBase;
 
-            string appbase = view.BrowseForFolder(message, initialFolder);
+            string appbase = dialogHandler.GetFolderPath(message, initialFolder);
             if (appbase != null && appbase != view.ApplicationBase)
                 UpdateApplicationBase(appbase);
         }
 
-        private void UpdateApplicationBase(string appbase)
+        public void UpdateApplicationBase(string appbase)
         {
             string basePath = null;
 
@@ -122,7 +109,7 @@ namespace NUnit.ProjectEditor
             //    applicationBaseTextBox.Text = selectedConfig.RelativeBasePath;
         }
 
-        private void EditConfigs()
+        public void EditConfigs()
         {
             using (ConfigurationEditorView editorView = new ConfigurationEditorView())
             {
@@ -134,9 +121,12 @@ namespace NUnit.ProjectEditor
             view.ActiveConfigName = model.ActiveConfigName;
         }
 
-        private void AddAssembly()
+        public void AddAssembly()
         {
-            string assemblyPath = view.GetAssemblyPath();
+            string assemblyPath = dialogHandler.GetFileOpenPath(
+                "Select Assembly",
+                "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
+                view.AssemblyPath);
 
             if (assemblyPath != null)
             {
@@ -144,81 +134,11 @@ namespace NUnit.ProjectEditor
                 selectedConfig.Assemblies.Add(assemblyPath);
                 SetAssemblyList();
             }
-
-            //OpenFileDialog dlg = new OpenFileDialog();
-            //dlg.Title = "Add Assemblies To Project";
-            //dlg.InitialDirectory = selectedConfig.BasePath;
-
-            ////if ( VisualStudioSupport )
-            ////    dlg.Filter =
-            ////        "Projects & Assemblies(*.csproj,*.vbproj,*.vjsproj, *.vcproj,*.dll,*.exe )|*.csproj;*.vjsproj;*.vbproj;*.vcproj;*.dll;*.exe|" +
-            ////        "Visual Studio Projects (*.csproj,*.vjsproj,*.vbproj,*.vcproj)|*.csproj;*.vjsproj;*.vbproj;*.vcproj|" +
-            ////        "C# Projects (*.csproj)|*.csproj|" +
-            ////        "J# Projects (*.vjsproj)|*.vjsproj|" +
-            ////        "VB Projects (*.vbproj)|*.vbproj|" +
-            ////        "C++ Projects (*.vcproj)|*.vcproj|" +
-            ////        "Assemblies (*.dll,*.exe)|*.dll;*.exe";
-            ////else
-            //dlg.Filter = "Assemblies (*.dll,*.exe)|*.dll;*.exe";
-
-            //dlg.FilterIndex = 1;
-            //dlg.FileName = "";
-
-            //if (dlg.ShowDialog(this) != DialogResult.OK)
-            //    return;
-
-            //if (PathUtils.IsAssemblyFileType(assemblyPath))
-            //{
-            //    selectedConfig.Assemblies.Add(assemblyPath);
-            //    return;
-            //}
-            //else if (VSProject.IsProjectFile(dlg.FileName))
-            //    try
-            //    {
-            //        VSProject vsProject = new VSProject(dlg.FileName);
-            //        MessageBoxButtons buttons;
-            //        string msg;
-
-            //        if (vsProject.Configs.Contains(selectedConfig.Name))
-            //        {
-            //            msg = "The project being added may contain multiple configurations;\r\r" +
-            //                "Select\tYes to add all configurations found.\r" +
-            //                "\tNo to add only the " + selectedConfig.Name + " configuration.\r" +
-            //                "\tCancel to exit without modifying the project.";
-            //            buttons = MessageBoxButtons.YesNoCancel;
-            //        }
-            //        else
-            //        {
-            //            msg = "The project being added may contain multiple configurations;\r\r" +
-            //                "Select\tOK to add all configurations found.\r" +
-            //                "\tCancel to exit without modifying the project.";
-            //            buttons = MessageBoxButtons.OKCancel;
-            //        }
-
-            //        DialogResult result = UserMessage.Ask(msg, buttons);
-            //        if (result == DialogResult.Yes || result == DialogResult.OK)
-            //        {
-            //            project.Add(vsProject);
-            //            return;
-            //        }
-            //        else if (result == DialogResult.No)
-            //        {
-            //            foreach (string assembly in vsProject.Configs[selectedConfig.Name].Assemblies)
-            //                selectedConfig.Assemblies.Add(assembly);
-            //            return;
-            //        }
-
-            //        assemblyListBox_Populate();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        UserMessage.DisplayFailure(ex.Message, "Invalid VS Project");
-            //    }
         }
 
-        private void RemoveAssembly()
+        public void RemoveAssembly()
         {
-            if (mbox.AskYesNoQuestion(string.Format("Remove {0} from model?", view.SelectedAssembly), "Remove Assembly"))
+            if (dialogHandler.AskYesNoQuestion(string.Format("Remove {0} from model?", view.SelectedAssembly), "Remove Assembly"))
             {
                 int index = view.SelectedAssemblyIndex;
                 ProjectConfig selectedConfig = model.Configs[view.SelectedConfig];
@@ -227,9 +147,12 @@ namespace NUnit.ProjectEditor
             }
         }
 
-        private void BrowseForAssembly()
+        public void BrowseForAssembly()
         {
-            string assemblyPath = view.GetAssemblyPath();
+            string assemblyPath = dialogHandler.GetFileOpenPath(
+                "Select Assembly",
+                "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
+                view.AssemblyPath);
 
             if (assemblyPath != null)
             {
@@ -239,17 +162,13 @@ namespace NUnit.ProjectEditor
             }
         }
 
-        #endregion
-
-        #region PropertyChange Handling
-
-        private void OnPropertyChange(object sender, PropertyChangedEventArgs e)
+        public void OnPropertyChange(string propertyName)
         {
             ProjectConfig selectedConfig = view.SelectedConfig >= 0
                 ? model.Configs[view.SelectedConfig]
                 : null;
 
-            switch (e.PropertyName)
+            switch (propertyName)
             {
                 case "ProjectBase":
                     string projectBase = view.ProjectBase;
@@ -321,7 +240,7 @@ namespace NUnit.ProjectEditor
                     }
                     catch (Exception ex)
                     {
-                        view.ErrorMessage("RuntimeVersion", ex.Message);
+                        view.SetErrorMessage("RuntimeVersion", ex.Message);
                     }
                     break;
 
@@ -357,7 +276,7 @@ namespace NUnit.ProjectEditor
                         if (configFile == Path.GetFileName(configFile))
                             selectedConfig.ConfigurationFile = view.ConfigurationFile;
                         else
-                            view.ErrorMessage("DefaultConfigurationFile", "Must be file name only - without directory path");
+                            view.SetErrorMessage("DefaultConfigurationFile", "Must be file name only - without directory path");
                     }
                     break;
 
@@ -378,7 +297,7 @@ namespace NUnit.ProjectEditor
                                 return;
                             if (Path.IsPathRooted(dir))
                             {
-                                view.ErrorMessage("PrivateBinPath", "Components must all be relative paths");
+                                view.SetErrorMessage("PrivateBinPath", "Components must all be relative paths");
                                 return;
                             }
                         }
@@ -412,8 +331,6 @@ namespace NUnit.ProjectEditor
                     break;
             }
         }
-
-        #endregion
 
         #region Helper Methods
 
@@ -463,7 +380,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.ErrorMessage(property, ex.Message);
+                view.SetErrorMessage(property, ex.Message);
                 return false;
             }
         }
@@ -477,7 +394,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.ErrorMessage(property, ex.Message);
+                view.SetErrorMessage(property, ex.Message);
                 return false;
             }
         }

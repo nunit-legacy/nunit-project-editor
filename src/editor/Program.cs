@@ -40,7 +40,7 @@ namespace NUnit.ProjectEditor
 
             ProjectModel model = new ProjectModel();
             MainForm view = new MainForm();
-            view.Presenter = new ProjectPresenter(model, view, new MessageBoxCreator("NUnit Project Editor"));
+            view.Presenter = new ProjectEditor(model, view, new DialogManager("NUnit Project Editor"));
 
             if (args.Length > 0)
                 model.OpenProject(args[0]);

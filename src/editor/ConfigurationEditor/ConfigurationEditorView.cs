@@ -40,7 +40,6 @@ namespace NUnit.ProjectEditor
 
         private string[] configList;
         private string activeConfigName;
-        private ConfigurationEditor editor;
 
 		/// <summary>
 		/// Required designer variable.
@@ -80,10 +79,7 @@ namespace NUnit.ProjectEditor
 
 		#endregion
 
-        public ConfigurationEditor Editor
-        {
-            set { this.editor = value; }
-        }
+        public ConfigurationEditor Editor { get; set; }
 
         #region Windows Form Designer generated code
         /// <summary>
@@ -195,32 +191,36 @@ namespace NUnit.ProjectEditor
 		}
 		#endregion
 
-        #region UI Event Handlers
+        #region Event Handlers
 
 		private void removeButton_Click(object sender, System.EventArgs e)
 		{
-            editor.RemoveConfig();
+            if (Editor != null)
+                Editor.RemoveConfig();
 		}
 
 		private void renameButton_Click(object sender, System.EventArgs e)
 		{
-            editor.RenameConfig();
+            if (Editor != null)
+                Editor.RenameConfig();
 		}
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
-            editor.AddConfig();
+            if (Editor != null)
+                Editor.AddConfig();
 		}
 
 		private void activeButton_Click(object sender, System.EventArgs e)
 		{
-            editor.MakeActive();
+            if (Editor != null)
+                Editor.MakeActive();
 		}
 
 		private void configListBox_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-            if (SelectedConfigChanged != null)
-                SelectedConfigChanged(this, EventArgs.Empty);
+            if (Editor != null)
+                Editor.SelectedConfigChanged();
 		}
 
 		#endregion
@@ -296,8 +296,6 @@ namespace NUnit.ProjectEditor
         {
             set { activeButton.Enabled = value; }
         }
-
-        public event EventHandler SelectedConfigChanged;
 
         public string GetNewNameForRename(string oldName)
         {

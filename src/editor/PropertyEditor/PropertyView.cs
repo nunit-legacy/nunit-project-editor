@@ -33,25 +33,20 @@ namespace NUnit.ProjectEditor
 {
     public partial class PropertyView : UserControl, IPropertyView
     {
+        #region Constructor
+
         public PropertyView()
         {
             InitializeComponent();
         }
 
-        #region IPropertyView Members
-
-        #region Events
-
-        public event CommandDelegate BrowseForProjectBase;
-        public event CommandDelegate BrowseForConfigBase;
-        public event CommandDelegate EditConfigs;
-        public event CommandDelegate AddAssembly;
-        public event CommandDelegate RemoveAssembly;
-        public event CommandDelegate BrowseForAssembly;
-
         #endregion
 
+        #region IPropertyView Members
+
         #region Properties
+
+        public PropertyPresenter Presenter { get; set; }
 
         public string ProjectPath
         {
@@ -62,11 +57,7 @@ namespace NUnit.ProjectEditor
         public string ProjectBase
         {
             get { return projectBaseTextBox.Text; }
-            set 
-            { 
-                projectBaseTextBox.Text = value;
-                FirePropertyChangedEvent("BasePath");
-            }
+            set { projectBaseTextBox.Text = value; }
         }
 
         public string[] ProcessModelOptions
@@ -295,35 +286,7 @@ namespace NUnit.ProjectEditor
 
         #region Methods
 
-        public string BrowseForFolder(string message, string initialPath)
-        {
-            FolderBrowserDialog browser = new FolderBrowserDialog();
-            browser.Description = message;
-            browser.SelectedPath = initialPath;
-            return browser.ShowDialog(this) == DialogResult.OK
-                ? browser.SelectedPath
-                : null;
-        }
-
-        public string GetAssemblyPath()
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Title = "Select Assembly";
-
-            dlg.Filter =
-                "Assemblies (*.dll,*.exe)|*.dll;*.exe|" +
-                "All Files (*.*)|*.*";
-
-            dlg.InitialDirectory = System.IO.Path.GetDirectoryName(assemblyPathTextBox.Text);
-            dlg.FilterIndex = 1;
-            dlg.FileName = "";
-
-            return dlg.ShowDialog(this) == DialogResult.OK
-                ? dlg.FileName
-                : null;
-        }
-
-        public void ErrorMessage(string property, string message)
+        public void SetErrorMessage(string property, string message)
         {
             MessageBox.Show(
                 property + ": " + message,
@@ -336,124 +299,128 @@ namespace NUnit.ProjectEditor
 
         #endregion
 
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
-
-        #region UI Event Handlers Issuing Commands
+        #region Event Handlers
 
         private void projectBaseBrowseButton_Click(object sender, System.EventArgs e)
         {
-            if (BrowseForProjectBase != null)
-                BrowseForProjectBase();
+            if (Presenter != null)
+                Presenter.BrowseForProjectBase();
         }
 
         private void editConfigsButton_Click(object sender, System.EventArgs e)
         {
-            if (EditConfigs != null)
-                EditConfigs();
+            if (Presenter != null)
+                Presenter.EditConfigs();
         }
 
         private void configBaseBrowseButton_Click(object sender, System.EventArgs e)
         {
-            if (BrowseForConfigBase != null)
-                BrowseForConfigBase();
+            if (Presenter != null)
+                Presenter.BrowseForConfigBase();
         }
 
         private void addAssemblyButton_Click(object sender, System.EventArgs e)
         {
-            if (AddAssembly != null)
-                AddAssembly();
+            if (Presenter != null)
+                Presenter.AddAssembly();
         }
 
         private void removeAssemblyButton_Click(object sender, System.EventArgs e)
         {
-            if (RemoveAssembly != null)
-                RemoveAssembly();
+            if (Presenter != null)
+                Presenter.RemoveAssembly();
         }
 
         private void assemblyPathBrowseButton_Click(object sender, System.EventArgs e)
         {
-            if (BrowseForAssembly != null)
-                BrowseForAssembly();
+            if (Presenter != null)
+                Presenter.BrowseForAssembly();
         }
-
-        #endregion
-
-        #region Other UI Event Handlers
 
         private void projectBaseTextBox_Validated(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("ProjectBase");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("ProjectBase");
         }
 
         private void processModelComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("ProcessModel");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("ProcessModel");
         }
 
         private void domainUsageComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("DomainUsage");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("DomainUsage");
         }
 
         private void configComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("SelectedConfig");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("SelectedConfig");
 
             this.projectTabControl.Enabled = configComboBox.SelectedIndex >= 0;
         }
 
         private void runtimeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("Runtime");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("Runtime");
         }
 
         private void runtimeVersionComboBox_Validated(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("RuntimeVersion");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("RuntimeVersion");
         }
 
         private void applicationBaseTextBox_Validated(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("ApplicationBase");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("ApplicationBase");
         }
 
         private void configFileTextBox_Validated(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("DefaultConfigurationFile");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("DefaultConfigurationFile");
         }
 
         private void autoBinPathRadioButton_CheckedChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("BinPathType");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("BinPathType");
         }
 
         private void manualBinPathRadioButton_CheckedChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("BinPathType");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("BinPathType");
         }
 
         private void noBinPathRadioButton_CheckedChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("BinPathType");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("BinPathType");
         }
 
         private void privateBinPathTextBox_Validated(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("PrivateBinPath");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("PrivateBinPath");
         }
 
         private void assemblyListBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("SelectedAssembly");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("SelectedAssembly");
         }
 
         private void assemblyPathTextBox_Validated(object sender, System.EventArgs e)
         {
-            FirePropertyChangedEvent("AssemblyPath");
+            if (Presenter != null)
+                Presenter.OnPropertyChange("AssemblyPath");
         }
 
         #endregion
@@ -479,12 +446,6 @@ namespace NUnit.ProjectEditor
 
             if (comboBox.Items.Count > 0)
                 comboBox.SelectedIndex = 0;
-        }
-
-        private void FirePropertyChangedEvent(string name)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
         #endregion

@@ -81,9 +81,10 @@
             this.domainUsageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.domainUsageComboBox.Items.AddRange(new object[] {
             "Default"});
-            this.domainUsageComboBox.Location = new System.Drawing.Point(350, 80);
+            this.domainUsageComboBox.Location = new System.Drawing.Point(262, 65);
+            this.domainUsageComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.domainUsageComboBox.Name = "domainUsageComboBox";
-            this.domainUsageComboBox.Size = new System.Drawing.Size(100, 24);
+            this.domainUsageComboBox.Size = new System.Drawing.Size(76, 21);
             this.domainUsageComboBox.TabIndex = 22;
             this.domainUsageComboBox.SelectedIndexChanged += new System.EventHandler(this.domainUsageComboBox_SelectedIndexChanged);
             // 
@@ -92,25 +93,28 @@
             this.processModelComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.processModelComboBox.Items.AddRange(new object[] {
             "Default"});
-            this.processModelComboBox.Location = new System.Drawing.Point(121, 80);
+            this.processModelComboBox.Location = new System.Drawing.Point(91, 65);
+            this.processModelComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.processModelComboBox.Name = "processModelComboBox";
-            this.processModelComboBox.Size = new System.Drawing.Size(106, 24);
+            this.processModelComboBox.Size = new System.Drawing.Size(80, 21);
             this.processModelComboBox.TabIndex = 21;
             this.processModelComboBox.SelectedIndexChanged += new System.EventHandler(this.processModelComboBox_SelectedIndexChanged);
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(238, 85);
+            this.label10.Location = new System.Drawing.Point(178, 69);
+            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(112, 16);
+            this.label10.Size = new System.Drawing.Size(84, 13);
             this.label10.TabIndex = 20;
             this.label10.Text = "Domain Usage:";
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(5, 85);
+            this.label9.Location = new System.Drawing.Point(4, 69);
+            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(110, 16);
+            this.label9.Size = new System.Drawing.Size(82, 13);
             this.label9.TabIndex = 19;
             this.label9.Text = "Process Model:";
             // 
@@ -118,9 +122,10 @@
             // 
             this.projectBaseBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.projectBaseBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("projectBaseBrowseButton.Image")));
-            this.projectBaseBrowseButton.Location = new System.Drawing.Point(655, 44);
+            this.projectBaseBrowseButton.Location = new System.Drawing.Point(491, 36);
+            this.projectBaseBrowseButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.projectBaseBrowseButton.Name = "projectBaseBrowseButton";
-            this.projectBaseBrowseButton.Size = new System.Drawing.Size(24, 20);
+            this.projectBaseBrowseButton.Size = new System.Drawing.Size(18, 16);
             this.projectBaseBrowseButton.TabIndex = 18;
             this.projectBaseBrowseButton.Click += new System.EventHandler(this.projectBaseBrowseButton_Click);
             // 
@@ -128,25 +133,28 @@
             // 
             this.projectBaseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.projectBaseTextBox.Location = new System.Drawing.Point(97, 42);
+            this.projectBaseTextBox.Location = new System.Drawing.Point(73, 34);
+            this.projectBaseTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.projectBaseTextBox.Name = "projectBaseTextBox";
-            this.projectBaseTextBox.Size = new System.Drawing.Size(537, 22);
+            this.projectBaseTextBox.Size = new System.Drawing.Size(404, 20);
             this.projectBaseTextBox.TabIndex = 17;
             this.projectBaseTextBox.Validated += new System.EventHandler(this.projectBaseTextBox_Validated);
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(5, 43);
+            this.label8.Location = new System.Drawing.Point(4, 35);
+            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(100, 21);
+            this.label8.Size = new System.Drawing.Size(75, 17);
             this.label8.TabIndex = 16;
             this.label8.Text = "Project Base:";
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(5, 5);
+            this.label5.Location = new System.Drawing.Point(4, 4);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(84, 22);
+            this.label5.Size = new System.Drawing.Size(63, 18);
             this.label5.TabIndex = 15;
             this.label5.Text = "Project Path:";
             // 
@@ -154,9 +162,10 @@
             // 
             this.projectPathLabel.AutoSize = true;
             this.projectPathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.projectPathLabel.Location = new System.Drawing.Point(100, 5);
+            this.projectPathLabel.Location = new System.Drawing.Point(75, 4);
+            this.projectPathLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.projectPathLabel.Name = "projectPathLabel";
-            this.projectPathLabel.Size = new System.Drawing.Size(0, 17);
+            this.projectPathLabel.Size = new System.Drawing.Size(0, 13);
             this.projectPathLabel.TabIndex = 23;
             // 
             // groupBox1
@@ -169,9 +178,11 @@
             this.groupBox1.Controls.Add(this.editConfigsButton);
             this.groupBox1.Controls.Add(this.configComboBox);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(13, 127);
+            this.groupBox1.Location = new System.Drawing.Point(10, 103);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(666, 366);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Size = new System.Drawing.Size(500, 297);
             this.groupBox1.TabIndex = 24;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Configuration Properties";
@@ -184,10 +195,11 @@
             this.projectTabControl.Controls.Add(this.generalTabPage);
             this.projectTabControl.Controls.Add(this.assemblyTabPage);
             this.projectTabControl.ItemSize = new System.Drawing.Size(49, 18);
-            this.projectTabControl.Location = new System.Drawing.Point(7, 82);
+            this.projectTabControl.Location = new System.Drawing.Point(5, 67);
+            this.projectTabControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.projectTabControl.Name = "projectTabControl";
             this.projectTabControl.SelectedIndex = 0;
-            this.projectTabControl.Size = new System.Drawing.Size(651, 278);
+            this.projectTabControl.Size = new System.Drawing.Size(488, 226);
             this.projectTabControl.TabIndex = 9;
             // 
             // generalTabPage
@@ -207,24 +219,27 @@
             this.generalTabPage.Controls.Add(this.applicationBaseTextBox);
             this.generalTabPage.Controls.Add(this.label3);
             this.generalTabPage.Location = new System.Drawing.Point(4, 22);
+            this.generalTabPage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.generalTabPage.Name = "generalTabPage";
-            this.generalTabPage.Size = new System.Drawing.Size(643, 252);
+            this.generalTabPage.Size = new System.Drawing.Size(480, 200);
             this.generalTabPage.TabIndex = 0;
             this.generalTabPage.Text = "General";
             // 
             // runtimeVersionComboBox
             // 
-            this.runtimeVersionComboBox.Location = new System.Drawing.Point(320, 16);
+            this.runtimeVersionComboBox.Location = new System.Drawing.Point(240, 13);
+            this.runtimeVersionComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.runtimeVersionComboBox.Name = "runtimeVersionComboBox";
-            this.runtimeVersionComboBox.Size = new System.Drawing.Size(101, 24);
+            this.runtimeVersionComboBox.Size = new System.Drawing.Size(77, 21);
             this.runtimeVersionComboBox.TabIndex = 14;
             this.runtimeVersionComboBox.Validated += new System.EventHandler(this.runtimeVersionComboBox_Validated);
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(192, 16);
+            this.label11.Location = new System.Drawing.Point(144, 15);
+            this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(122, 16);
+            this.label11.Size = new System.Drawing.Size(92, 13);
             this.label11.TabIndex = 13;
             this.label11.Text = "Runtime Version";
             // 
@@ -233,43 +248,48 @@
             this.runtimeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.runtimeComboBox.Items.AddRange(new object[] {
             "Any"});
-            this.runtimeComboBox.Location = new System.Drawing.Point(87, 16);
+            this.runtimeComboBox.Location = new System.Drawing.Point(65, 13);
+            this.runtimeComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.runtimeComboBox.Name = "runtimeComboBox";
-            this.runtimeComboBox.Size = new System.Drawing.Size(81, 24);
+            this.runtimeComboBox.Size = new System.Drawing.Size(62, 21);
             this.runtimeComboBox.TabIndex = 12;
             this.runtimeComboBox.SelectedIndexChanged += new System.EventHandler(this.runtimeComboBox_SelectedIndexChanged);
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(13, 16);
+            this.label7.Location = new System.Drawing.Point(10, 15);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(60, 16);
+            this.label7.Size = new System.Drawing.Size(51, 13);
             this.label7.TabIndex = 11;
             this.label7.Text = "Runtime:";
             // 
             // autoBinPathRadioButton
             // 
-            this.autoBinPathRadioButton.Location = new System.Drawing.Point(24, 154);
+            this.autoBinPathRadioButton.Location = new System.Drawing.Point(18, 125);
+            this.autoBinPathRadioButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.autoBinPathRadioButton.Name = "autoBinPathRadioButton";
-            this.autoBinPathRadioButton.Size = new System.Drawing.Size(273, 21);
+            this.autoBinPathRadioButton.Size = new System.Drawing.Size(205, 17);
             this.autoBinPathRadioButton.TabIndex = 10;
             this.autoBinPathRadioButton.Text = "Use automatically generated path";
             this.autoBinPathRadioButton.CheckedChanged += new System.EventHandler(this.autoBinPathRadioButton_CheckedChanged);
             // 
             // manualBinPathRadioButton
             // 
-            this.manualBinPathRadioButton.Location = new System.Drawing.Point(24, 186);
+            this.manualBinPathRadioButton.Location = new System.Drawing.Point(18, 151);
+            this.manualBinPathRadioButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.manualBinPathRadioButton.Name = "manualBinPathRadioButton";
-            this.manualBinPathRadioButton.Size = new System.Drawing.Size(101, 20);
+            this.manualBinPathRadioButton.Size = new System.Drawing.Size(76, 16);
             this.manualBinPathRadioButton.TabIndex = 9;
             this.manualBinPathRadioButton.Text = "Use this path:";
             this.manualBinPathRadioButton.CheckedChanged += new System.EventHandler(this.manualBinPathRadioButton_CheckedChanged);
             // 
             // noBinPathRadioButton
             // 
-            this.noBinPathRadioButton.Location = new System.Drawing.Point(24, 218);
+            this.noBinPathRadioButton.Location = new System.Drawing.Point(18, 177);
+            this.noBinPathRadioButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.noBinPathRadioButton.Name = "noBinPathRadioButton";
-            this.noBinPathRadioButton.Size = new System.Drawing.Size(353, 21);
+            this.noBinPathRadioButton.Size = new System.Drawing.Size(265, 17);
             this.noBinPathRadioButton.TabIndex = 8;
             this.noBinPathRadioButton.Text = "None - or specified in Configuration File";
             this.noBinPathRadioButton.CheckedChanged += new System.EventHandler(this.noBinPathRadioButton_CheckedChanged);
@@ -278,9 +298,10 @@
             // 
             this.configBaseBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.configBaseBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("configBaseBrowseButton.Image")));
-            this.configBaseBrowseButton.Location = new System.Drawing.Point(606, 56);
+            this.configBaseBrowseButton.Location = new System.Drawing.Point(454, 46);
+            this.configBaseBrowseButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.configBaseBrowseButton.Name = "configBaseBrowseButton";
-            this.configBaseBrowseButton.Size = new System.Drawing.Size(20, 20);
+            this.configBaseBrowseButton.Size = new System.Drawing.Size(15, 16);
             this.configBaseBrowseButton.TabIndex = 7;
             this.configBaseBrowseButton.Click += new System.EventHandler(this.configBaseBrowseButton_Click);
             // 
@@ -288,18 +309,20 @@
             // 
             this.privateBinPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.privateBinPathTextBox.Location = new System.Drawing.Point(144, 186);
+            this.privateBinPathTextBox.Location = new System.Drawing.Point(108, 151);
+            this.privateBinPathTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.privateBinPathTextBox.Name = "privateBinPathTextBox";
-            this.privateBinPathTextBox.Size = new System.Drawing.Size(485, 22);
+            this.privateBinPathTextBox.Size = new System.Drawing.Size(365, 20);
             this.privateBinPathTextBox.TabIndex = 5;
             this.privateBinPathTextBox.Validated += new System.EventHandler(this.privateBinPathTextBox_Validated);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 130);
+            this.label6.Location = new System.Drawing.Point(6, 106);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(105, 17);
+            this.label6.Size = new System.Drawing.Size(80, 13);
             this.label6.TabIndex = 4;
             this.label6.Text = "PrivateBinPath:";
             // 
@@ -307,18 +330,20 @@
             // 
             this.configFileTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.configFileTextBox.Location = new System.Drawing.Point(168, 96);
+            this.configFileTextBox.Location = new System.Drawing.Point(126, 78);
+            this.configFileTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.configFileTextBox.Name = "configFileTextBox";
-            this.configFileTextBox.Size = new System.Drawing.Size(461, 22);
+            this.configFileTextBox.Size = new System.Drawing.Size(347, 20);
             this.configFileTextBox.TabIndex = 3;
             this.configFileTextBox.Validated += new System.EventHandler(this.configFileTextBox_Validated);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 98);
+            this.label4.Location = new System.Drawing.Point(6, 80);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(163, 17);
+            this.label4.Size = new System.Drawing.Size(122, 13);
             this.label4.TabIndex = 2;
             this.label4.Text = "Configuration File Name:";
             // 
@@ -326,18 +351,20 @@
             // 
             this.applicationBaseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.applicationBaseTextBox.Location = new System.Drawing.Point(128, 56);
+            this.applicationBaseTextBox.Location = new System.Drawing.Point(96, 46);
+            this.applicationBaseTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.applicationBaseTextBox.Name = "applicationBaseTextBox";
-            this.applicationBaseTextBox.Size = new System.Drawing.Size(469, 22);
+            this.applicationBaseTextBox.Size = new System.Drawing.Size(353, 20);
             this.applicationBaseTextBox.TabIndex = 1;
             this.applicationBaseTextBox.Validated += new System.EventHandler(this.applicationBaseTextBox_Validated);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 57);
+            this.label3.Location = new System.Drawing.Point(6, 46);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(113, 17);
+            this.label3.Size = new System.Drawing.Size(86, 13);
             this.label3.TabIndex = 0;
             this.label3.Text = "ApplicationBase:";
             // 
@@ -350,8 +377,9 @@
             this.assemblyTabPage.Controls.Add(this.addAssemblyButton);
             this.assemblyTabPage.Controls.Add(this.removeAssemblyButton);
             this.assemblyTabPage.Location = new System.Drawing.Point(4, 22);
+            this.assemblyTabPage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.assemblyTabPage.Name = "assemblyTabPage";
-            this.assemblyTabPage.Size = new System.Drawing.Size(643, 252);
+            this.assemblyTabPage.Size = new System.Drawing.Size(480, 200);
             this.assemblyTabPage.TabIndex = 1;
             this.assemblyTabPage.Text = "Assemblies";
             this.assemblyTabPage.Visible = false;
@@ -360,9 +388,10 @@
             // 
             this.assemblyPathBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.assemblyPathBrowseButton.Image = ((System.Drawing.Image)(resources.GetObject("assemblyPathBrowseButton.Image")));
-            this.assemblyPathBrowseButton.Location = new System.Drawing.Point(570, 192);
+            this.assemblyPathBrowseButton.Location = new System.Drawing.Point(428, 156);
+            this.assemblyPathBrowseButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.assemblyPathBrowseButton.Name = "assemblyPathBrowseButton";
-            this.assemblyPathBrowseButton.Size = new System.Drawing.Size(20, 20);
+            this.assemblyPathBrowseButton.Size = new System.Drawing.Size(15, 16);
             this.assemblyPathBrowseButton.TabIndex = 11;
             this.assemblyPathBrowseButton.Click += new System.EventHandler(this.assemblyPathBrowseButton_Click);
             // 
@@ -370,17 +399,19 @@
             // 
             this.assemblyPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.assemblyPathTextBox.Location = new System.Drawing.Point(13, 192);
+            this.assemblyPathTextBox.Location = new System.Drawing.Point(10, 156);
+            this.assemblyPathTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.assemblyPathTextBox.Name = "assemblyPathTextBox";
-            this.assemblyPathTextBox.Size = new System.Drawing.Size(539, 22);
+            this.assemblyPathTextBox.Size = new System.Drawing.Size(405, 20);
             this.assemblyPathTextBox.TabIndex = 8;
             this.assemblyPathTextBox.Validated += new System.EventHandler(this.assemblyPathTextBox_Validated);
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(13, 176);
+            this.label2.Location = new System.Drawing.Point(10, 143);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(107, 14);
+            this.label2.Size = new System.Drawing.Size(80, 11);
             this.label2.TabIndex = 7;
             this.label2.Text = "Assembly Path:";
             // 
@@ -388,19 +419,20 @@
             // 
             this.assemblyListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.assemblyListBox.ItemHeight = 16;
-            this.assemblyListBox.Location = new System.Drawing.Point(13, 24);
+            this.assemblyListBox.Location = new System.Drawing.Point(10, 20);
+            this.assemblyListBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.assemblyListBox.Name = "assemblyListBox";
-            this.assemblyListBox.Size = new System.Drawing.Size(492, 132);
+            this.assemblyListBox.Size = new System.Drawing.Size(370, 108);
             this.assemblyListBox.TabIndex = 6;
             this.assemblyListBox.SelectedIndexChanged += new System.EventHandler(this.assemblyListBox_SelectedIndexChanged);
             // 
             // addAssemblyButton
             // 
             this.addAssemblyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.addAssemblyButton.Location = new System.Drawing.Point(513, 21);
+            this.addAssemblyButton.Location = new System.Drawing.Point(385, 17);
+            this.addAssemblyButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.addAssemblyButton.Name = "addAssemblyButton";
-            this.addAssemblyButton.Size = new System.Drawing.Size(78, 33);
+            this.addAssemblyButton.Size = new System.Drawing.Size(58, 27);
             this.addAssemblyButton.TabIndex = 2;
             this.addAssemblyButton.Text = "&Add...";
             this.addAssemblyButton.Click += new System.EventHandler(this.addAssemblyButton_Click);
@@ -408,9 +440,10 @@
             // removeAssemblyButton
             // 
             this.removeAssemblyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.removeAssemblyButton.Location = new System.Drawing.Point(513, 60);
+            this.removeAssemblyButton.Location = new System.Drawing.Point(385, 49);
+            this.removeAssemblyButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.removeAssemblyButton.Name = "removeAssemblyButton";
-            this.removeAssemblyButton.Size = new System.Drawing.Size(78, 28);
+            this.removeAssemblyButton.Size = new System.Drawing.Size(58, 23);
             this.removeAssemblyButton.TabIndex = 5;
             this.removeAssemblyButton.Text = "&Remove";
             this.removeAssemblyButton.Click += new System.EventHandler(this.removeAssemblyButton_Click);
@@ -418,9 +451,10 @@
             // editConfigsButton
             // 
             this.editConfigsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.editConfigsButton.Location = new System.Drawing.Point(505, 33);
+            this.editConfigsButton.Location = new System.Drawing.Point(379, 27);
+            this.editConfigsButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.editConfigsButton.Name = "editConfigsButton";
-            this.editConfigsButton.Size = new System.Drawing.Size(147, 26);
+            this.editConfigsButton.Size = new System.Drawing.Size(110, 21);
             this.editConfigsButton.TabIndex = 8;
             this.editConfigsButton.Text = "&Edit Configs...";
             this.editConfigsButton.Click += new System.EventHandler(this.editConfigsButton_Click);
@@ -430,27 +464,30 @@
             this.configComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.configComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.configComboBox.ItemHeight = 16;
-            this.configComboBox.Location = new System.Drawing.Point(108, 34);
+            this.configComboBox.ItemHeight = 13;
+            this.configComboBox.Location = new System.Drawing.Point(81, 28);
+            this.configComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.configComboBox.Name = "configComboBox";
-            this.configComboBox.Size = new System.Drawing.Size(391, 24);
+            this.configComboBox.Size = new System.Drawing.Size(294, 21);
             this.configComboBox.TabIndex = 7;
             this.configComboBox.SelectedIndexChanged += new System.EventHandler(this.configComboBox_SelectedIndexChanged);
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(13, 35);
+            this.label1.Location = new System.Drawing.Point(10, 28);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 24);
+            this.label1.Size = new System.Drawing.Size(76, 20);
             this.label1.TabIndex = 6;
             this.label1.Text = "Configuration:";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(477, 85);
+            this.label12.Location = new System.Drawing.Point(358, 69);
+            this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(94, 17);
+            this.label12.Size = new System.Drawing.Size(73, 13);
             this.label12.TabIndex = 25;
             this.label12.Text = "Active Config:";
             // 
@@ -458,9 +495,10 @@
             // 
             this.activeConfigLabel.AutoSize = true;
             this.activeConfigLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.activeConfigLabel.Location = new System.Drawing.Point(577, 84);
+            this.activeConfigLabel.Location = new System.Drawing.Point(433, 68);
+            this.activeConfigLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.activeConfigLabel.Name = "activeConfigLabel";
-            this.activeConfigLabel.Size = new System.Drawing.Size(0, 17);
+            this.activeConfigLabel.Size = new System.Drawing.Size(0, 13);
             this.activeConfigLabel.TabIndex = 26;
             // 
             // errorProvider1
@@ -469,7 +507,7 @@
             // 
             // PropertyView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Controls.Add(this.activeConfigLabel);
@@ -484,8 +522,9 @@
             this.Controls.Add(this.projectBaseTextBox);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label5);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "PropertyView";
-            this.Size = new System.Drawing.Size(701, 496);
+            this.Size = new System.Drawing.Size(526, 403);
             this.groupBox1.ResumeLayout(false);
             this.projectTabControl.ResumeLayout(false);
             this.generalTabPage.ResumeLayout(false);

@@ -25,28 +25,32 @@ using System;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IConfigurationEditorView
+    public class XmlPresenter
     {
-        event EventHandler SelectedConfigChanged;
+        private IXmlModel model;
+        private IXmlView view;
 
-        string[] ConfigList { set; }
-        string ActiveConfigName { set; }
+        public XmlPresenter(IProjectModel model, IXmlView view)
+        {
+            this.model = model;
+            this.view = view;
+        }
 
-        string SelectedConfig { get;  set; }
+        public void LoadViewFromModel()
+        {
+            view.Text = model.XmlText;
+            view.Exception = model.Exception;
+        }
 
-        bool AddConfigEnabled { set; }
-        bool RenameConfigEnabled { set; }
-        bool RemoveConfigEnabled { set; }
-        bool MakeActiveEnabled { set; }
+        public void UpdateModelFromView()
+        {
+            model.XmlText = view.Text;
+        }
 
-        string GetNewNameForRename(string oldName);
-        bool GetAddConfigData(ref AddConfigData data);
+        public void OnXmlChange()
+        {
+            // TODO: Validation goes here
+            model.XmlText = view.Text;
+        }
     }
-
-    public struct AddConfigData
-    {
-        public string ConfigToCreate;
-        public string ConfigToCopy;
-    }
-
 }
