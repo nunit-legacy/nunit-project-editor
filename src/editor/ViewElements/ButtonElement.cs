@@ -22,16 +22,27 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
+using System.Windows.Forms;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.ViewElements
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    /// <summary>
+    /// ControlWrapper is a general wrapper for controls used
+    /// by the view. It implements several different interfaces
+    /// so that the view may choose which one to expose, based
+    /// on the type of control and how it is used.
+    /// </summary>
+    public class ButtonElement : ControlElement, ICommand
     {
+        public ButtonElement(Button button) : base(button)
+        {
+            button.Click += delegate
+            {
+                if (Execute != null)
+                    Execute();
+            };
+        }
+
+        public event CommandDelegate Execute;
     }
 }

@@ -22,16 +22,49 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor.Tests
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public class ConfigurationEditorViewStub : IConfigurationEditorView
     {
+        public ConfigurationEditorViewStub()
+        {
+            AddCommand = new CommandStub("Add");
+            RemoveCommand = new CommandStub("Remove");
+            RenameCommand = new CommandStub("Rename");
+            ActiveCommand = new CommandStub("Active");
+
+            ConfigList = new SelectionStub("ConfigList");
+        }
+
+        #region IConfigurationEditorView Members
+
+        public event ActionDelegate SelectedConfigChanged;
+
+        public ICommand AddCommand { get; private set; }
+        public ICommand RenameCommand { get; private set; }
+        public ICommand RemoveCommand { get; private set; }
+        public ICommand ActiveCommand { get; private set; }
+
+        public ISelectionList ConfigList { get; private set; }
+
+        public string GetNewNameForRename(string oldName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAddConfigData(ref AddConfigData data)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        public void FireSelectedConfigChangedEvent()
+        {
+            if (SelectedConfigChanged != null)
+                SelectedConfigChanged();
+        }
     }
 }

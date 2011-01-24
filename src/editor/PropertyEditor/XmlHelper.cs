@@ -27,7 +27,7 @@ using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
-    class XmlHelper
+    public class XmlHelper
     {
         #region Attributes
 
@@ -93,6 +93,8 @@ namespace NUnit.ProjectEditor
         
         #endregion
 
+        #region Elements
+
         /// <summary>
         /// Adds a new element as a child of an existing XmlNode and returns it.
         /// </summary>
@@ -105,5 +107,29 @@ namespace NUnit.ProjectEditor
             node.AppendChild(childNode);
             return childNode;
         }
+
+        /// <summary>
+        /// Inserts a new element as a child of an existing XmlNode and returns it.
+        /// </summary>
+        /// <param name="node">The node to which the element should be inserted as a child.</param>
+        /// <param name="name">The element name.</param>
+        /// <param name="index">The index at which the element should be inserted.</param>
+        /// <returns>The newly created child element</returns>
+        public static XmlNode InsertElement(XmlNode node, string name, int index)
+        {
+            XmlNode childNode = node.OwnerDocument.CreateElement(name);
+            int childCount = node.ChildNodes.Count;
+
+            if (index < 0 || index > childCount)
+                throw new ArgumentOutOfRangeException("index");
+
+            if (index == node.ChildNodes.Count)
+                node.AppendChild(childNode);
+            else
+                node.InsertBefore(childNode, node.ChildNodes[index]);
+
+            return childNode;
+        }
+        #endregion
     }
 }

@@ -42,7 +42,7 @@
             this.richTextBox1.Size = new System.Drawing.Size(461, 279);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
-            this.richTextBox1.Validated += new System.EventHandler(this.richTextBox1_Validated);
+            //this.richTextBox1.Validated += new System.EventHandler(this.richTextBox1_Validated);
             // 
             // errorMessageLabel
             // 

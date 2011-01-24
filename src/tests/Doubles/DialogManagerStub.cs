@@ -22,16 +22,38 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
 
 namespace NUnit.ProjectEditor.Tests
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public class DialogManagerStub : IDialogManager
     {
+        #region IDialogManager Members
+
+        public bool AskYesNoQuestion(string question)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AskYesNoQuestion(string question, string caption)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetFileOpenPath(string title, string filter, string initialDirectory)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetSaveAsPath(string title, string filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetFolderPath(string message, string initialPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

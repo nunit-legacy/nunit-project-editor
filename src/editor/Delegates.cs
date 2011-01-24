@@ -22,16 +22,12 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor
 {
-    [TestFixture]
-    public class ProjectPresenterTests
-    {
-    }
+    public delegate void ActionDelegate();
+
+    public delegate void CommandDelegate();
+
+    public delegate bool ActionStartingDelegate();
 }

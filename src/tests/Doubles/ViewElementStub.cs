@@ -22,16 +22,23 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor.Tests
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public class ViewElementStub : IViewElement
     {
+        public ViewElementStub(string name)
+        {
+            this.Name = name;
+        }
+
+        public string Name { get; set; }
+        public bool Enabled { get; set; }
+
+        public virtual bool HasSubscribers
+        {
+            get { return false; }
+        }
     }
 }

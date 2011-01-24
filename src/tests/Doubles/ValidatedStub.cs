@@ -22,16 +22,27 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor.Tests
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public class ValidatedStub : ViewElementStub, IValidatedElement
     {
+        public ValidatedStub(string name) : base(name) { }
+
+        public event ActionDelegate Validated;
+
+        public string Text { get; set; }
+
+        public override bool HasSubscribers
+        {
+            get { return Validated != null; }
+        }
+
+        public void FireValidatedEvent()
+        {
+            if (Validated != null)
+                Validated();
+        }
     }
 }

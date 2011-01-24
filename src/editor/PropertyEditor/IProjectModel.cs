@@ -22,16 +22,27 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public interface IProjectModel
     {
+        #region Properties
+
+        IProjectDocument Document { get; }
+
+        string ProjectPath { get; set; }
+        string BasePath { get; set; }
+        string EffectiveBasePath { get; }
+        bool AutoConfig { get; set; }
+        string ActiveConfigName { get; set; }
+
+        ProcessModel ProcessModel { get; set; }
+        DomainUsage DomainUsage { get; set; }
+
+        ConfigList Configs { get; }
+        string[] ConfigNames { get; }
+
+        #endregion
     }
 }

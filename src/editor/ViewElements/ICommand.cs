@@ -22,16 +22,16 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.ViewElements
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public interface ICommand : IViewElement
     {
+        /// <summary>
+        /// Execute event is raised to signal the presenter
+        /// to execute the command with which this menu
+        /// item is associated.
+        /// </summary>
+        event CommandDelegate Execute;
     }
 }

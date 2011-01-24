@@ -22,24 +22,49 @@
 // ***********************************************************************
 
 using System;
+using NUnit.Framework;
+using Rhino.Mocks;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.Tests.XmlEditor
 {
-    public interface IPropertyModel
+    public class XmlPresenterTests
     {
-        #region Properties
+        private IProjectDocument model;
+        private XmlViewStub view;
+        private XmlPresenter presenter;
 
-        string ProjectPath { get; set; }
-        string BasePath { get; set; }
-        bool AutoConfig { get; set; }
-        string ActiveConfigName { get; set; }
+        private static readonly string initialText = "<NUnitProject/>";
+        private static readonly string changedText = "<NUnitProject processModel=\"Separate\"/>";
 
-        ProcessModel ProcessModel { get; set; }
-        DomainUsage DomainUsage { get; set; }
+        [SetUp]
+        public void Initialize()
+        {
+            model = new ProjectDocument();
+            model.LoadXml(initialText);
+            view = new XmlViewStub();
+            presenter = new XmlPresenter(model, view);
+            presenter.LoadViewFromModel();
+        }
 
-        ConfigList Configs { get; }
-        string[] ConfigNames { get; }
+        [Test]
+        public void ViewIsInitializedCorrectly()
+        {
+            Assert.AreEqual(initialText, view.Xml.Text);
+        }
 
-        #endregion
+        [Test]
+        public void WhenXmlChangesModelIsUpdated()
+        {
+            view.SimulateXmlChange(changedText);
+            Assert.AreEqual(changedText, model.XmlText);
+        }
+
+        //[Test]
+        public void BadXmlSetsException()
+        {
+            model.Exception = new ProjectFormatException();
+            view.SimulateXmlChange("<NUnitProject>"); // Missing slash
+            Assert.NotNull(view.Exception);
+        }
     }
 }

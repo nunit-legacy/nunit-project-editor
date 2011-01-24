@@ -22,16 +22,14 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.ViewElements
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public interface ITextElement : IViewElement
     {
+        /// <summary>
+        /// Gets or sets the text of the element
+        /// </summary>
+        string Text { get; set; }
     }
 }

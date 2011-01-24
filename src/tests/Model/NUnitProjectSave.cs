@@ -34,13 +34,15 @@ namespace NUnit.ProjectEditor.Tests
 	{
 		static readonly string xmlfile = "test.nunit";
 
+        private ProjectDocument doc;
         private ProjectModel project;
 
 		[SetUp]
 		public void SetUp()
 		{
-            project = new ProjectModel();
-            project.CreateNewProject();
+            doc = new ProjectDocument();
+            project = new ProjectModel(doc);
+            doc.CreateNewProject();
 		}
 
 		[TearDown]
@@ -91,7 +93,7 @@ namespace NUnit.ProjectEditor.Tests
         [Test]
         public void NormalProject_RoundTrip()
         {
-            project.LoadXml(NUnitProjectXml.NormalProject);
+            doc.LoadXml(NUnitProjectXml.NormalProject);
             CheckContents(NUnitProjectXml.NormalProject);
         }
 
@@ -123,14 +125,14 @@ namespace NUnit.ProjectEditor.Tests
         [Test]
         public void ProjectWithComplexSettings_RoundTrip()
         {
-            project.LoadXml(NUnitProjectXml.ComplexSettingsProject);
+            doc.LoadXml(NUnitProjectXml.ComplexSettingsProject);
             CheckContents(NUnitProjectXml.ComplexSettingsProject);
         }
 
         [Test]
         public void ProjectWithComplexSettings_RoundTripWithChanges()
         {
-            project.LoadXml(NUnitProjectXml.ComplexSettingsProject);
+            doc.LoadXml(NUnitProjectXml.ComplexSettingsProject);
             project.ProcessModel = ProcessModel.Single;
             CheckContents(NUnitProjectXml.ComplexSettingsProject
                 .Replace("Separate", "Single"));
@@ -138,7 +140,7 @@ namespace NUnit.ProjectEditor.Tests
 
         private void CheckContents(string expected)
         {
-            project.Save(xmlfile);
+            doc.Save(xmlfile);
             StreamReader reader = new StreamReader(xmlfile);
             string contents = reader.ReadToEnd();
             reader.Close();

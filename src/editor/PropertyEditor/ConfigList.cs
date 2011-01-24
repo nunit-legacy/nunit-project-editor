@@ -30,14 +30,16 @@ namespace NUnit.ProjectEditor
 	/// <summary>
 	/// Summary description for ConfigList.
 	/// </summary>
-	public class ConfigList : IEnumerable<ProjectConfig>
+	public class ConfigList : IEnumerable<IProjectConfig>
 	{
+        private IProjectModel project;
         private XmlNode projectNode;
 
-		public ConfigList(XmlNode projectNode) 
-		{
-            this.projectNode = projectNode;
-		}
+        public ConfigList(IProjectModel project)
+        {
+            this.project = project;
+            this.projectNode = project.Document.RootNode;
+        }
 
 		#region Properties
 
@@ -46,12 +48,12 @@ namespace NUnit.ProjectEditor
             get { return ConfigNodes.Count; }
         }
 
-		public ProjectConfig this[int index]
+		public IProjectConfig this[int index]
 		{
-            get { return new ProjectConfig(ConfigNodes[index]); }
+            get { return new ProjectConfig(project, ConfigNodes[index]); }
 		}
 
-        public ProjectConfig this[string name]
+        public IProjectConfig this[string name]
         {
             get
             {
@@ -65,6 +67,11 @@ namespace NUnit.ProjectEditor
             get { return projectNode.SelectNodes("Config"); }
         }
 
+        private XmlNode SettingsNode
+        {
+            get { return projectNode.SelectSingleNode("Settings"); }
+        }
+
 		#endregion
 
 		#region Methods
@@ -74,7 +81,7 @@ namespace NUnit.ProjectEditor
             XmlNode configNode = XmlHelper.AddElement(projectNode, "Config");
             XmlHelper.AddAttribute(configNode, "name", name);
 
-            return new ProjectConfig(configNode);
+            return new ProjectConfig(project, configNode);
 		}
 
         public void RemoveAt(int index)
@@ -102,11 +109,6 @@ namespace NUnit.ProjectEditor
             return -1;
         }
 
-        //public bool Contains( ProjectConfig config )
-        //{
-        //    return InnerList.Contains( config );
-        //}
-
         public bool Contains(string name)
         {
             return IndexOf(name) >= 0;
@@ -114,14 +116,12 @@ namespace NUnit.ProjectEditor
 
 		#endregion
 
-        #region IEnumerable Members
+        #region IEnumerable<IProjectConfig> Members
 
-        public IEnumerator<ProjectConfig> GetEnumerator()
+        public IEnumerator<IProjectConfig> GetEnumerator()
         {
-            List<ProjectConfig> list = new List<ProjectConfig>();
             foreach (XmlNode node in ConfigNodes)
-                list.Add(new ProjectConfig(node));
-            return list.GetEnumerator();
+                yield return new ProjectConfig(project, node);
         }
 
         #endregion

@@ -30,27 +30,26 @@ namespace NUnit.ProjectEditor
         private IXmlModel model;
         private IXmlView view;
 
-        public XmlPresenter(IProjectModel model, IXmlView view)
+        public XmlPresenter(IXmlModel model, IXmlView view)
         {
             this.model = model;
             this.view = view;
+
+            view.Xml.Validated += delegate
+            {
+                UpdateModelFromView();
+            };
         }
 
         public void LoadViewFromModel()
         {
-            view.Text = model.XmlText;
+            view.Xml.Text = model.XmlText;
             view.Exception = model.Exception;
         }
 
         public void UpdateModelFromView()
         {
-            model.XmlText = view.Text;
-        }
-
-        public void OnXmlChange()
-        {
-            // TODO: Validation goes here
-            model.XmlText = view.Text;
+            model.XmlText = view.Xml.Text;
         }
     }
 }

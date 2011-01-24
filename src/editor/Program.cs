@@ -38,12 +38,26 @@ namespace NUnit.ProjectEditor
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            ProjectModel model = new ProjectModel();
+            // Common dialog manager
+            DialogManager dialogManager = new DialogManager("NUnit Project Editor");
+
+            // Set up main editor triad
+            ProjectDocument doc = new ProjectDocument();
             MainForm view = new MainForm();
-            view.Presenter = new ProjectEditor(model, view, new DialogManager("NUnit Project Editor"));
+            new MainPresenter(doc, view, new DialogManager("NUnit Project Editor"));
+
+            //// Set up property editor triad
+            //ProjectModel project = new ProjectModel(doc);
+            //IPropertyView propertyView = view.PropertyView;
+            //new PropertyPresenter(project, propertyView, dialogManager);
+
+            //// Set up XML editor triad
+            //XmlModel xmlModel = new XmlModel();
+            //IXmlView xmlView = view.XmlView;
+            //new XmlPresenter(xmlModel, xmlView);
 
             if (args.Length > 0)
-                model.OpenProject(args[0]);
+                doc.OpenProject(args[0]);
 
             Application.Run(view);
         }

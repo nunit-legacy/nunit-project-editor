@@ -22,12 +22,13 @@
 // ***********************************************************************
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
@@ -38,253 +39,107 @@ namespace NUnit.ProjectEditor
         public PropertyView()
         {
             InitializeComponent();
+
+            InitializeViewElements();
+        }
+
+        private void InitializeViewElements()
+        {
+            BrowseProjectBaseCommand = new ButtonElement(projectBaseBrowseButton);
+            EditConfigsCommand = new ButtonElement(editConfigsButton);
+            BrowseConfigBaseCommand = new ButtonElement(configBaseBrowseButton);
+            AddAssemblyCommand = new ButtonElement(addAssemblyButton);
+            RemoveAssemblyCommand = new ButtonElement(removeAssemblyButton);
+            BrowseAssemblyPathCommand = new ButtonElement(assemblyPathBrowseButton);
+
+            ProjectPath = new ControlElement(projectPathLabel);
+            ProjectBase = new ValidatedElement(projectBaseTextBox);
+            ProcessModel = new ListControlWrapper(processModelComboBox);
+            DomainUsage = new ListControlWrapper(domainUsageComboBox);
+            Runtime = new ListControlWrapper(runtimeComboBox);
+            RuntimeVersion = new ListControlWrapper(runtimeVersionComboBox);
+            ActiveConfigName = new ControlElement(activeConfigLabel);
+
+            ConfigList = new ListControlWrapper(configComboBox);
+
+            ApplicationBase = new ValidatedElement(applicationBaseTextBox);
+            ConfigurationFile = new ValidatedElement(configFileTextBox);
+            BinPathType = new RadioButtonGroup("BinPathType", autoBinPathRadioButton, manualBinPathRadioButton, noBinPathRadioButton);
+            PrivateBinPath = new ValidatedElement(privateBinPathTextBox);
+            AssemblyPath = new ValidatedElement(assemblyPathTextBox);
+            AssemblyList = new ListControlWrapper(assemblyListBox);
         }
 
         #endregion
-
+        
         #region IPropertyView Members
 
         #region Properties
 
-        public PropertyPresenter Presenter { get; set; }
+        public ICommand BrowseProjectBaseCommand { get; private set; }
+        public ICommand EditConfigsCommand { get; private set; }
+        public ICommand BrowseConfigBaseCommand { get; private set; }
+        public ICommand AddAssemblyCommand { get; private set; }
+        public ICommand RemoveAssemblyCommand { get; private set; }
+        public ICommand BrowseAssemblyPathCommand { get; private set; }
 
-        public string ProjectPath
-        {
-            get { return projectPathLabel.Text; }
-            set { projectPathLabel.Text = value; }
-        }
+        public ITextElement ProjectPath{ get; private set; }
+        public IValidatedElement ProjectBase { get; private set; }
 
-        public string ProjectBase
-        {
-            get { return projectBaseTextBox.Text; }
-            set { projectBaseTextBox.Text = value; }
-        }
+        public ISelectionList ProcessModel { get; private set; }
 
-        public string[] ProcessModelOptions
-        {
-            get { return GetComboBoxOptions(processModelComboBox); }
-            set { SetComboBoxOptions(processModelComboBox, value); }
-        }
+        public ISelectionList DomainUsage { get; private set; }
 
-        public string ProcessModel
-        {
-            get { return processModelComboBox.Text; }
-            set 
-            { 
-                processModelComboBox.SelectedIndex = 
-                    processModelComboBox.FindString(value); 
-            }
-        }
+        public ITextElement ActiveConfigName { get; private set; }
 
-        public string[] DomainUsageOptions
-        {
-            get { return GetComboBoxOptions(domainUsageComboBox); } 
-            set { SetComboBoxOptions(domainUsageComboBox, value); }
-        }
+        public ISelectionList ConfigList { get; private set; }
 
-        public string[] RuntimeOptions
-        {
-            get { return GetComboBoxOptions(this.runtimeComboBox); }
-            set { SetComboBoxOptions(this.runtimeComboBox, value); }
-        }
+        public ISelectionList Runtime { get; private set; }
+        public ISelectionList RuntimeVersion { get; private set; }
+        public IValidatedElement ApplicationBase { get; private set; }
+        public IValidatedElement ConfigurationFile { get; private set; }
+        public ISelection BinPathType { get; private set; }
 
-        public string[] RuntimeVersionOptions
-        {
-            get { return GetComboBoxOptions(this.runtimeVersionComboBox); }
-            set { SetComboBoxOptions(this.runtimeVersionComboBox, value); }
-        }
+        public IValidatedElement PrivateBinPath { get; private set;  }
 
-        public string DomainUsage
-        {
-            get { return domainUsageComboBox.Text; }
-            set
-            {
-                domainUsageComboBox.SelectedIndex =
-                    domainUsageComboBox.FindString(value);
-            }
-        }
+        public ISelectionList AssemblyList { get; private set; }
 
-        public string ActiveConfigName
-        {
-            get { return activeConfigLabel.Text; }
-            set { activeConfigLabel.Text = value; }
-        }
-
-        public string[] ConfigList
-        {
-            set
-            {
-                string selectedConfig = (string)configComboBox.SelectedItem;
-                configComboBox.Items.Clear();
-
-                //if (selectedConfig == null)
-                //    selectedConfig = project.ActiveConfigName;
-
-                int selectedIndex = -1;
-
-                foreach (string name in value)
-                {
-                    int index = configComboBox.Items.Add(name);
-                    if (name == selectedConfig)
-                        selectedIndex = index;
-                }
-
-                if (selectedIndex == -1 && configComboBox.Items.Count > 0)
-                    selectedIndex = 0;
-
-                configComboBox.SelectedIndex = selectedIndex;
-
-                // Necessary because the previous line won't cause a change
-                // if the selected index is -1.
-                if (selectedIndex == -1)
-                    configComboBox_SelectedIndexChanged(this, EventArgs.Empty);
-            }
-        }
-
-        public int SelectedConfig
-        {
-            get { return configComboBox.SelectedIndex; }
-            set { configComboBox.SelectedIndex = value; }
-        }
-
-        public string Runtime
-        {
-            get { return this.runtimeComboBox.Text; }
-            set { this.runtimeComboBox.Text = value; }
-        }
-
-        public string RuntimeVersion
-        {
-            get { return this.runtimeVersionComboBox.Text; }
-            set { this.runtimeVersionComboBox.Text = value; }
-        }
-
-        public string ApplicationBase
-        {
-            get { return this.applicationBaseTextBox.Text; }
-            set { this.applicationBaseTextBox.Text = value; }
-        }
-
-        public string ConfigurationFile
-        {
-            get { return this.configFileTextBox.Text; }
-            set { this.configFileTextBox.Text = value; }
-        }
-
-        public BinPathType BinPathType
-        {
-            get
-            {
-                if (autoBinPathRadioButton.Checked)
-                    return BinPathType.Auto;
-                else if (manualBinPathRadioButton.Checked)
-                    return BinPathType.Manual;
-                else
-                    return BinPathType.None;
-            }
-            set
-            {
-                switch (value)
-                {
-                    case BinPathType.Auto:
-                        autoBinPathRadioButton.Checked = true;
-                        break;
-                    case BinPathType.Manual:
-                        manualBinPathRadioButton.Checked = true;
-                        break;
-                    default:
-                        noBinPathRadioButton.Checked = true;
-                        break;
-                }
-            }
-        }
-
-        public string PrivateBinPath
-        {
-            get { return privateBinPathTextBox.Text; }
-            set { privateBinPathTextBox.Text = value; }
-        }
-
-        public string[] AssemblyList
-        {
-            set
-            {
-                string selectedAssembly = (string)assemblyListBox.SelectedItem;
-
-                assemblyListBox.Items.Clear();
-                int selectedIndex = -1;
-
-                foreach (string assembly in value)
-                {
-                    int index = assemblyListBox.Items.Add(Path.GetFileName(assembly));
-
-                    if (assembly == selectedAssembly)
-                        selectedIndex = index;
-                }
-
-                if (assemblyListBox.Items.Count > 0 && selectedIndex == -1)
-                    selectedIndex = 0;
-
-                if (selectedIndex == -1)
-                {
-                    removeAssemblyButton.Enabled = false;
-                    assemblyPathBrowseButton.Enabled = false;
-                }
-                else
-                {
-                    assemblyListBox.SelectedIndex = selectedIndex;
-                    removeAssemblyButton.Enabled = true;
-                    assemblyPathBrowseButton.Enabled = true;
-                }
-            }
-        }
-
-        public int SelectedAssemblyIndex
-        {
-            get { return assemblyListBox.SelectedIndex; }
-        }
-
-        public string SelectedAssembly
-        {
-            get { return assemblyListBox.SelectedItem.ToString(); }
-        }
-
-        public string AssemblyPath
-        {
-            get { return this.assemblyPathTextBox.Text; }
-            set { this.assemblyPathTextBox.Text = value; }
-        }
-
-        public bool PrivateBinPathEnabled
-        {
-            get { return privateBinPathTextBox.Enabled; }
-            set { privateBinPathTextBox.Enabled = value; }
-        }
-
-        public bool AddAssemblyEnabled
-        {
-            get { return addAssemblyButton.Enabled; }
-            set { addAssemblyButton.Enabled = value; }
-        }
-
-        public bool RemoveAssemblyEnabled
-        {
-            get { return removeAssemblyButton.Enabled; }
-            set { removeAssemblyButton.Enabled = value; }
-        }
-
-        public bool EditAssemblyEnabled
-        {
-            set 
-            {
-                assemblyPathTextBox.Enabled = value;
-                assemblyPathBrowseButton.Enabled = value; 
-            }
-        }
+        public IValidatedElement AssemblyPath { get; private set; }
 
         #endregion
 
         #region Methods
+
+        public void SetAssemblyList(IEnumerable<string> list)
+        {
+            string selectedAssembly = (string)assemblyListBox.SelectedItem;
+
+            assemblyListBox.Items.Clear();
+            int selectedIndex = -1;
+
+            foreach (string assembly in list)
+            {
+                int index = assemblyListBox.Items.Add(Path.GetFileName(assembly));
+
+                if (assembly == selectedAssembly)
+                    selectedIndex = index;
+            }
+
+            if (assemblyListBox.Items.Count > 0 && selectedIndex == -1)
+                selectedIndex = 0;
+
+            if (selectedIndex == -1)
+            {
+                removeAssemblyButton.Enabled = false;
+                assemblyPathBrowseButton.Enabled = false;
+            }
+            else
+            {
+                assemblyListBox.SelectedIndex = selectedIndex;
+                removeAssemblyButton.Enabled = true;
+                assemblyPathBrowseButton.Enabled = true;
+            }
+        }
 
         public void SetErrorMessage(string property, string message)
         {
@@ -296,132 +151,6 @@ namespace NUnit.ProjectEditor
         }
         
         #endregion
-
-        #endregion
-
-        #region Event Handlers
-
-        private void projectBaseBrowseButton_Click(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.BrowseForProjectBase();
-        }
-
-        private void editConfigsButton_Click(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.EditConfigs();
-        }
-
-        private void configBaseBrowseButton_Click(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.BrowseForConfigBase();
-        }
-
-        private void addAssemblyButton_Click(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.AddAssembly();
-        }
-
-        private void removeAssemblyButton_Click(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.RemoveAssembly();
-        }
-
-        private void assemblyPathBrowseButton_Click(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.BrowseForAssembly();
-        }
-
-        private void projectBaseTextBox_Validated(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("ProjectBase");
-        }
-
-        private void processModelComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("ProcessModel");
-        }
-
-        private void domainUsageComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("DomainUsage");
-        }
-
-        private void configComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("SelectedConfig");
-
-            this.projectTabControl.Enabled = configComboBox.SelectedIndex >= 0;
-        }
-
-        private void runtimeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("Runtime");
-        }
-
-        private void runtimeVersionComboBox_Validated(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("RuntimeVersion");
-        }
-
-        private void applicationBaseTextBox_Validated(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("ApplicationBase");
-        }
-
-        private void configFileTextBox_Validated(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("DefaultConfigurationFile");
-        }
-
-        private void autoBinPathRadioButton_CheckedChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("BinPathType");
-        }
-
-        private void manualBinPathRadioButton_CheckedChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("BinPathType");
-        }
-
-        private void noBinPathRadioButton_CheckedChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("BinPathType");
-        }
-
-        private void privateBinPathTextBox_Validated(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("PrivateBinPath");
-        }
-
-        private void assemblyListBox_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("SelectedAssembly");
-        }
-
-        private void assemblyPathTextBox_Validated(object sender, System.EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnPropertyChange("AssemblyPath");
-        }
 
         #endregion
 

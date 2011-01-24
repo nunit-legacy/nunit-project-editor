@@ -33,7 +33,7 @@ namespace NUnit.ProjectEditor
     /// Displays a dialog for creation of a new configuration.
     /// The dialog collects and validates the name and the
     /// name of a configuration to be copied and then adds the
-    /// new configuration to the project.
+    /// new configuration to the doc.
     /// 
     /// A DialogResult of DialogResult.OK indicates that the
     /// configuration was added successfully.

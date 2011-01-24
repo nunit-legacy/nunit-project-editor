@@ -22,65 +22,61 @@
 // ***********************************************************************
 
 using System;
-using System.Collections;
-using System.ComponentModel;
+using System.Collections.Generic;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    public delegate void CommandDelegate();
-
     public interface IPropertyView
     {
         #region Properties
 
-        PropertyPresenter Presenter { get; set; }
-
-        string ProjectPath { get; set; }
-        string ProjectBase { get; set; }
-        string ProcessModel { get; set; }
-        string DomainUsage { get; set; }
-        string ActiveConfigName { get; set; }
-
-        string[] ConfigList { set; }
-
-        int SelectedConfig { get; set; }
-
-        #region Properties Applying to Selected Config
-
-        string Runtime { get; set; }
-        string RuntimeVersion { get; set; }
-        string ApplicationBase { get; set; }
-        string ConfigurationFile { get; set; }
-
-        BinPathType BinPathType { get; set; }
-        string PrivateBinPath { get; set; }
-
-        string[] AssemblyList { set; }
-        string SelectedAssembly { get; }
-        int SelectedAssemblyIndex { get; }
-        string AssemblyPath { get; set; }
-
-        bool PrivateBinPathEnabled { set; }
-        bool AddAssemblyEnabled { set; }
-        bool RemoveAssemblyEnabled { set; }
-        bool EditAssemblyEnabled { set; }
-
         bool Visible { get; set; }
+
+        #region Command Elements
+
+        ICommand BrowseProjectBaseCommand { get; }
+        ICommand EditConfigsCommand { get; }
+        ICommand BrowseConfigBaseCommand { get; }
+
+        ICommand AddAssemblyCommand { get; }
+        ICommand RemoveAssemblyCommand { get; }
+        ICommand BrowseAssemblyPathCommand { get; }
 
         #endregion
 
-        #region Selection Options for Lists
+        #region Properties of the Model as a Whole
 
-        string[] ProcessModelOptions { get; set; }
-        string[] DomainUsageOptions { get; set; }
-        string[] RuntimeOptions { get; set; }
-        string[] RuntimeVersionOptions { get; set; }
+        ITextElement ProjectPath { get; }
+        IValidatedElement ProjectBase { get; }
+        ISelectionList ProcessModel { get; }
+        ISelectionList DomainUsage { get; }
+        ITextElement ActiveConfigName { get; }
+
+        ISelectionList ConfigList { get; }
+
+        #endregion
+
+        #region Properties of the Selected Config
+
+        ISelectionList Runtime { get; }
+        ISelectionList RuntimeVersion { get; }
+        IValidatedElement ApplicationBase { get; }
+        IValidatedElement ConfigurationFile { get; }
+
+        ISelection BinPathType { get; }
+        IValidatedElement PrivateBinPath { get; }
+
+        ISelectionList AssemblyList { get; }
+        IValidatedElement AssemblyPath { get; }
 
         #endregion
 
         #endregion
 
         #region Methods
+
+        void SetAssemblyList(IEnumerable<string> list);
 
         void SetErrorMessage(string property, string message);
 

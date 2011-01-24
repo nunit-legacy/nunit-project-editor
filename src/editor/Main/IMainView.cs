@@ -22,16 +22,36 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
+using NUnit.ProjectEditor.ViewElements;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    /// <summary>
+    /// IMainView represents the top level view for the
+    /// Project editor. It provides a menu commands and several
+    /// utility methods used in opening and saving files. It
+    /// aggregates the property and xml views.
+    /// </summary>
+    public interface IMainView
     {
+        ICommand NewProjectCommand { get; }
+        ICommand OpenProjectCommand { get; }
+        ICommand CloseProjectCommand { get; }
+        ICommand SaveProjectCommand { get; }
+        ICommand SaveProjectAsCommand { get; }
+
+        event ActionStartingDelegate ActiveViewChanging;
+        event ActionDelegate ActiveViewChanged;
+
+        IPropertyView PropertyView { get; }
+        IXmlView XmlView { get; }
+
+        SelectedView SelectedView { get; }
+    }
+
+    public enum SelectedView
+    {
+        PropertyView = 0,
+        XmlView = 1
     }
 }

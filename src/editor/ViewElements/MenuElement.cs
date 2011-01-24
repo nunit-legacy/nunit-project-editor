@@ -22,29 +22,43 @@
 // ***********************************************************************
 
 using System;
+using System.Windows.Forms;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.ViewElements
 {
     /// <summary>
-    /// IProjectView represents the top level view for the
-    /// Project editor. It provides a menu commands and several
-    /// utility methods used in opening and saving files. It
-    /// aggregates the property and xml views.
+    /// MenuItemWrapper is the implementation of MenuItem 
+    /// used in the actual application.
     /// </summary>
-    public interface IProjectView
+    public class MenuElement : ICommand
     {
-        IPropertyView PropertyView { get; }
-        IXmlView XmlView { get; }
+        private ToolStripMenuItem menuItem;
 
-        SelectedView SelectedView { get; }
+        public MenuElement(ToolStripMenuItem menuItem)
+        {
+            this.menuItem = menuItem;
 
-        bool CloseCommandEnabled { set; }
-        bool SaveCommandsEnabled { set; }
-    }
+            menuItem.Click += delegate 
+                { if (Execute != null) Execute(); };
+        }
 
-    public enum SelectedView
-    {
-        PropertyView = 0,
-        XmlView = 1
+        public event CommandDelegate Execute;
+
+        public string Name
+        {
+            get { return menuItem.Name; }
+        }
+
+        public bool Enabled
+        {
+            get { return menuItem.Enabled; }
+            set { menuItem.Enabled = value; }
+        }
+
+        public string Text
+        {
+            get { return menuItem.Text; }
+            set { menuItem.Text = value; }
+        }
     }
 }

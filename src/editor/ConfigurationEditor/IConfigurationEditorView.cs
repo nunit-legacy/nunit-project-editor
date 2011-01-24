@@ -22,23 +22,29 @@
 // ***********************************************************************
 
 using System;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
     public interface IConfigurationEditorView
     {
-        string[] ConfigList { set; }
-        string ActiveConfigName { set; }
+        #region Properties
 
-        string SelectedConfig { get;  set; }
+        ICommand AddCommand { get; }
+        ICommand RenameCommand { get; }
+        ICommand RemoveCommand { get; }
+        ICommand ActiveCommand { get; }
 
-        bool AddConfigEnabled { set; }
-        bool RenameConfigEnabled { set; }
-        bool RemoveConfigEnabled { set; }
-        bool MakeActiveEnabled { set; }
+        ISelectionList ConfigList { get; }
+
+        #endregion
+
+        #region Methods
 
         string GetNewNameForRename(string oldName);
         bool GetAddConfigData(ref AddConfigData data);
+
+        #endregion
     }
 
     public struct AddConfigData

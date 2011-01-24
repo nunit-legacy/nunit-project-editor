@@ -22,16 +22,27 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public interface IProjectConfig
     {
+        string Name { get; set; }
+
+        string BasePath { get; set; }
+
+        string RelativeBasePath { get; }
+
+        string EffectiveBasePath { get; }
+
+        string ConfigurationFile { get; set; }
+
+        string PrivateBinPath { get; set; }
+
+        BinPathType BinPathType { get; set; }
+
+        System.Collections.Generic.IList<string> Assemblies { get; }
+
+        RuntimeFramework RuntimeFramework { get; set; }
     }
 }

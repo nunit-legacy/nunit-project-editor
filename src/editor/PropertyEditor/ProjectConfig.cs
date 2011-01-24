@@ -35,7 +35,7 @@ namespace NUnit.ProjectEditor
 		None
 	}
 
-	public class ProjectConfig
+	public class ProjectConfig : IProjectConfig
 	{
 		#region Instance Variables
 
@@ -45,21 +45,22 @@ namespace NUnit.ProjectEditor
         private XmlNode configNode;
         
 		/// <summary>
-		/// IProject interface of containing project
+		/// IProject interface of containing doc
 		/// </summary>
-		protected ProjectModel project = null;
+		private IProjectModel project;
 
         /// <summary>
         /// List of the test assemblies in this config
         /// </summary>
-        private AssemblyList assemblies;
+        private IList<string> assemblies;
 
 		#endregion
 
 		#region Constructor
 
-        public ProjectConfig(XmlNode configNode)
+        public ProjectConfig(IProjectModel project, XmlNode configNode)
         {
+            this.project = project;
             this.configNode = configNode;
             this.assemblies = new AssemblyList(configNode);
         }
@@ -85,7 +86,7 @@ namespace NUnit.ProjectEditor
         }
 
         /// <summary>
-        /// The base path relative to the project base
+        /// The base path relative to the doc base
         /// </summary>
         public string RelativeBasePath
         {
@@ -97,6 +98,22 @@ namespace NUnit.ProjectEditor
                     return basePath;
 
                 return PathUtils.RelativePath(project.BasePath, basePath);
+            }
+        }
+
+        public string EffectiveBasePath
+        {
+            get
+            {
+                string basePath = BasePath;
+
+                if (project == null) 
+                    return basePath;
+
+                if (basePath == null)
+                    return project.EffectiveBasePath;
+
+                return Path.Combine(project.EffectiveBasePath, basePath);
             }
         }
 
@@ -136,7 +153,7 @@ namespace NUnit.ProjectEditor
         /// <summary>
         /// Return our AssemblyList
         /// </summary>
-        public AssemblyList Assemblies
+        public IList<string> Assemblies
         {
             get { return assemblies; }
         }
@@ -162,7 +179,10 @@ namespace NUnit.ProjectEditor
 
         private void SetAttribute(string name, object value)
         {
-            XmlHelper.SetAttribute(configNode, name, value);
+            if (value == null)
+                XmlHelper.RemoveAttribute(configNode, name);
+            else
+                XmlHelper.SetAttribute(configNode, name, value);
         }
 
         #endregion

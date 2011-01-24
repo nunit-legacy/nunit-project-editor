@@ -29,19 +29,26 @@ namespace NUnit.ProjectEditor
     {
         #region Instance Variables
 
-        private IPropertyModel model;
+        private IProjectModel model;
         private IConfigurationEditorView view;
 
         #endregion
 
         #region Constructor
 
-        public ConfigurationEditor(IPropertyModel model, IConfigurationEditorView view)
+        public ConfigurationEditor(IProjectModel model, IConfigurationEditorView view)
         {
             this.model = model;
             this.view = view;
 
             UpdateConfigList();
+
+            view.AddCommand.Execute += AddConfig;
+            view.RemoveCommand.Execute += RemoveConfig;
+            view.RenameCommand.Execute += RenameConfig;
+            view.ActiveCommand.Execute += MakeActive;
+
+            view.ConfigList.SelectionChanged += SelectedConfigChanged;
         }
 
         #endregion
@@ -54,11 +61,11 @@ namespace NUnit.ProjectEditor
             if (view.GetAddConfigData(ref data))
             {
                 model.Configs.Add(data.ConfigToCreate);
-                ProjectConfig newConfig = model.Configs[data.ConfigToCreate];
+                IProjectConfig newConfig = model.Configs[data.ConfigToCreate];
 
                 if (data.ConfigToCopy != null)
                 {
-                    ProjectConfig copyConfig = model.Configs[data.ConfigToCopy];
+                    IProjectConfig copyConfig = model.Configs[data.ConfigToCopy];
                     if (copyConfig != null)
                     {
                         newConfig.BasePath = copyConfig.BasePath;
@@ -79,7 +86,7 @@ namespace NUnit.ProjectEditor
 
         public void RenameConfig()
         {
-            string oldName = view.SelectedConfig;
+            string oldName = view.ConfigList.SelectedItem;
 
             string newName = view.GetNewNameForRename(oldName);
 
@@ -92,25 +99,26 @@ namespace NUnit.ProjectEditor
 
         public void RemoveConfig()
         {
-            model.Configs.Remove(view.SelectedConfig);
+            model.Configs.RemoveAt(view.ConfigList.SelectedIndex);
 
             UpdateConfigList();
         }
 
         public void MakeActive()
         {
-            model.ActiveConfigName = view.SelectedConfig;
+            model.ActiveConfigName = view.ConfigList.SelectedItem;
 
             UpdateConfigList();
         }
 
         public void SelectedConfigChanged()
         {
-            string selectedConfig = view.SelectedConfig;
+            int index = view.ConfigList.SelectedIndex;
 
-            view.MakeActiveEnabled = selectedConfig != null && selectedConfig != model.ActiveConfigName;
-            view.RenameConfigEnabled = view.AddConfigEnabled = selectedConfig != null;
-            view.RemoveConfigEnabled = selectedConfig != null && model.Configs.Count > 0;
+            view.AddCommand.Enabled = true;
+            view.ActiveCommand.Enabled = index >= 0 && model.Configs[index].Name != model.ActiveConfigName;
+            view.RenameCommand.Enabled = index >= 0;
+            view.RemoveCommand.Enabled = index >= 0;
         }
 
         #endregion
@@ -119,30 +127,38 @@ namespace NUnit.ProjectEditor
 
         private void UpdateConfigList()
         {
-            string selectedConfig = view.SelectedConfig;
-            bool foundSelectedConfig = false;
+            string selectedConfig = view.ConfigList.SelectedItem;
+            if (selectedConfig != null && selectedConfig.EndsWith(" (active)"))
+                selectedConfig = selectedConfig.Substring(0, selectedConfig.Length - 9);
+            int selectedIndex = -1;
+            int activeIndex = -1;
 
             int count = model.Configs.Count;
             string[] configList = new string[count];
 
-            for (int i = 0; i < count; i++)
+            for (int index = 0; index < count; index++)
             {
-                string config = model.Configs[i].Name;
+                string config = model.Configs[index].Name;
 
-                configList[i] = config;
+                if (config == model.ActiveConfigName)
+                    activeIndex = index;
                 if (config == selectedConfig)
-                    foundSelectedConfig = true;
+                    selectedIndex = index;
+
+                configList[index] = config;
             }
 
-            view.ConfigList = configList;
-            view.ActiveConfigName = model.ActiveConfigName;
+            if (activeIndex >= 0)
+                configList[activeIndex] += " (active)";
 
-            if (foundSelectedConfig)
-                view.SelectedConfig = selectedConfig;
-            else if (configList.Length > 0)
-                view.SelectedConfig = configList[0];
-            else
-                view.SelectedConfig = null;
+            view.ConfigList.SelectionList = configList;
+
+            view.ConfigList.SelectedIndex = selectedIndex > 0
+                ? selectedIndex
+                : configList.Length > 0
+                    ? 0 : -1;
+
+            SelectedConfigChanged();
         }
 
         #endregion

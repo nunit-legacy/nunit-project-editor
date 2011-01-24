@@ -22,16 +22,25 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor.Tests
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public class CommandStub : ViewElementStub, ICommand
     {
+        public CommandStub(string name) : base(name) { }
+
+        public event CommandDelegate Execute;
+
+        public override bool HasSubscribers
+        {
+            get { return Execute != null; }
+        }
+
+        public void RaiseExecuteEvent()
+        {
+            if (Execute != null)
+                Execute();
+        }
     }
 }

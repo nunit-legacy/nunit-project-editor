@@ -22,7 +22,9 @@
 // ***********************************************************************
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
@@ -36,22 +38,19 @@ namespace NUnit.ProjectEditor
         public XmlView()
         {
             InitializeComponent();
+
+            Xml = new ValidatedElement(richTextBox1);
         }
 
         #endregion
 
         #region IXmlView Members
 
-        public XmlPresenter Presenter { get; set ; }
 
         /// <summary>
         /// Gets or sets the XML text
         /// </summary>
-        public override string Text
-        {
-            get { return richTextBox1.Text; }
-            set { richTextBox1.Text = value; }
-        }
+        public IValidatedElement Xml { get; private set; }
 
         /// <summary>
         /// Sets an exception arising in validating
@@ -89,11 +88,11 @@ namespace NUnit.ProjectEditor
 
         #region Event Handlers
 
-        private void richTextBox1_Validated(object sender, EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OnXmlChange();
-        }
+        //private void richTextBox1_Validated(object sender, EventArgs e)
+        //{
+        //    if (XmlChanged != null)
+        //        XmlChanged();
+        //}
 
         #endregion
     }

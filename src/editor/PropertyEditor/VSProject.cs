@@ -31,8 +31,8 @@ namespace NUnit.ProjectEditor
 	/// <summary>
 	/// This class allows loading information about
 	/// configurations and assemblies in a Visual
-	/// Studio project file and inspecting them.
-	/// Only the most common project types are
+	/// Studio doc file and inspecting them.
+	/// Only the most common doc types are
 	/// supported and an exception is thrown if
 	/// an attempt is made to load an invalid
 	/// file or one of an unknown type.
@@ -52,12 +52,12 @@ namespace NUnit.ProjectEditor
 		private static readonly string solutionExtension = ".sln";
 
 		/// <summary>
-		/// Path to the file storing this project
+		/// Path to the file storing this doc
 		/// </summary>
 		private string projectPath;
 
 		/// <summary>
-		/// Collection of configs for the project
+		/// Collection of configs for the doc
 		/// </summary>
 		private VSProjectConfigCollection configs;
 
@@ -78,7 +78,7 @@ namespace NUnit.ProjectEditor
 		#region Properties
 
 		/// <summary>
-		/// The name of the project.
+		/// The name of the doc.
 		/// </summary>
 		public string Name
 		{
@@ -86,7 +86,7 @@ namespace NUnit.ProjectEditor
 		}
 
 		/// <summary>
-		/// The path to the project
+		/// The path to the doc
 		/// </summary>
 		public string ProjectPath
 		{

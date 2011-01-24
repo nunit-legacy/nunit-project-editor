@@ -22,16 +22,21 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.ViewElements
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    /// <summary>
+    /// The IValidatedElement interface is exposed by the view
+    /// for any element that requires presenter action 
+    /// when the Validated event is fired.
+    /// </summary>
+    public interface IValidatedElement : ITextElement
     {
+        /// <summary>
+        /// Validated event is raised when the item has been
+        /// changed and focus has left the UI element.
+        /// </summary>
+        event ActionDelegate Validated;
     }
+
 }

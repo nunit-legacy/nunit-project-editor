@@ -29,21 +29,43 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    public partial class MainForm : Form, IProjectView
+    public partial class MainForm : Form, IMainView
     {
         #region Constructor
 
         public MainForm()
         {
             InitializeComponent();
+
+            this.NewProjectCommand = new MenuElement(newToolStripMenuItem);
+            this.OpenProjectCommand = new MenuElement(openToolStripMenuItem);
+            this.CloseProjectCommand = new MenuElement(closeToolStripMenuItem);
+            this.SaveProjectCommand = new MenuElement(saveToolStripMenuItem);
+            this.SaveProjectAsCommand = new MenuElement(saveAsToolStripMenuItem);
         }
 
         #endregion
 
-        #region IProjectView Members
+        #region IMainView Members
+
+        #region Events
+
+        public event ActionStartingDelegate ActiveViewChanging;
+        public event ActionDelegate ActiveViewChanged;
+
+        #endregion
+
+        #region Properties
+
+        public ICommand NewProjectCommand { get; private set; }
+        public ICommand OpenProjectCommand { get; private set; }
+        public ICommand CloseProjectCommand { get; private set; }
+        public ICommand SaveProjectCommand { get; private set; }
+        public ICommand SaveProjectAsCommand { get; private set; }
 
         public IXmlView XmlView
         {
@@ -60,25 +82,7 @@ namespace NUnit.ProjectEditor
             get { return (SelectedView)tabControl1.SelectedIndex; }
         }
 
-        public bool CloseCommandEnabled
-        {
-            set { this.closeToolStripMenuItem.Enabled = value; }
-        }
-
-        public bool SaveCommandsEnabled
-        {
-            set
-            {
-                this.saveToolStripMenuItem.Enabled = value;
-                this.saveAsToolStripMenuItem.Enabled = value;
-            }
-        }
-
         #endregion
-
-        #region Other Properties
-
-        public ProjectEditor Presenter { get; set; }
 
         #endregion
 
@@ -86,38 +90,8 @@ namespace NUnit.ProjectEditor
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Presenter != null)
-                Presenter.CloseProject();
-        }
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.CreateNewProject();
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.OpenProject();
-        }
-
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.CloseProject();
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.SaveProject();
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Presenter != null)
-                Presenter.SaveProjectAs();
+            //if (CloseProjectCommand.Click != null)
+            //    CloseProjectCommand.Click();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -133,17 +107,16 @@ namespace NUnit.ProjectEditor
 
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            if (Presenter != null && !Presenter.ValidateActiveViewChange())
+            if (ActiveViewChanging != null && !ActiveViewChanging())
                 e.Cancel = true;
         }
 
         private void tabControl1_Selected(object sender, TabControlEventArgs e)
         {
-            if (Presenter != null)
-                Presenter.ActiveViewChanged();
+            if (ActiveViewChanged != null)
+                ActiveViewChanged();
         }
 
         #endregion
-
     }
 }

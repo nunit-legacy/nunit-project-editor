@@ -22,16 +22,23 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
 using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.Tests.Views
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public class ConfigurationEditorViewTests
     {
+        [Test]
+        public void AllViewElementsAreWrapped()
+        {
+            ConfigurationEditorView view = new ConfigurationEditorView();
+
+            Assert.NotNull(view.AddCommand);
+            Assert.NotNull(view.RemoveCommand);
+            Assert.NotNull(view.RenameCommand);
+            Assert.NotNull(view.ActiveCommand);
+
+            Assert.NotNull(view.ConfigList);
+        }
     }
 }

@@ -30,15 +30,15 @@ using System.Windows.Forms;
 namespace NUnit.ProjectEditor
 {
     /// <summary>
-    /// ProjectEditor is the top-level presenter with subordinate 
-    /// presenters for each view of the project. It directly handles
+    /// MainPresenter is the top-level presenter with subordinate 
+    /// presenters for each view of the doc. It directly handles
     /// the menu commands from the top-level view and coordinates 
     /// changes in the two different submodels.
     /// </summary>
-    public class ProjectEditor
+    public class MainPresenter
     {
-        private IProjectView view;
-        private IProjectModel model;
+        private IMainView view;
+        private IProjectDocument doc;
         private IDialogManager dialogManager;
 
         private PropertyPresenter propertyPresenter;
@@ -46,24 +46,34 @@ namespace NUnit.ProjectEditor
 
         #region Constructor
 
-        public ProjectEditor(IProjectModel model, IProjectView view, IDialogManager dialogHandler)
+        public MainPresenter(IProjectDocument doc, IMainView view, IDialogManager dialogHandler)
         {
-            this.model = model;
+            this.doc = doc;
             this.view = view;
             this.dialogManager = dialogHandler;
 
-            // Set up handlers for model events
-            model.ProjectCreated += new CommandDelegate(OnProjectCreated);
-            model.ProjectClosed += new CommandDelegate(OnProjectClosed);
+            // Set up handlers for view events
+            view.NewProjectCommand.Execute += CreateNewProject;
+            view.OpenProjectCommand.Execute += OpenProject;
+            view.SaveProjectCommand.Execute += SaveProject;
+            view.SaveProjectAsCommand.Execute += SaveProjectAs;
+            view.CloseProjectCommand.Execute += CloseProject;
+            view.ActiveViewChanging += this.ValidateActiveViewChange;
+            view.ActiveViewChanged += this.ActiveViewChanged;
+
+            // Set up handlers for doc events
+            doc.ProjectCreated += new ActionDelegate(OnProjectCreated);
+            doc.ProjectClosed += new ActionDelegate(OnProjectClosed);
         }
 
         public bool ValidateActiveViewChange()
         {
-            model.SynchronizeModel();
-            if (model.IsValid)
+            doc.SynchronizeModel();
+            if (doc.IsValid)
                 return true;
 
-            view.SaveCommandsEnabled = false;
+            view.SaveProjectCommand.Enabled = false;
+            view.SaveProjectAsCommand.Enabled = false;
             return false;
         }
 
@@ -85,14 +95,15 @@ namespace NUnit.ProjectEditor
 
         #region Command Event Handlers
 
-        public void CreateNewProject()
+        private void CreateNewProject()
         {
-            model.CreateNewProject();
-            view.CloseCommandEnabled = true;
-            view.SaveCommandsEnabled = true;
+            doc.CreateNewProject();
+            view.CloseProjectCommand.Enabled = true;
+            view.SaveProjectCommand.Enabled = true;
+            view.SaveProjectAsCommand.Enabled = true;
         }
 
-        public void OpenProject()
+        private void OpenProject()
         {
             string path = dialogManager.GetFileOpenPath(
                 "Open Project", 
@@ -101,28 +112,30 @@ namespace NUnit.ProjectEditor
 
             if (path != null)
             {
-                model.OpenProject(path);
-                view.CloseCommandEnabled = true;
-                view.SaveCommandsEnabled = model.IsValid;
+                doc.OpenProject(path);
+                view.CloseProjectCommand.Enabled = true;
+                view.SaveProjectCommand.Enabled = doc.IsValid;
+                view.SaveProjectAsCommand.Enabled = doc.IsValid;
             }
         }
 
-        public void CloseProject()
+        private void CloseProject()
         {
-            if (model.HasUnsavedChanges &&
-                dialogManager.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", model.Name)))
+            if (doc.HasUnsavedChanges &&
+                dialogManager.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", doc.Name)))
                     SaveProject();
 
-            model.CloseProject();
-            view.CloseCommandEnabled = false;
-            view.SaveCommandsEnabled = false;
+            doc.CloseProject();
+            view.CloseProjectCommand.Enabled = false;
+            view.SaveProjectCommand.Enabled = false;
+            view.SaveProjectAsCommand.Enabled = false;
         }
 
-        public void SaveProject()
+        private void SaveProject()
         {
-            if (IsValidWritableProjectPath(model.ProjectPath))
+            if (IsValidWritableProjectPath(doc.ProjectPath))
             {
-                model.SaveProject();
+                doc.SaveProject();
             }
             else
             {
@@ -130,7 +143,7 @@ namespace NUnit.ProjectEditor
             }
         }
 
-        public void SaveProjectAs()
+        private void SaveProjectAs()
         {
             string path = dialogManager.GetSaveAsPath(
                 "Save As",
@@ -138,8 +151,8 @@ namespace NUnit.ProjectEditor
 
             if (path != null)
             {
-                model.SaveProject(path);
-                view.PropertyView.ProjectPath = model.ProjectPath;
+                doc.SaveProject(path);
+                view.PropertyView.ProjectPath.Text = doc.ProjectPath;
             }
         }
 
@@ -149,22 +162,27 @@ namespace NUnit.ProjectEditor
 
         void OnProjectCreated()
         {
-            view.XmlView.Visible = true;
-            view.XmlView.Text = model.XmlText;
+            // Set up property editor triad
+            ProjectModel project = new ProjectModel(this.doc);
+            IPropertyView propertyView = view.PropertyView;
+            propertyPresenter = new PropertyPresenter(project, propertyView, dialogManager);
+            propertyView.Visible = true;
 
-            view.PropertyView.Visible = true;
-            propertyPresenter = new PropertyPresenter(model, view.PropertyView, dialogManager);
-            view.PropertyView.Presenter = propertyPresenter;
-            xmlPresenter = new XmlPresenter(model, view.XmlView);
-            view.XmlView.Presenter = xmlPresenter;
+            // Set up XML editor triad
+            //XmlModel xmlModel = new XmlModel();
+            //xmlModel.XmlText = doc.ToXml();
+            IXmlView xmlView = view.XmlView;
+            xmlPresenter = new XmlPresenter((IXmlModel)doc, xmlView);
+            xmlView.Visible = true;
 
             propertyPresenter.LoadViewFromModel();
+            xmlPresenter.LoadViewFromModel();
         }
 
         void OnProjectClosed()
         {
 
-            view.XmlView.Text = null;
+            view.XmlView.Xml.Text = null;
 
             view.XmlView.Visible = false;
             view.PropertyView.Visible = false;
@@ -179,7 +197,7 @@ namespace NUnit.ProjectEditor
             if (!Path.IsPathRooted(path))
                 return false;
 
-            if (!ProjectModel.IsProjectFile(path))
+            if (!ProjectDocument.IsProjectFile(path))
                 return false;
 
             if (!File.Exists(path))

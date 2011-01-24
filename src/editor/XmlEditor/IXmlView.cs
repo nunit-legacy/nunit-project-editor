@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
@@ -31,8 +32,6 @@ namespace NUnit.ProjectEditor
     /// </summary>
     public interface IXmlView
     {
-        XmlPresenter Presenter { get; set; }
-
         /// <summary>
         /// Gets or sets the visibility of the view
         /// </summary>
@@ -41,7 +40,7 @@ namespace NUnit.ProjectEditor
         /// <summary>
         /// Gets or sets the XML text
         /// </summary>
-        string Text { get; set; }
+        IValidatedElement Xml { get; }
 
         /// <summary>
         /// Sets an exception arising in validating

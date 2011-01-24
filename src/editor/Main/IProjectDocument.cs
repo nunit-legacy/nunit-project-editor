@@ -23,15 +23,49 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Text;
-using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public interface IProjectDocument : IXmlModel
     {
+        #region Events
+
+        event ActionDelegate ProjectCreated;
+        event ActionDelegate ProjectClosed;
+        event ActionDelegate ProjectChanged;
+
+        #endregion
+
+        #region Properties
+
+        string Name { get; }
+
+        /// <summary>
+        /// Gets or sets the path to which a doc will be saved.
+        /// </summary>
+        string ProjectPath { get; set; }
+
+        System.Xml.XmlNode RootNode { get; }
+
+        bool HasUnsavedChanges { get; }
+        bool IsValid { get; }
+
+        #endregion
+
+        #region Methods
+
+        void CreateNewProject();
+        void OpenProject(string fileName);
+        void CloseProject();
+        void SaveProject();
+        void SaveProject(string fileName);
+
+        void SynchronizeModel();
+
+        void LoadXml(string xmlText);
+        string ToXml();
+
+        #endregion
     }
 }

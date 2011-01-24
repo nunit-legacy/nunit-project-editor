@@ -27,19 +27,17 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
 	/// <summary>
 	/// ConfigurationEditor form is designed for adding, deleting
-	/// and renaming configurations from a project.
+	/// and renaming configurations from a doc.
 	/// </summary>
 	public class ConfigurationEditorView : System.Windows.Forms.Form, IConfigurationEditorView
-	{
-		#region Instance Variables
-
-        private string[] configList;
-        private string activeConfigName;
+    {
+        #region Instance Variables
 
 		/// <summary>
 		/// Required designer variable.
@@ -53,13 +51,20 @@ namespace NUnit.ProjectEditor
 		private System.Windows.Forms.HelpProvider helpProvider1;
 		private System.Windows.Forms.Button closeButton;
 
-		#endregion
+        #endregion
 
 		#region Construction and Disposal
 
 		public ConfigurationEditorView()
 		{
 			InitializeComponent();
+
+            AddCommand = new ButtonElement(addButton);
+            RemoveCommand = new ButtonElement(removeButton);
+            RenameCommand = new ButtonElement(renameButton);
+            ActiveCommand = new ButtonElement(activeButton);
+
+            ConfigList = new ListControlWrapper(configListBox);
 		}
 
 		/// <summary>
@@ -79,7 +84,70 @@ namespace NUnit.ProjectEditor
 
 		#endregion
 
-        public ConfigurationEditor Editor { get; set; }
+        #region IConfigurationEditorView Members
+
+        #region Properties
+
+        public ICommand AddCommand { get; private set; }
+        public ICommand RemoveCommand { get; private set; }
+        public ICommand RenameCommand { get; private set; }
+        public ICommand ActiveCommand { get; private set; }
+
+        public ISelectionList ConfigList { get; private set; }
+
+        #endregion
+
+        #region Methods
+
+        public string GetNewNameForRename(string oldName)
+        {
+            string[] configList = new string[configListBox.Items.Count];
+            for (int i = 0; i < configListBox.Items.Count; i++)
+            {
+                string config = configListBox.Items[i].ToString();
+                if (config.EndsWith(" (active)"))
+                    config = config.Substring(0, config.Length - 9);
+                configList[i] = config;
+            }
+
+            using (RenameConfigurationDialog dlg =
+                       new RenameConfigurationDialog(oldName, configList))
+            {
+                return dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK
+                    ? dlg.ConfigurationName : null;
+            }
+        }
+
+        public bool GetAddConfigData(ref AddConfigData data)
+        {
+            string[] configList = new string[configListBox.Items.Count];
+            for (int i = 0; i < configListBox.Items.Count; i++)
+            {
+                string config = configListBox.Items[i].ToString();
+                if (config.EndsWith(" (active)"))
+                    config = config.Substring(0, config.Length - 9);
+                configList[i] = config;
+            }
+
+
+            using (AddConfigurationDialog dlg = new AddConfigurationDialog(configList, (string)configListBox.SelectedItem))
+            {
+                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    data.ConfigToCreate = dlg.ConfigToCreate;
+                    data.ConfigToCopy = dlg.ConfigToCopy;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
 
         #region Windows Form Designer generated code
         /// <summary>
@@ -107,7 +175,6 @@ namespace NUnit.ProjectEditor
 			this.helpProvider1.SetShowHelp(this.configListBox, true);
 			this.configListBox.Size = new System.Drawing.Size(168, 212);
 			this.configListBox.TabIndex = 0;
-			this.configListBox.SelectedIndexChanged += new System.EventHandler(this.configListBox_SelectedIndexChanged);
 			// 
 			// removeButton
 			// 
@@ -118,7 +185,6 @@ namespace NUnit.ProjectEditor
 			this.removeButton.Size = new System.Drawing.Size(96, 32);
 			this.removeButton.TabIndex = 1;
 			this.removeButton.Text = "&Remove";
-			this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
 			// 
 			// renameButton
 			// 
@@ -129,7 +195,6 @@ namespace NUnit.ProjectEditor
 			this.renameButton.Size = new System.Drawing.Size(96, 32);
 			this.renameButton.TabIndex = 2;
 			this.renameButton.Text = "Re&name...";
-			this.renameButton.Click += new System.EventHandler(this.renameButton_Click);
 			// 
 			// closeButton
 			// 
@@ -151,7 +216,6 @@ namespace NUnit.ProjectEditor
 			this.addButton.Size = new System.Drawing.Size(96, 32);
 			this.addButton.TabIndex = 5;
 			this.addButton.Text = "&Add...";
-			this.addButton.Click += new System.EventHandler(this.addButton_Click);
 			// 
 			// activeButton
 			// 
@@ -162,7 +226,6 @@ namespace NUnit.ProjectEditor
 			this.activeButton.Size = new System.Drawing.Size(96, 32);
 			this.activeButton.TabIndex = 6;
 			this.activeButton.Text = "&Make Active";
-			this.activeButton.Click += new System.EventHandler(this.activeButton_Click);
 			// 
 			// ConfigurationEditor
 			// 
@@ -190,148 +253,5 @@ namespace NUnit.ProjectEditor
 
 		}
 		#endregion
-
-        #region Event Handlers
-
-		private void removeButton_Click(object sender, System.EventArgs e)
-		{
-            if (Editor != null)
-                Editor.RemoveConfig();
-		}
-
-		private void renameButton_Click(object sender, System.EventArgs e)
-		{
-            if (Editor != null)
-                Editor.RenameConfig();
-		}
-
-		private void addButton_Click(object sender, System.EventArgs e)
-		{
-            if (Editor != null)
-                Editor.AddConfig();
-		}
-
-		private void activeButton_Click(object sender, System.EventArgs e)
-		{
-            if (Editor != null)
-                Editor.MakeActive();
-		}
-
-		private void configListBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-            if (Editor != null)
-                Editor.SelectedConfigChanged();
-		}
-
-		#endregion
-
-        #region IConfigurationEditorView Members
-
-        public string[] ConfigList
-        {
-            set
-            {
-                this.configList = value;
-                FillListBox();
-            }
-        }
-
-        public string ActiveConfigName
-        {
-            set
-            {
-                activeConfigName = value;
-                FillListBox();
-            }
-        }
-
-        private void FillListBox()
-        {
-            configListBox.Items.Clear();
-
-            foreach (string config in configList)
-            {
-                string item = config;
-                if (item == activeConfigName)
-                    item += " (active)";
-                configListBox.Items.Add(item);
-            }
-        }
-
-        public string SelectedConfig
-        {
-            get 
-            { 
-                return configListBox.SelectedIndex >= 0
-                    ? configList[configListBox.SelectedIndex]
-                    : null; 
-            }
-            set
-            {
-                for (int i = 0; i < configList.Length; i++)
-                    if (configList[i] == value)
-                    {
-                        configListBox.SelectedIndex = i;
-                        break;
-                    }
-            }
-        }
-
-        public bool AddConfigEnabled
-        {
-            set { addButton.Enabled = value; }
-        }
-
-        public bool RenameConfigEnabled
-        {
-            set { renameButton.Enabled = value; }
-        }
-
-        public bool RemoveConfigEnabled
-        {
-            set { removeButton.Enabled = value; }
-        }
-
-        public bool MakeActiveEnabled
-        {
-            set { activeButton.Enabled = value; }
-        }
-
-        public string GetNewNameForRename(string oldName)
-        {
-            string[] configList = new string[configListBox.Items.Count];
-            for (int i = 0; i < configListBox.Items.Count; i++)
-                configList[i] = configListBox.Items[i].ToString();
-
-            using (RenameConfigurationDialog dlg =
-                       new RenameConfigurationDialog(oldName, configList))
-            {
-                return dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK
-                    ? dlg.ConfigurationName : null;
-            }
-        }
-
-        public bool GetAddConfigData(ref AddConfigData data)
-        {
-            string[] configList = new string[configListBox.Items.Count];
-            for (int i = 0; i < configListBox.Items.Count; i++)
-                configList[i] = configListBox.Items[i].ToString();
-
-            using (AddConfigurationDialog dlg = new AddConfigurationDialog(configList, (string)configListBox.SelectedItem))
-            {
-                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    data.ConfigToCreate = dlg.ConfigToCreate;
-                    data.ConfigToCopy = dlg.ConfigToCopy;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        #endregion
     }
 }

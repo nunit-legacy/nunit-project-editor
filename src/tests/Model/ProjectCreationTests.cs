@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Copyright (c) 2010 Charlie Poole
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,19 +28,26 @@ using NUnit.Framework;
 
 namespace NUnit.ProjectEditor.Tests
 {
-	[TestFixture]
-	public class NewProjectTests
-	{
+    [TestFixture]
+    public class ProjectCreationTests
+    {
         static readonly string xmlfile = "test.nunit";
 
+        private ProjectDocument doc;
         private ProjectModel project;
 
-		[SetUp]
-		public void SetUp()
-		{
-            project = new ProjectModel();
-            project.CreateNewProject();
-		}
+        private bool gotChangeNotice;
+
+        [SetUp]
+        public void SetUp()
+        {
+            doc = new ProjectDocument();
+            doc.CreateNewProject();
+            project = new ProjectModel(doc);
+
+            doc.ProjectChanged += OnProjectChange;
+            gotChangeNotice = false;
+        }
 
         [TearDown]
         public void EraseFile()
@@ -49,78 +56,76 @@ namespace NUnit.ProjectEditor.Tests
                 File.Delete(xmlfile);
         }
 
-        [Test]
-		public void HasNoConfigs()
-		{
-			Assert.AreEqual( 0, project.Configs.Count );
-            Assert.IsNull( project.ActiveConfigName );
-		}
+        private void OnProjectChange()
+        {
+            gotChangeNotice = true;
+        }
 
         [Test]
         public void IsNotDirty()
         {
-            Assert.IsFalse(project.HasUnsavedChanges);
+            Assert.IsFalse(doc.HasUnsavedChanges);
         }
 
         [Test]
         public void ProjectPathIsSameAsName()
         {
-            Assert.AreEqual(Path.GetFullPath(project.Name), project.ProjectPath);
+            Assert.AreEqual(Path.GetFullPath(doc.Name), doc.ProjectPath);
         }
 
         [Test]
         public void NameIsUnique()
         {
-            ProjectModel anotherProject = new ProjectModel(xmlfile);
-            Assert.AreNotEqual(project.Name, anotherProject.Name);
+            ProjectDocument anotherProject = new ProjectDocument(xmlfile);
+            Assert.AreNotEqual(doc.Name, anotherProject.Name);
+        }
+
+        [Test]
+        public void RootElementIsNUnitProject()
+        {
+            Assert.AreEqual("NUnitProject", doc.RootNode.Name);
+        }
+
+        [Test]
+        public void ProjectNodeHasNoChildren()
+        {
+            Assert.AreEqual(0, doc.RootNode.ChildNodes.Count);
+        }
+
+        [Test]
+        public void ProjectNodeHasNoAttributes()
+        {
+            Assert.AreEqual(0, doc.RootNode.Attributes.Count);
+        }
+
+        [Test]
+        public void NewProjectHasNoConfigs()
+        {
+            Assert.AreEqual(0, project.Configs.Count);
+            Assert.IsNull(project.ActiveConfigName);
         }
 
         [Test]
         public void SaveMakesProjectNotDirty()
         {
             project.Configs.Add("Debug");
-            project.Save(xmlfile);
-            Assert.IsFalse(project.HasUnsavedChanges);
+            doc.Save(xmlfile);
+            Assert.IsFalse(doc.HasUnsavedChanges);
         }
 
         [Test]
         public void SaveSetsProjectPathAndName()
         {
-            project.Save(xmlfile);
-            Assert.AreEqual(Path.GetFullPath(xmlfile), project.ProjectPath);
-            Assert.AreEqual("test", project.Name);
-        }
-
-        //[Test]
-        //public void SaveSetsDefaultApplicationBase()
-        //{
-        //    project.Save(xmlfile);
-        //    Assert.AreEqual(Path.GetDirectoryName(project.ProjectPath), project.BasePath);
-        //}
-
-        [Test]
-        public void SaveSetsDefaultConfigurationFile()
-        {
-            Assert.AreEqual(project.Name + ".config", project.DefaultConfigurationFile);
-            project.Save(xmlfile);
-            Assert.AreEqual("test.config", project.DefaultConfigurationFile);
+            doc.Save(xmlfile);
+            Assert.AreEqual(Path.GetFullPath(xmlfile), doc.ProjectPath);
+            Assert.AreEqual("test", doc.Name);
         }
 
         [Test]
         public void DefaultProjectName()
         {
-            project.Save(xmlfile);
-            Assert.AreEqual("test", project.Name);
-        }
-
-        [Test]
-        public void LoadMakesProjectNotDirty()
-        {
-            project.Configs.Add("Debug");
-            project.Save(xmlfile);
-            ProjectModel project2 = new ProjectModel(xmlfile);
-            project2.Load();
-            Assert.IsFalse(project2.HasUnsavedChanges);
+            doc.Save(xmlfile);
+            Assert.AreEqual("test", doc.Name);
         }
 
         [Test]
@@ -146,20 +151,6 @@ namespace NUnit.ProjectEditor.Tests
             Assert.AreEqual(2, project.Configs.Count);
         }
 
-        //[Test]
-        //public void AddConfigMakesProjectDirty()
-        //{
-        //    project.AddConfig("Debug");
-        //    Assert.IsTrue(project.HasChanges);
-        //}
-
-        //[Test]
-        //public void AddConfigFiresChangedEvent()
-        //{
-        //    project.AddConfig("Debug");
-        //    Assert.IsTrue(gotChangeNotice);
-        //}
-
         [Test]
         public void DefaultActiveConfig()
         {
@@ -168,16 +159,27 @@ namespace NUnit.ProjectEditor.Tests
         }
 
         [Test]
-        public void CanSaveAndLoadProject()
+        public void LoadMakesProjectNotDirty()
         {
-            project.Save(xmlfile);
-            Assert.IsTrue(File.Exists(xmlfile));
-
-            ProjectModel project2 = new ProjectModel(xmlfile);
-            project2.Load();
-
-            Assert.AreEqual(project.Name, project2.Name);
-            Assert.AreEqual(0, project2.Configs.Count);
+            project.Configs.Add("Debug");
+            doc.Save(xmlfile);
+            ProjectDocument doc2 = new ProjectDocument(xmlfile);
+            doc2.Load();
+            Assert.IsFalse(doc2.HasUnsavedChanges);
         }
-	}
+
+        [Test]
+        public void AddConfigMakesProjectDirty()
+        {
+            project.Configs.Add("Debug");
+            Assert.IsTrue(doc.HasUnsavedChanges);
+        }
+
+        [Test]
+        public void AddConfigFiresChangedEvent()
+        {
+            project.Configs.Add("Debug");
+            Assert.IsTrue(gotChangeNotice);
+        }
+    }
 }

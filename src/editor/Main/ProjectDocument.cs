@@ -28,7 +28,7 @@ using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
-    public class ProjectModel : IProjectModel
+    public class ProjectDocument : IProjectDocument
     {
         #region Static Fields
 
@@ -54,15 +54,15 @@ namespace NUnit.ProjectEditor
         #region Instance Fields
 
         /// <summary>
-        /// The original text from which the project was loaded.
+        /// The original text from which the doc was loaded.
         /// Updated from the doc when the xml view is displayed
         /// and from the view when the user edits it.
         /// </summary>
         string xmlText;
 
         /// <summary>
-        /// The XmlDocument representing the loaded project. It
-        /// is generated from the text when the project is loaded
+        /// The XmlDocument representing the loaded doc. It
+        /// is generated from the text when the doc is loaded
         /// unless an exception is thrown. It is modified as the
         /// user makes changes.
         /// </summary>
@@ -75,33 +75,17 @@ namespace NUnit.ProjectEditor
         Exception exception;
 
         /// <summary>
-        /// The top-level (NUnitProject) node
-        /// </summary>
-        XmlNode projectNode;
-
-        /// <summary>
-        /// The Settings node in the xml doc
-        /// </summary>
-        XmlNode settingsNode;
-
-        /// <summary>
-        /// Path to the file storing this project
+        /// Path to the file storing this doc
         /// </summary>
         private string projectPath;
 
-        ///// <summary>
-        ///// Collection of configs for the project
-        ///// </summary>
-        private ConfigList configs;
-
-        /// <summary>
+        /// <summry>
         /// True if the Xml Document has been changed
-        /// what 
         /// </summary>
         private ProjectUpdateState projectUpdateState;
 
         /// <summary>
-        /// True if the project has been changed and not yet saved
+        /// True if the doc has been changed and not yet saved
         /// </summary>
         private bool hasUnsavedChanges;
 
@@ -109,9 +93,9 @@ namespace NUnit.ProjectEditor
 
         #region Constructors
 
-        public ProjectModel() : this(GenerateProjectName()) { }
+        public ProjectDocument() : this(GenerateProjectName()) { }
 
-        public ProjectModel(string projectPath)
+        public ProjectDocument(string projectPath)
         {
             this.xmlDoc = new XmlDocument();
             this.projectPath = Path.GetFullPath(projectPath);
@@ -123,40 +107,28 @@ namespace NUnit.ProjectEditor
 
         #endregion
 
-        #region IProjectModel Members
+        #region IProjectDocument Members
 
         #region Events
 
-        public event CommandDelegate ProjectCreated;
-        public event CommandDelegate ProjectClosed;
-        public event CommandDelegate ProjectChanged;
+        public event ActionDelegate ProjectCreated;
+        public event ActionDelegate ProjectClosed;
+        public event ActionDelegate ProjectChanged;
 
         #endregion
 
         #region Properties
 
-        public string XmlText
+        /// <summary>
+        /// The name of the doc.
+        /// </summary>
+        public string Name
         {
-            get { return xmlText; }
-            set
-            {
-                xmlText = value;
-                projectUpdateState = ProjectUpdateState.XmlTextHasChanges;
-            }
-        }
-
-        public Exception Exception
-        {
-            get { return exception; }
-            set
-            {
-                exception = value;
-                projectUpdateState = ProjectUpdateState.XmlTextHasChanges;
-            }
+            get { return Path.GetFileNameWithoutExtension(projectPath); }
         }
 
         /// <summary>
-        /// Gets or sets the path to which a project will be saved.
+        /// Gets or sets the path to which a doc will be saved.
         /// </summary>
         public string ProjectPath
         {
@@ -172,104 +144,11 @@ namespace NUnit.ProjectEditor
         }
 
         /// <summary>
-        /// The base path for the project. Constructor sets
-        /// it to the directory part of the project path.
+        /// The top-level (NUnitProject) node
         /// </summary>
-        public string BasePath
+        public XmlNode RootNode
         {
-            get { return GetProjectLevelAttribute("appbase"); }
-            set { SetProjectLevelAttribute("appbase", value); }
-        }
-
-        /// <summary>
-        /// The name of the project.
-        /// </summary>
-        public string Name
-        {
-            get { return Path.GetFileNameWithoutExtension(projectPath); }
-        }
-
-        public bool AutoConfig
-        {
-            get { return GetProjectLevelAttribute("autoconfig", false); }
-            set { SetProjectLevelAttribute("autoconfig", value.ToString()); }
-        }
-
-        public string ActiveConfigName
-        {
-            get
-            {
-                string activeConfigName = GetProjectLevelAttribute("activeconfig");
-
-                // In case the previous active config was removed
-                if (!Configs.Contains(activeConfigName))
-                    activeConfigName = null;
-
-                // In case no active config is set or it was removed
-                if (activeConfigName == null && configs.Count > 0)
-                    activeConfigName = configs[0].Name;
-
-                return activeConfigName;
-            }
-            set
-            {
-                int index = -1;
-
-                if (value != null)
-                {
-                    for (int i = 0; i < configs.Count; i++)
-                    {
-                        if (configs[i].Name == value)
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-                }
-
-                if (index >= 0)
-                    SetProjectLevelAttribute("activeconfig", value);
-                else
-                    RemoveProjectLevelAttribute("activeconfig");
-            }
-        }
-
-        public string DefaultConfigurationFile
-        {
-            get
-            {
-                // TODO: Check this
-                return Path.GetFileNameWithoutExtension(projectPath) + ".config";
-            }
-        }
-
-        public ProcessModel ProcessModel
-        {
-            get { return GetProjectLevelAttribute("processModel", ProcessModel.Default); }
-            set { SetProjectLevelAttribute("processModel", value); }
-        }
-
-        public DomainUsage DomainUsage
-        {
-            get { return GetProjectLevelAttribute("domainUsage", DomainUsage.Default); }
-            set { SetProjectLevelAttribute("domainUsage", value); }
-        }
-
-        public ConfigList Configs
-        {
-            get { return configs; }
-        }
-
-        public string[] ConfigNames
-        {
-            get
-            {
-                string[] configList = new string[configs.Count];
-                for (int i = 0; i < configs.Count; i++)
-                    configList[i] = configs[i].Name;
-
-                return configList;
-            }
+            get { return xmlDoc.FirstChild; }
         }
 
         public bool HasUnsavedChanges
@@ -289,7 +168,7 @@ namespace NUnit.ProjectEditor
         public void CreateNewProject()
         {
             this.xmlText = "<NUnitProject />";
-            
+
             UpdateXmlDocFromXmlText();
             hasUnsavedChanges = false;
 
@@ -317,7 +196,7 @@ namespace NUnit.ProjectEditor
             if (ProjectClosed != null)
                 ProjectClosed();
         }
-      
+
         public void SaveProject()
         {
             XmlTextWriter writer = new XmlTextWriter(
@@ -368,14 +247,11 @@ namespace NUnit.ProjectEditor
         {
             try
             {
+                this.xmlText = xmlText;
                 this.xmlDoc.LoadXml(xmlText);
 
-                this.projectNode = xmlDoc.FirstChild;
-                if (projectNode.Name != "NUnitProject")
+                if (RootNode.Name != "NUnitProject")
                     throw new ProjectFormatException("Top level element must be <NUnitProject...>.");
-
-                this.settingsNode = projectNode.SelectSingleNode("Settings");
-                this.configs = new ConfigList(this.projectNode);
             }
             catch (ProjectFormatException)
             {
@@ -430,6 +306,30 @@ namespace NUnit.ProjectEditor
         #endregion
 
         #endregion
+
+        #endregion
+
+        #region IXmlModel Members
+
+        public string XmlText
+        {
+            get { return xmlText; }
+            set
+            {
+                xmlText = value;
+                projectUpdateState = ProjectUpdateState.XmlTextHasChanges;
+            }
+        }
+
+        public Exception Exception
+        {
+            get { return exception; }
+            set
+            {
+                exception = value;
+                projectUpdateState = ProjectUpdateState.XmlTextHasChanges;
+            }
+        }
 
         #endregion
 
@@ -488,115 +388,6 @@ namespace NUnit.ProjectEditor
         {
             xmlText = this.ToXml();
             projectUpdateState = ProjectUpdateState.NoChanges;
-        }
-
-        private string GetProjectLevelAttribute(string name)
-        {
-            if (settingsNode == null)
-                return null;
-
-            return XmlHelper.GetAttribute(settingsNode, name);
-        }
-
-        private bool GetProjectLevelAttribute(string name, bool defaultValue)
-        {
-            string val = GetProjectLevelAttribute(name);
-            return val == null
-                ? defaultValue
-                : bool.Parse(val);
-        }
-
-        private T GetProjectLevelAttribute<T>(string name, T defaultValue)
-        {
-            if (settingsNode == null)
-                return defaultValue;
-
-            return XmlHelper.GetAttributeAsEnum(settingsNode, name, defaultValue);
-        }
-
-        private void SetProjectLevelAttribute(string name, object value)
-        {
-            if (settingsNode == null)
-            {
-                settingsNode = xmlDoc.CreateElement("Settings");
-                projectNode.InsertAfter(settingsNode, null);
-            }
-
-            XmlHelper.SetAttribute(settingsNode, name, value);
-        }
-
-        private void RemoveProjectLevelAttribute(string name)
-        {
-            if (settingsNode != null)
-                XmlHelper.RemoveAttribute(settingsNode, name);
-        }
-
-        #endregion
-    }
-
-    public class XmlModel : IXmlModel
-    {
-        #region Events
-
-        public EventHandler Changed;
-
-        #endregion
-
-        #region Instance Fields
-
-        /// <summary>
-        /// The original text from which the project was loaded.
-        /// Updated from the doc when the xml view is displayed
-        /// and from the view when the user edits it.
-        /// </summary>
-        string xmlText;
-
-        /// <summary>
-        /// The XmlDocument representing the loaded project. It
-        /// is generated from the text when the project is loaded
-        /// unless an exception is thrown. It is modified as the
-        /// user makes changes.
-        /// </summary>
-        //XmlDocument xmlDoc;
-
-        /// <summary>
-        /// An exception thrown when trying to build the xml
-        /// document from the xml text.
-        /// </summary>
-        Exception exception;
-
-        #endregion
-
-        #region Properties
-
-        public string XmlText
-        {
-            get { return xmlText; }
-            set
-            {
-                xmlText = value;
-                FireChangedEvent();
-            }
-        }
-
-        public Exception Exception
-        {
-            get { return exception; }
-            set
-            {
-                exception = value;
-                FireChangedEvent();
-            }
-        }
-
-        #endregion
-
-        #region Helper Methods
-
-        private void FireChangedEvent()
-        {
-            if (Changed != null)
-                Changed(this, EventArgs.Empty);
         }
 
         #endregion

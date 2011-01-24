@@ -86,7 +86,6 @@
             this.domainUsageComboBox.Name = "domainUsageComboBox";
             this.domainUsageComboBox.Size = new System.Drawing.Size(76, 21);
             this.domainUsageComboBox.TabIndex = 22;
-            this.domainUsageComboBox.SelectedIndexChanged += new System.EventHandler(this.domainUsageComboBox_SelectedIndexChanged);
             // 
             // processModelComboBox
             // 
@@ -98,7 +97,6 @@
             this.processModelComboBox.Name = "processModelComboBox";
             this.processModelComboBox.Size = new System.Drawing.Size(80, 21);
             this.processModelComboBox.TabIndex = 21;
-            this.processModelComboBox.SelectedIndexChanged += new System.EventHandler(this.processModelComboBox_SelectedIndexChanged);
             // 
             // label10
             // 
@@ -127,7 +125,6 @@
             this.projectBaseBrowseButton.Name = "projectBaseBrowseButton";
             this.projectBaseBrowseButton.Size = new System.Drawing.Size(18, 16);
             this.projectBaseBrowseButton.TabIndex = 18;
-            this.projectBaseBrowseButton.Click += new System.EventHandler(this.projectBaseBrowseButton_Click);
             // 
             // projectBaseTextBox
             // 
@@ -138,7 +135,6 @@
             this.projectBaseTextBox.Name = "projectBaseTextBox";
             this.projectBaseTextBox.Size = new System.Drawing.Size(404, 20);
             this.projectBaseTextBox.TabIndex = 17;
-            this.projectBaseTextBox.Validated += new System.EventHandler(this.projectBaseTextBox_Validated);
             // 
             // label8
             // 
@@ -232,7 +228,6 @@
             this.runtimeVersionComboBox.Name = "runtimeVersionComboBox";
             this.runtimeVersionComboBox.Size = new System.Drawing.Size(77, 21);
             this.runtimeVersionComboBox.TabIndex = 14;
-            this.runtimeVersionComboBox.Validated += new System.EventHandler(this.runtimeVersionComboBox_Validated);
             // 
             // label11
             // 
@@ -253,7 +248,6 @@
             this.runtimeComboBox.Name = "runtimeComboBox";
             this.runtimeComboBox.Size = new System.Drawing.Size(62, 21);
             this.runtimeComboBox.TabIndex = 12;
-            this.runtimeComboBox.SelectedIndexChanged += new System.EventHandler(this.runtimeComboBox_SelectedIndexChanged);
             // 
             // label7
             // 
@@ -272,7 +266,6 @@
             this.autoBinPathRadioButton.Size = new System.Drawing.Size(205, 17);
             this.autoBinPathRadioButton.TabIndex = 10;
             this.autoBinPathRadioButton.Text = "Use automatically generated path";
-            this.autoBinPathRadioButton.CheckedChanged += new System.EventHandler(this.autoBinPathRadioButton_CheckedChanged);
             // 
             // manualBinPathRadioButton
             // 
@@ -282,7 +275,6 @@
             this.manualBinPathRadioButton.Size = new System.Drawing.Size(76, 16);
             this.manualBinPathRadioButton.TabIndex = 9;
             this.manualBinPathRadioButton.Text = "Use this path:";
-            this.manualBinPathRadioButton.CheckedChanged += new System.EventHandler(this.manualBinPathRadioButton_CheckedChanged);
             // 
             // noBinPathRadioButton
             // 
@@ -292,7 +284,6 @@
             this.noBinPathRadioButton.Size = new System.Drawing.Size(265, 17);
             this.noBinPathRadioButton.TabIndex = 8;
             this.noBinPathRadioButton.Text = "None - or specified in Configuration File";
-            this.noBinPathRadioButton.CheckedChanged += new System.EventHandler(this.noBinPathRadioButton_CheckedChanged);
             // 
             // configBaseBrowseButton
             // 
@@ -303,7 +294,6 @@
             this.configBaseBrowseButton.Name = "configBaseBrowseButton";
             this.configBaseBrowseButton.Size = new System.Drawing.Size(15, 16);
             this.configBaseBrowseButton.TabIndex = 7;
-            this.configBaseBrowseButton.Click += new System.EventHandler(this.configBaseBrowseButton_Click);
             // 
             // privateBinPathTextBox
             // 
@@ -314,7 +304,6 @@
             this.privateBinPathTextBox.Name = "privateBinPathTextBox";
             this.privateBinPathTextBox.Size = new System.Drawing.Size(365, 20);
             this.privateBinPathTextBox.TabIndex = 5;
-            this.privateBinPathTextBox.Validated += new System.EventHandler(this.privateBinPathTextBox_Validated);
             // 
             // label6
             // 
@@ -335,7 +324,6 @@
             this.configFileTextBox.Name = "configFileTextBox";
             this.configFileTextBox.Size = new System.Drawing.Size(347, 20);
             this.configFileTextBox.TabIndex = 3;
-            this.configFileTextBox.Validated += new System.EventHandler(this.configFileTextBox_Validated);
             // 
             // label4
             // 
@@ -356,7 +344,6 @@
             this.applicationBaseTextBox.Name = "applicationBaseTextBox";
             this.applicationBaseTextBox.Size = new System.Drawing.Size(353, 20);
             this.applicationBaseTextBox.TabIndex = 1;
-            this.applicationBaseTextBox.Validated += new System.EventHandler(this.applicationBaseTextBox_Validated);
             // 
             // label3
             // 
@@ -393,7 +380,6 @@
             this.assemblyPathBrowseButton.Name = "assemblyPathBrowseButton";
             this.assemblyPathBrowseButton.Size = new System.Drawing.Size(15, 16);
             this.assemblyPathBrowseButton.TabIndex = 11;
-            this.assemblyPathBrowseButton.Click += new System.EventHandler(this.assemblyPathBrowseButton_Click);
             // 
             // assemblyPathTextBox
             // 
@@ -404,7 +390,6 @@
             this.assemblyPathTextBox.Name = "assemblyPathTextBox";
             this.assemblyPathTextBox.Size = new System.Drawing.Size(405, 20);
             this.assemblyPathTextBox.TabIndex = 8;
-            this.assemblyPathTextBox.Validated += new System.EventHandler(this.assemblyPathTextBox_Validated);
             // 
             // label2
             // 
@@ -424,7 +409,6 @@
             this.assemblyListBox.Name = "assemblyListBox";
             this.assemblyListBox.Size = new System.Drawing.Size(370, 108);
             this.assemblyListBox.TabIndex = 6;
-            this.assemblyListBox.SelectedIndexChanged += new System.EventHandler(this.assemblyListBox_SelectedIndexChanged);
             // 
             // addAssemblyButton
             // 
@@ -435,7 +419,6 @@
             this.addAssemblyButton.Size = new System.Drawing.Size(58, 27);
             this.addAssemblyButton.TabIndex = 2;
             this.addAssemblyButton.Text = "&Add...";
-            this.addAssemblyButton.Click += new System.EventHandler(this.addAssemblyButton_Click);
             // 
             // removeAssemblyButton
             // 
@@ -446,7 +429,6 @@
             this.removeAssemblyButton.Size = new System.Drawing.Size(58, 23);
             this.removeAssemblyButton.TabIndex = 5;
             this.removeAssemblyButton.Text = "&Remove";
-            this.removeAssemblyButton.Click += new System.EventHandler(this.removeAssemblyButton_Click);
             // 
             // editConfigsButton
             // 
@@ -457,7 +439,6 @@
             this.editConfigsButton.Size = new System.Drawing.Size(110, 21);
             this.editConfigsButton.TabIndex = 8;
             this.editConfigsButton.Text = "&Edit Configs...";
-            this.editConfigsButton.Click += new System.EventHandler(this.editConfigsButton_Click);
             // 
             // configComboBox
             // 
@@ -470,7 +451,6 @@
             this.configComboBox.Name = "configComboBox";
             this.configComboBox.Size = new System.Drawing.Size(294, 21);
             this.configComboBox.TabIndex = 7;
-            this.configComboBox.SelectedIndexChanged += new System.EventHandler(this.configComboBox_SelectedIndexChanged);
             // 
             // label1
             // 

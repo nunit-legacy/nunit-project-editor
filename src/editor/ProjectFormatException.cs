@@ -26,7 +26,7 @@ using System;
 namespace NUnit.ProjectEditor
 {
 	/// <summary>
-	/// Exception raised when loading a project file with
+	/// Exception raised when loading a doc file with
 	/// an invalid format.
 	/// </summary>
 	public class ProjectFormatException : ApplicationException

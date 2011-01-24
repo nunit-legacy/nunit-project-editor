@@ -30,17 +30,18 @@ using System.Text;
 namespace NUnit.ProjectEditor
 {
     /// <summary>
-    /// The ProjectPresenter handles presentation of the project as
+    /// The ProjectPresenter handles presentation of the doc as
     /// a set of properties, which the ProjectView is expected to
     /// display.
     /// </summary>
     public class PropertyPresenter
     {
-        private IPropertyModel model;
+        private IProjectModel model;
+        private IProjectConfig selectedConfig;
         private IPropertyView view;
         private IDialogManager dialogHandler;
 
-        public PropertyPresenter(IPropertyModel model, IPropertyView view, IDialogManager dialogHandler)
+        public PropertyPresenter(IProjectModel model, IPropertyView view, IDialogManager dialogHandler)
         {
             this.model = model;
             this.view = view;
@@ -50,248 +51,278 @@ namespace NUnit.ProjectEditor
             SetDomainUsageOptions();
             SetRuntimeOptions();
             SetRuntimeVersionOptions();
+
+            WireUpEvents(view);
         }
 
         public void LoadViewFromModel()
         {
             view.Visible = true;
 
-            view.ProjectPath = model.ProjectPath;
-            view.ProjectBase = model.BasePath == null ? model.ProjectPath : model.BasePath;
-            view.ActiveConfigName = model.ActiveConfigName;
+            view.ProjectPath.Text = model.ProjectPath;
+            view.ProjectBase.Text = model.BasePath == null ? model.ProjectPath : model.BasePath;
+            view.ActiveConfigName.Text = model.ActiveConfigName;
 
-            view.ProcessModel = model.ProcessModel.ToString();
-            view.DomainUsage = model.DomainUsage.ToString();
+            view.ProcessModel.SelectedItem = model.ProcessModel.ToString();
+            view.DomainUsage.SelectedItem = model.DomainUsage.ToString();
 
-            view.ConfigList = model.ConfigNames;
-        }
-
-        public void BrowseForProjectBase()
-        {
-            string message = "Select ApplicationBase for the model as a whole.";
-            string projectBase = dialogHandler.GetFolderPath(message, view.ProjectBase);
-            if (projectBase != null && projectBase != model.BasePath)
-                view.ProjectBase = model.BasePath = projectBase;
-        }
-
-        public void BrowseForConfigBase()
-        {
-            string message = string.Format(
-                "Select ApplicationBase for the {0} configuration, if different from the model as a whole.",
-                model.Configs[view.SelectedConfig].Name);
-            string initialFolder = view.ApplicationBase;
-            if (initialFolder == string.Empty)
-                initialFolder = view.ProjectBase;
-
-            string appbase = dialogHandler.GetFolderPath(message, initialFolder);
-            if (appbase != null && appbase != view.ApplicationBase)
-                UpdateApplicationBase(appbase);
-        }
-
-        public void UpdateApplicationBase(string appbase)
-        {
-            string basePath = null;
-
-            if (appbase != String.Empty)
+            view.ConfigList.SelectionList = model.ConfigNames;
+            if (model.ConfigNames.Length > 0)
             {
-                basePath = Path.Combine(model.BasePath, appbase);
-                if (PathUtils.SamePath(model.BasePath, basePath))
-                    basePath = null;
+                view.ConfigList.SelectedIndex = 0;
+                selectedConfig = model.Configs[0];
             }
-
-            ProjectConfig selectedConfig = model.Configs[view.SelectedConfig];
-            view.ApplicationBase = selectedConfig.BasePath = basePath;
-
-            // TODO: Test what happens if we set it the same as project base
-            //if (selectedConfig.RelativeBasePath == null)
-            //    applicationBaseTextBox.Text = string.Empty;
-            //else
-            //    applicationBaseTextBox.Text = selectedConfig.RelativeBasePath;
+            else
+                view.ConfigList.SelectedIndex = -1;
         }
 
-        public void EditConfigs()
+        private void WireUpEvents(IPropertyView view)
         {
-            using (ConfigurationEditorView editorView = new ConfigurationEditorView())
+            view.BrowseProjectBaseCommand.Execute += delegate
             {
-                editorView.Editor = new ConfigurationEditor(model, editorView);
-                editorView.ShowDialog();
-            }
+                string message = "Select ApplicationBase for the model as a whole.";
+                string projectBase = dialogHandler.GetFolderPath(message, view.ProjectBase.Text);
+                if (projectBase != null && projectBase != model.BasePath)
+                    view.ProjectBase.Text = model.BasePath = projectBase;
+            };
 
-            view.ConfigList = model.ConfigNames;
-            view.ActiveConfigName = model.ActiveConfigName;
-        }
-
-        public void AddAssembly()
-        {
-            string assemblyPath = dialogHandler.GetFileOpenPath(
-                "Select Assembly",
-                "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
-                view.AssemblyPath);
-
-            if (assemblyPath != null)
+            view.EditConfigsCommand.Execute += delegate
             {
-                ProjectConfig selectedConfig = model.Configs[view.SelectedConfig];
-                selectedConfig.Assemblies.Add(assemblyPath);
-                SetAssemblyList();
-            }
-        }
+                using (ConfigurationEditorView editorView = new ConfigurationEditorView())
+                {
+                    new ConfigurationEditor(model, editorView);
+                    editorView.ShowDialog();
+                }
 
-        public void RemoveAssembly()
-        {
-            if (dialogHandler.AskYesNoQuestion(string.Format("Remove {0} from model?", view.SelectedAssembly), "Remove Assembly"))
-            {
-                int index = view.SelectedAssemblyIndex;
-                ProjectConfig selectedConfig = model.Configs[view.SelectedConfig];
-                selectedConfig.Assemblies.RemoveAt(index);
-                SetAssemblyList();
-            }
-        }
+                string selectedConfig = view.ConfigList.SelectedItem;
+                string[] configs = model.ConfigNames;
 
-        public void BrowseForAssembly()
-        {
-            string assemblyPath = dialogHandler.GetFileOpenPath(
-                "Select Assembly",
-                "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
-                view.AssemblyPath);
+                view.ConfigList.SelectionList = configs;
 
-            if (assemblyPath != null)
-            {
-                ProjectConfig selectedConfig = model.Configs[view.SelectedConfig];
-                selectedConfig.Assemblies[view.SelectedAssemblyIndex] = assemblyPath;
-                SetAssemblyList();
-            }
-        }
-
-        public void OnPropertyChange(string propertyName)
-        {
-            ProjectConfig selectedConfig = view.SelectedConfig >= 0
-                ? model.Configs[view.SelectedConfig]
-                : null;
-
-            switch (propertyName)
-            {
-                case "ProjectBase":
-                    string projectBase = view.ProjectBase;
-                    if (projectBase == string.Empty)
-                        projectBase = Path.GetDirectoryName(model.ProjectPath);
-                    
-                    if (ValidateDirectoryPath("ProjectBase", view.ProjectBase))
-                        model.BasePath = projectBase; ;
-                    break;
-
-                case "ProcessModel":
-                    model.ProcessModel = (ProcessModel)Enum.Parse(typeof(ProcessModel), view.ProcessModel);
-                    SetDomainUsageOptions();
-                    break;
-
-                case "DomainUsage":
-                    model.DomainUsage = (DomainUsage)Enum.Parse(typeof(DomainUsage), view.DomainUsage);
-                    break;
-
-                case "SelectedConfig":
-                    if (view.SelectedConfig >= 0)
+                if (configs.Length > 0)
+                {
+                    view.ConfigList.SelectedIndex = 0;
+                    foreach (string config in configs)
                     {
-                        RuntimeFramework framework = selectedConfig.RuntimeFramework;
-                        if (framework == null)
-                        {
-                            view.Runtime = RuntimeType.Any.ToString();
-                        }
-                        else
-                        {
-                            view.Runtime = framework.Runtime.ToString();
-                            view.RuntimeVersion = framework.ClrVersion.ToString();
-                        }
-
-                        view.ApplicationBase = selectedConfig.RelativeBasePath;
-                        view.ConfigurationFile = selectedConfig.ConfigurationFile;
-                        view.BinPathType = selectedConfig.BinPathType;
-                        if (selectedConfig.BinPathType == BinPathType.Manual)
-                            view.PrivateBinPath = selectedConfig.PrivateBinPath;
-                        else
-                            view.PrivateBinPath = string.Empty;
-
-                        SetAssemblyList();
+                        if (config == selectedConfig)
+                            view.ConfigList.SelectedItem = config;
                     }
-                    else
-                    {
-                        view.ApplicationBase = null;
-                        view.ConfigurationFile = null;
-                        view.PrivateBinPath = null;
-                        view.BinPathType = BinPathType.Auto;
+                }
 
-                        view.AssemblyList = new string[0];
-                        view.AssemblyPath = null;
+                view.ActiveConfigName.Text = model.ActiveConfigName;
+            };
 
-                        
+            view.BrowseConfigBaseCommand.Execute += delegate
+            {
+                string message = string.Format(
+                    "Select ApplicationBase for the {0} configuration, if different from the model as a whole.",
+                    model.Configs[view.ConfigList.SelectedIndex].Name);
+                string initialFolder = view.ApplicationBase.Text;
+                if (initialFolder == string.Empty)
+                    initialFolder = view.ProjectBase.Text;
 
-                        //((System.Windows.Forms.Control)view).Enabled = false;
-                    }
+                string appbase = dialogHandler.GetFolderPath(message, initialFolder);
+                if (appbase != null && appbase != view.ApplicationBase.Text)
+                    UpdateApplicationBase(appbase);
+            };
 
-                    break;
+            view.AddAssemblyCommand.Execute += delegate
+            {
+                string assemblyPath = dialogHandler.GetFileOpenPath(
+                    "Select Assembly",
+                    "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
+                    view.AssemblyPath.Text);
 
-                case "Runtime":
-                case "RuntimeVersion":
-                    RuntimeType runtime = (RuntimeType)Enum.Parse(typeof(RuntimeType), view.Runtime);
-                    
+                if (assemblyPath != null)
+                {
+                    assemblyPath = PathUtils.RelativePath(selectedConfig.EffectiveBasePath, assemblyPath);
+                    selectedConfig.Assemblies.Add(assemblyPath);
+                    SetAssemblyList();
+                }
+            };
+
+            view.RemoveAssemblyCommand.Execute += delegate
+            {
+                if (dialogHandler.AskYesNoQuestion(string.Format("Remove {0} from model?", view.AssemblyList.SelectedItem), "Remove Assembly"))
+                {
+                    selectedConfig.Assemblies.Remove(view.AssemblyList.SelectedItem);
+                    SetAssemblyList();
+                }
+            };
+
+            view.BrowseAssemblyPathCommand.Execute += delegate
+            {
+                string assemblyPath = dialogHandler.GetFileOpenPath(
+                    "Select Assembly",
+                    "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
+                    view.AssemblyPath.Text);
+
+                if (assemblyPath != null)
+                {
+                    selectedConfig.Assemblies[view.AssemblyList.SelectedIndex] = assemblyPath;
+                    SetAssemblyList();
+                }
+            };
+
+            view.ProjectBase.Validated += delegate
+            {
+                string projectBase = view.ProjectBase.Text;
+
+                if (projectBase == string.Empty)
+                    view.ProjectBase.Text = projectBase = Path.GetDirectoryName(model.ProjectPath);
+
+                if (ValidateDirectoryPath("ProjectBase", projectBase))
+                    model.BasePath = projectBase;
+            };
+
+            view.ProcessModel.SelectionChanged += delegate
+            {
+                model.ProcessModel = (ProcessModel)Enum.Parse(typeof(ProcessModel), view.ProcessModel.SelectedItem);
+                SetDomainUsageOptions();
+            };
+
+            view.DomainUsage.SelectionChanged += delegate
+            {
+                model.DomainUsage = (DomainUsage)Enum.Parse(typeof(DomainUsage), view.DomainUsage.SelectedItem);
+            };
+
+            view.Runtime.SelectionChanged += delegate
+            {
+                if (selectedConfig != null)
+                {
+                    RuntimeType runtime = (RuntimeType)Enum.Parse(typeof(RuntimeType), view.Runtime.SelectedItem);
+
                     try
                     {
-                        Version version = new Version(view.RuntimeVersion);
+                        Version version = new Version(view.RuntimeVersion.SelectedItem);
                         selectedConfig.RuntimeFramework = new RuntimeFramework(runtime, version);
                     }
                     catch (Exception ex)
                     {
                         view.SetErrorMessage("RuntimeVersion", ex.Message);
                     }
-                    break;
+                }
+            };
 
-                case "ApplicationBase":
+            view.RuntimeVersion.SelectionChanged += delegate
+            {
+                if (selectedConfig != null)
+                {
+                    RuntimeType runtime = (RuntimeType)Enum.Parse(typeof(RuntimeType), view.Runtime.SelectedItem);
+
+                    try
+                    {
+                        Version version = new Version(view.RuntimeVersion.SelectedItem);
+                        selectedConfig.RuntimeFramework = new RuntimeFramework(runtime, version);
+                    }
+                    catch (Exception ex)
+                    {
+                        view.SetErrorMessage("RuntimeVersion", ex.Message);
+                    }
+                }
+            };
+
+            view.ApplicationBase.Validated += delegate
+            {
+                if (selectedConfig != null)
+                {
                     string basePath = null;
 
-                    if (view.ApplicationBase != String.Empty)
+                    if (view.ApplicationBase.Text != String.Empty)
                     {
-                        if (!ValidateDirectoryPath("ApplicationBase", view.ApplicationBase))
-                            break;
+                        if (!ValidateDirectoryPath("ApplicationBase", view.ApplicationBase.Text))
+                            return;
 
-                        basePath = Path.Combine(model.BasePath, view.ApplicationBase);
+                        basePath = Path.Combine(model.BasePath, view.ApplicationBase.Text);
                         if (PathUtils.SamePath(model.BasePath, basePath))
                             basePath = null;
                     }
 
                     selectedConfig.BasePath = basePath;
 
-                    // TODO: Test what happens if we set it the same as project base
-                    if (selectedConfig.RelativeBasePath == null)
-                        view.ApplicationBase = string.Empty;
-                    else
-                        view.ApplicationBase = selectedConfig.RelativeBasePath;
-                    break;
+                    // TODO: Test what happens if we set it the same as doc base
+                    //if (index.RelativeBasePath == null)
+                    //    view.ApplicationBase.Text = string.Empty;
+                    //else
+                    //    view.ApplicationBase.Text = index.RelativeBasePath;
+                }
+            };
 
-                case "DefaultConfigurationFile":
-                    string configFile = view.ConfigurationFile;
+            view.ConfigurationFile.Validated += delegate
+            {
+                if (selectedConfig != null)
+                {
+                    string configFile = view.ConfigurationFile.Text;
 
                     if (configFile == string.Empty)
                         selectedConfig.ConfigurationFile = null;
                     else if (ValidateFilePath("DefaultConfigurationFile", configFile))
                     {
                         if (configFile == Path.GetFileName(configFile))
-                            selectedConfig.ConfigurationFile = view.ConfigurationFile;
+                            selectedConfig.ConfigurationFile = view.ConfigurationFile.Text;
                         else
                             view.SetErrorMessage("DefaultConfigurationFile", "Must be file name only - without directory path");
                     }
-                    break;
+                }
+            };
 
-                case "BinPathType":
-                    if (selectedConfig != null)
-                        selectedConfig.BinPathType = view.BinPathType;
-                    view.PrivateBinPathEnabled = view.BinPathType == BinPathType.Manual;
-                    break;
+            view.ConfigList.SelectionChanged += delegate
+            {
+                IProjectConfig selectedConfig = view.ConfigList.SelectedIndex >= 0
+                    ? model.Configs[view.ConfigList.SelectedIndex]
+                    : null;
 
-                case "PrivateBinPath":
-                    if (view.PrivateBinPath == string.Empty)
+                if (selectedConfig != null)
+                {
+                    RuntimeFramework framework = selectedConfig.RuntimeFramework;
+                    if (framework == null)
+                    {
+                        view.Runtime.SelectedItem = RuntimeType.Any.ToString();
+                    }
+                    else
+                    {
+                        view.Runtime.SelectedItem = framework.Runtime.ToString();
+                        view.RuntimeVersion.SelectedItem = framework.ClrVersion.ToString();
+                    }
+
+                    view.ApplicationBase.Text = selectedConfig.RelativeBasePath;
+                    view.ConfigurationFile.Text = selectedConfig.ConfigurationFile;
+                    view.BinPathType.SelectedIndex = (int)selectedConfig.BinPathType;
+                    if (selectedConfig.BinPathType == BinPathType.Manual)
+                        view.PrivateBinPath.Text = selectedConfig.PrivateBinPath;
+                    else
+                        view.PrivateBinPath.Text = string.Empty;
+
+                    SetAssemblyList();
+                }
+                else
+                {
+                    view.ApplicationBase.Text = null;
+                    view.ConfigurationFile.Text = null;
+                    view.PrivateBinPath.Text = string.Empty;
+                    view.BinPathType.SelectedIndex = (int)BinPathType.Auto;
+
+                    view.AssemblyList.SelectionList = new string[0];
+                    view.AssemblyPath.Text = null;
+                }
+            };
+
+            view.BinPathType.SelectionChanged += delegate
+            {
+                if (selectedConfig != null)
+                    selectedConfig.BinPathType = (BinPathType)view.BinPathType.SelectedIndex;
+                view.PrivateBinPath.Enabled = view.BinPathType.SelectedIndex == (int)BinPathType.Manual;
+            };
+
+            view.PrivateBinPath.Validated += delegate
+            {
+                if (selectedConfig != null)
+                {
+                    if (view.PrivateBinPath.Text == string.Empty)
                         selectedConfig.PrivateBinPath = null;
                     else
                     {
-                        foreach (string dir in view.PrivateBinPath.Split(Path.PathSeparator))
+                        foreach (string dir in view.PrivateBinPath.Text.Split(Path.PathSeparator))
                         {
                             if (!ValidateDirectoryPath("PrivateBinPath", dir))
                                 return;
@@ -302,53 +333,76 @@ namespace NUnit.ProjectEditor
                             }
                         }
 
-                        selectedConfig.PrivateBinPath = view.PrivateBinPath;
+                        selectedConfig.PrivateBinPath = view.PrivateBinPath.Text;
                     }
-                    break;
+                }
+            };
 
-                case "SelectedAssembly":
-                    if (view.SelectedAssemblyIndex == -1)
-                    {
-                        view.AssemblyPath = null;
-                        view.RemoveAssemblyEnabled = false;
-                        view.EditAssemblyEnabled = false;
-                    }
-                    else
-                    {
-                        view.AssemblyPath = 
-                            selectedConfig.Assemblies[view.SelectedAssemblyIndex];
-                        view.RemoveAssemblyEnabled = true;
-                        view.EditAssemblyEnabled = true;
-                    }
-                    break;
+            view.AssemblyList.SelectionChanged += delegate
+            {
+                if (view.AssemblyList.SelectedIndex == -1)
+                {
+                    view.AssemblyPath.Text = null;
+                    view.RemoveAssemblyCommand.Enabled = false;
+                    view.BrowseAssemblyPathCommand.Enabled = false;
+                }
+                else if (selectedConfig != null)
+                {
+                    view.AssemblyPath.Text =
+                        selectedConfig.Assemblies[view.AssemblyList.SelectedIndex];
+                    view.RemoveAssemblyCommand.Enabled = true;
+                    view.BrowseAssemblyPathCommand.Enabled = true;
+                }
+            };
 
-                case "AssemblyPath":
-                    if (ValidateFilePath("AssemblyPath", view.AssemblyPath))
-                    {
-                        selectedConfig.Assemblies[view.SelectedAssemblyIndex] = view.AssemblyPath;
-                        SetAssemblyList();
-                    }
-                    break;
+            view.AssemblyPath.Validated += delegate
+            {
+                if (selectedConfig != null && ValidateFilePath("AssemblyPath", view.AssemblyPath.Text))
+                {
+                    selectedConfig.Assemblies[view.AssemblyList.SelectedIndex] = view.AssemblyPath.Text;
+                    SetAssemblyList();
+                }
+            };
+        }
+
+        private void UpdateApplicationBase(string appbase)
+        {
+            string basePath = null;
+
+            if (appbase != String.Empty)
+            {
+                basePath = Path.Combine(model.BasePath, appbase);
+                if (PathUtils.SamePath(model.BasePath, basePath))
+                    basePath = null;
             }
+
+            IProjectConfig selectedConfig = model.Configs[view.ConfigList.SelectedIndex];
+            view.ApplicationBase.Text = selectedConfig.BasePath = basePath;
+
+            // TODO: Test what happens if we set it the same as doc base
+            //if (index.RelativeBasePath == null)
+            //    applicationBaseTextBox.Text = string.Empty;
+            //else
+            //    applicationBaseTextBox.Text = index.RelativeBasePath;
         }
 
         #region Helper Methods
 
         private void SetProcessModelOptions()
         {
-            view.ProcessModelOptions = Enum.GetNames(typeof(ProcessModel));
+            view.ProcessModel.SelectionList = Enum.GetNames(typeof(ProcessModel));
         }
 
         private void SetDomainUsageOptions()
         {
-            view.DomainUsageOptions = view.ProcessModel == ProcessModel.Multiple.ToString()
+            view.DomainUsage.SelectionList = view.ProcessModel.SelectedItem == ProcessModel.Multiple.ToString()
                 ? new string[] { "Default", "Single" }
                 : new string[] { "Default", "Single", "Multiple" };
         }
 
         private void SetRuntimeOptions()
         {
-            view.RuntimeOptions = new string[] { "Any", "Net", "Mono" };
+            view.Runtime.SelectionList = new string[] { "Any", "Net", "Mono" };
         }
 
         private void SetRuntimeVersionOptions()
@@ -358,17 +412,16 @@ namespace NUnit.ProjectEditor
             for (int i = 0; i < RuntimeFramework.KnownClrVersions.Length; i++)
                 versions[i] = RuntimeFramework.KnownClrVersions[i].ToString(3);
 
-            view.RuntimeVersionOptions = versions;
+            view.RuntimeVersion.SelectionList = versions;
         }
 
         private void SetAssemblyList()
         {
-            ProjectConfig selectedConfig = model.Configs[view.SelectedConfig];
-            string[] assemblyList = selectedConfig.Assemblies.ToArray();
-            view.AssemblyList = assemblyList;
+            var list = model.Configs[view.ConfigList.SelectedIndex].Assemblies;
+            view.SetAssemblyList(list);
 
-            if (assemblyList.Length == 0)
-                view.AssemblyPath = "";
+            if (list.Count == 0)
+                view.AssemblyPath.Text = "";
         }
 
         private bool ValidateDirectoryPath(string property, string path)

@@ -22,43 +22,19 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.ViewElements
 {
-    public interface IProjectModel : IPropertyModel, IXmlModel
+    public interface ISelection : IViewElement
     {
-        #region Events
+        /// <summary>
+        /// Gets or sets the index of the currently selected item
+        /// </summary>
+        int SelectedIndex { get; set; }
 
-        event CommandDelegate ProjectCreated;
-        event CommandDelegate ProjectClosed;
-        event CommandDelegate ProjectChanged;
-
-        #endregion
-
-        #region Properties
-
-        string Name { get; }
-
-        bool HasUnsavedChanges { get; }
-        bool IsValid { get; }
-
-        #endregion
-
-        #region Methods
-
-        void CreateNewProject();
-        void OpenProject(string fileName);
-        void CloseProject();
-        void SaveProject();
-        void SaveProject(string fileName);
-
-        void SynchronizeModel();
-
-        void LoadXml(string xmlText);
-        string ToXml();
-
-        #endregion
+        /// <summary>
+        /// Event raised when the selection is changed by the user
+        /// </summary>
+        event ActionDelegate SelectionChanged;
     }
 }

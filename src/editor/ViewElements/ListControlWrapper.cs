@@ -1,0 +1,125 @@
+﻿// ***********************************************************************
+// Copyright (c) 2010 Charlie Poole
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// ***********************************************************************
+
+using System;
+using System.Windows.Forms;
+using NUnit.ProjectEditor.ViewElements;
+
+namespace NUnit.ProjectEditor
+{
+    public class ListControlWrapper : ControlElement, ISelectionList
+    {
+        private ListControl control;
+        private ListBox listBox;
+        private ComboBox comboBox;
+
+        public ListControlWrapper(ListBox listBox)
+            : base(listBox)
+        {
+            this.control = this.listBox = listBox;
+
+            listBox.SelectedIndexChanged += delegate
+            {
+                if (SelectionChanged != null)
+                    SelectionChanged();
+            };
+        }
+
+        public ListControlWrapper(ComboBox comboBox)
+            : base(comboBox)
+        {
+            this.control = this.comboBox = comboBox;
+
+            comboBox.SelectedIndexChanged += delegate
+            {
+                if (SelectionChanged != null)
+                    SelectionChanged();
+            };
+        }
+
+        public int SelectedIndex
+        {
+            get { return control.SelectedIndex; }
+            set { control.SelectedIndex = value; }
+        }
+
+        public string SelectedItem
+        {
+            get 
+            { 
+                return listBox != null
+                    ? (string)listBox.SelectedItem
+                    : (string)comboBox.SelectedItem; 
+            }
+            set 
+            {
+                if (listBox != null)
+                    listBox.SelectedItem = value;
+                else
+                    comboBox.SelectedItem = value; 
+            }
+        }
+
+        public string[] SelectionList
+        {
+            get
+            {
+                string[] list;
+
+                if (listBox != null)
+                {
+                    list = new string[listBox.Items.Count];
+                    int index = 0;
+                    foreach (string item in listBox.Items)
+                        list[index++] = item;
+                }
+                else
+                {
+                    list = new string[comboBox.Items.Count];
+                    int index = 0;
+                    foreach (string item in comboBox.Items)
+                        list[index++] = item;
+                }
+
+                return list;
+            }
+            set
+            {
+                if (listBox != null)
+                {
+                    listBox.Items.Clear();
+                    foreach (string item in value)
+                        listBox.Items.Add(item);
+                }
+                else
+                {
+                    comboBox.Items.Clear();
+                    foreach (string item in value)
+                        comboBox.Items.Add(item);
+                }
+            }
+        }
+
+        public event ActionDelegate SelectionChanged;
+    }
+}

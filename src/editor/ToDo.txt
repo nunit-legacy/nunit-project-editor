@@ -8,13 +8,9 @@ Move Assemblies up and down in the list.
 
 Move Configs up and down in the list.
 
-Adding a new config doesn't copy the config selected
-as a model.
-
 Allow selecting multiple assemblies to be added.
 
-Error setting Project Base to empty
-
-Newly added assemblies use full path rather than relative
+All paths should use forward slashes for cross-platform
+compatibility.
 
 Need a toolbar

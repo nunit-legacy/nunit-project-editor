@@ -22,16 +22,22 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-using NUnit.Framework;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor.Tests
 {
-    [TestFixture]
-    public class ProjectPresenterTests
+    public class XmlViewStub : IXmlView
     {
+        private ValidatedStub xml = new ValidatedStub("Xml");
+
+        public bool Visible { get; set; }
+        public IValidatedElement Xml { get { return xml; } }
+        public Exception Exception { get; set; }
+
+        public void SimulateXmlChange(string text)
+        {
+            xml.Text = text;
+            xml.FireValidatedEvent();
+        }
     }
 }
