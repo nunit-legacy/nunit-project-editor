@@ -34,6 +34,8 @@ namespace NUnit.ProjectEditor
     /// </summary>
     public interface IMainView
     {
+        IDialogManager DialogManager { get; }
+
         ICommand NewProjectCommand { get; }
         ICommand OpenProjectCommand { get; }
         ICommand CloseProjectCommand { get; }

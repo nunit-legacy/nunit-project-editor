@@ -39,13 +39,11 @@ namespace NUnit.ProjectEditor
         private IProjectModel model;
         private IProjectConfig selectedConfig;
         private IPropertyView view;
-        private IDialogManager dialogHandler;
 
-        public PropertyPresenter(IProjectModel model, IPropertyView view, IDialogManager dialogHandler)
+        public PropertyPresenter(IProjectModel model, IPropertyView view)
         {
             this.model = model;
             this.view = view;
-            this.dialogHandler = dialogHandler;
 
             SetProcessModelOptions();
             SetDomainUsageOptions();
@@ -81,7 +79,7 @@ namespace NUnit.ProjectEditor
             view.BrowseProjectBaseCommand.Execute += delegate
             {
                 string message = "Select ApplicationBase for the model as a whole.";
-                string projectBase = dialogHandler.GetFolderPath(message, view.ProjectBase.Text);
+                string projectBase = view.DialogManager.GetFolderPath(message, view.ProjectBase.Text);
                 if (projectBase != null && projectBase != model.BasePath)
                     view.ProjectBase.Text = model.BasePath = projectBase;
             };
@@ -121,14 +119,14 @@ namespace NUnit.ProjectEditor
                 if (initialFolder == string.Empty)
                     initialFolder = view.ProjectBase.Text;
 
-                string appbase = dialogHandler.GetFolderPath(message, initialFolder);
+                string appbase = view.DialogManager.GetFolderPath(message, initialFolder);
                 if (appbase != null && appbase != view.ApplicationBase.Text)
                     UpdateApplicationBase(appbase);
             };
 
             view.AddAssemblyCommand.Execute += delegate
             {
-                string assemblyPath = dialogHandler.GetFileOpenPath(
+                string assemblyPath = view.DialogManager.GetFileOpenPath(
                     "Select Assembly",
                     "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
                     view.AssemblyPath.Text);
@@ -143,7 +141,8 @@ namespace NUnit.ProjectEditor
 
             view.RemoveAssemblyCommand.Execute += delegate
             {
-                if (dialogHandler.AskYesNoQuestion(string.Format("Remove {0} from model?", view.AssemblyList.SelectedItem), "Remove Assembly"))
+                string question = string.Format("Remove {0} from project?", view.AssemblyList.SelectedItem);
+                if (view.DialogManager.AskYesNoQuestion(question))
                 {
                     selectedConfig.Assemblies.Remove(view.AssemblyList.SelectedItem);
                     SetAssemblyList();
@@ -152,7 +151,7 @@ namespace NUnit.ProjectEditor
 
             view.BrowseAssemblyPathCommand.Execute += delegate
             {
-                string assemblyPath = dialogHandler.GetFileOpenPath(
+                string assemblyPath = view.DialogManager.GetFileOpenPath(
                     "Select Assembly",
                     "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
                     view.AssemblyPath.Text);
@@ -199,7 +198,7 @@ namespace NUnit.ProjectEditor
                     }
                     catch (Exception ex)
                     {
-                        view.SetErrorMessage("RuntimeVersion", ex.Message);
+                        view.DialogManager.DisplayError("Invalid RuntimeVersion: " + ex.Message);
                     }
                 }
             };
@@ -217,7 +216,7 @@ namespace NUnit.ProjectEditor
                     }
                     catch (Exception ex)
                     {
-                        view.SetErrorMessage("RuntimeVersion", ex.Message);
+                        view.DialogManager.DisplayError("Invalid RuntimeVersion: " + ex.Message);
                     }
                 }
             };
@@ -261,7 +260,7 @@ namespace NUnit.ProjectEditor
                         if (configFile == Path.GetFileName(configFile))
                             selectedConfig.ConfigurationFile = view.ConfigurationFile.Text;
                         else
-                            view.SetErrorMessage("DefaultConfigurationFile", "Must be file name only - without directory path");
+                            view.DialogManager.DisplayError("ConfigurationFile must be specified as a file name only - without directory path. The configuration file is always located in the application base directory.");
                     }
                 }
             };
@@ -328,7 +327,7 @@ namespace NUnit.ProjectEditor
                                 return;
                             if (Path.IsPathRooted(dir))
                             {
-                                view.SetErrorMessage("PrivateBinPath", "Components must all be relative paths");
+                                view.DialogManager.DisplayError("Path " + dir + " is an absolute path. PrivateBinPath components must all be relative paths.");
                                 return;
                             }
                         }
@@ -433,7 +432,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.SetErrorMessage(property, ex.Message);
+                view.DialogManager.DisplayError(string.Format("Invalid directory path for {0}: {1}", property, ex.Message));
                 return false;
             }
         }
@@ -447,7 +446,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.SetErrorMessage(property, ex.Message);
+                view.DialogManager.DisplayError(string.Format("Invalid file path for {0}: {1}", property, ex.Message));
                 return false;
             }
         }

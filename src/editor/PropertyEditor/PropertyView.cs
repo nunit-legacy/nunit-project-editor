@@ -45,6 +45,8 @@ namespace NUnit.ProjectEditor
 
         private void InitializeViewElements()
         {
+            DialogManager = new DialogManager("NUnit Project Editor");
+
             BrowseProjectBaseCommand = new ButtonElement(projectBaseBrowseButton);
             EditConfigsCommand = new ButtonElement(editConfigsButton);
             BrowseConfigBaseCommand = new ButtonElement(configBaseBrowseButton);
@@ -75,6 +77,8 @@ namespace NUnit.ProjectEditor
         #region IPropertyView Members
 
         #region Properties
+
+        public IDialogManager DialogManager { get; private set; }
 
         public ICommand BrowseProjectBaseCommand { get; private set; }
         public ICommand EditConfigsCommand { get; private set; }
@@ -140,16 +144,7 @@ namespace NUnit.ProjectEditor
                 assemblyPathBrowseButton.Enabled = true;
             }
         }
-
-        public void SetErrorMessage(string property, string message)
-        {
-            MessageBox.Show(
-                property + ": " + message,
-                "NUnit Project Editor",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
-        }
-        
+       
         #endregion
 
         #endregion

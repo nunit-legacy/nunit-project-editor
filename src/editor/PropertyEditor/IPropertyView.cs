@@ -33,6 +33,8 @@ namespace NUnit.ProjectEditor
 
         bool Visible { get; set; }
 
+        IDialogManager DialogManager { get; }
+
         #region Command Elements
 
         ICommand BrowseProjectBaseCommand { get; }
@@ -77,8 +79,6 @@ namespace NUnit.ProjectEditor
         #region Methods
 
         void SetAssemblyList(IEnumerable<string> list);
-
-        void SetErrorMessage(string property, string message);
 
         #endregion
     }

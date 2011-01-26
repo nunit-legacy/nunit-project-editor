@@ -39,18 +39,16 @@ namespace NUnit.ProjectEditor
     {
         private IMainView view;
         private IProjectDocument doc;
-        private IDialogManager dialogManager;
 
         private PropertyPresenter propertyPresenter;
         private XmlPresenter xmlPresenter;
 
         #region Constructor
 
-        public MainPresenter(IProjectDocument doc, IMainView view, IDialogManager dialogHandler)
+        public MainPresenter(IProjectDocument doc, IMainView view)
         {
             this.doc = doc;
             this.view = view;
-            this.dialogManager = dialogHandler;
 
             // Set up handlers for view events
             view.NewProjectCommand.Execute += CreateNewProject;
@@ -105,7 +103,7 @@ namespace NUnit.ProjectEditor
 
         private void OpenProject()
         {
-            string path = dialogManager.GetFileOpenPath(
+            string path = view.DialogManager.GetFileOpenPath(
                 "Open Project", 
                 "Test Projects (*.nunit)|*.nunit",
                 null);
@@ -122,7 +120,7 @@ namespace NUnit.ProjectEditor
         private void CloseProject()
         {
             if (doc.HasUnsavedChanges &&
-                dialogManager.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", doc.Name)))
+                view.DialogManager.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", doc.Name)))
                     SaveProject();
 
             doc.CloseProject();
@@ -145,7 +143,7 @@ namespace NUnit.ProjectEditor
 
         private void SaveProjectAs()
         {
-            string path = dialogManager.GetSaveAsPath(
+            string path = view.DialogManager.GetSaveAsPath(
                 "Save As",
                 "Test Projects (*.nunit)|*.nunit");
 
@@ -165,7 +163,7 @@ namespace NUnit.ProjectEditor
             // Set up property editor triad
             ProjectModel project = new ProjectModel(this.doc);
             IPropertyView propertyView = view.PropertyView;
-            propertyPresenter = new PropertyPresenter(project, propertyView, dialogManager);
+            propertyPresenter = new PropertyPresenter(project, propertyView);
             propertyView.Visible = true;
 
             // Set up XML editor triad

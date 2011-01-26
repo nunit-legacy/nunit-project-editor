@@ -71,6 +71,8 @@
     <Compile Include="PropertyEditor\XmlHelper.cs" />
     <Compile Include="ViewElements\ButtonElement.cs" />
     <Compile Include="ViewElements\ControlElement.cs" />
+    <Compile Include="ViewElements\DialogManager.cs" />
+    <Compile Include="ViewElements\IDialogManager.cs" />
     <Compile Include="ViewElements\ISelection.cs" />
     <Compile Include="ViewElements\ISelectionList.cs" />
     <Compile Include="ViewElements\ITextElement.cs" />
@@ -90,8 +92,6 @@
     <Compile Include="ConfigurationEditor\RenameConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DialogManager\IDialogManager.cs" />
-    <Compile Include="DialogManager\DialogManager.cs" />
     <Compile Include="PropertyEditor\IProjectModel.cs" />
     <Compile Include="PropertyEditor\IPropertyView.cs" />
     <Compile Include="PropertyEditor\PropertyPresenter.cs" />

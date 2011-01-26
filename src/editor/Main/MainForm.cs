@@ -41,6 +41,8 @@ namespace NUnit.ProjectEditor
         {
             InitializeComponent();
 
+            this.DialogManager = new DialogManager("NUnit Project Editor");
+
             this.NewProjectCommand = new MenuElement(newToolStripMenuItem);
             this.OpenProjectCommand = new MenuElement(openToolStripMenuItem);
             this.CloseProjectCommand = new MenuElement(closeToolStripMenuItem);
@@ -60,6 +62,8 @@ namespace NUnit.ProjectEditor
         #endregion
 
         #region Properties
+
+        public IDialogManager DialogManager { get; private set; }
 
         public ICommand NewProjectCommand { get; private set; }
         public ICommand OpenProjectCommand { get; private set; }

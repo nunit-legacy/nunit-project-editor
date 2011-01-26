@@ -38,13 +38,10 @@ namespace NUnit.ProjectEditor
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Common dialog manager
-            DialogManager dialogManager = new DialogManager("NUnit Project Editor");
-
             // Set up main editor triad
             ProjectDocument doc = new ProjectDocument();
             MainForm view = new MainForm();
-            new MainPresenter(doc, view, new DialogManager("NUnit Project Editor"));
+            new MainPresenter(doc, view);
 
             //// Set up property editor triad
             //ProjectModel project = new ProjectModel(doc);

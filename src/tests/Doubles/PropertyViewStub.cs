@@ -32,6 +32,8 @@ namespace NUnit.ProjectEditor.Tests
     {
         public PropertyViewStub()
         {
+            this.DialogManager = new DialogManagerStub();
+
             this.BrowseProjectBaseCommand = new CommandStub("BrowseProjectBase");
             this.EditConfigsCommand = new CommandStub("EditConfigs");
             this.BrowseConfigBaseCommand = new CommandStub("BrowseConfigBase");
@@ -57,6 +59,8 @@ namespace NUnit.ProjectEditor.Tests
             this.AssemblyPath = new ValidatedStub("AssemblyPath");
             this.AssemblyList = new SelectionStub("AssemblyList");
         }
+
+        public DialogManagerStub DialogManager { get; private set; }
 
         public CommandStub BrowseProjectBaseCommand { get; private set; }
         public CommandStub EditConfigsCommand { get; private set; }
@@ -84,6 +88,11 @@ namespace NUnit.ProjectEditor.Tests
         public SelectionStub AssemblyList { get; private set; }
         
         #region IPropertyView Members
+
+        IDialogManager IPropertyView.DialogManager
+        {
+            get { return DialogManager; }
+        }
 
         ICommand IPropertyView.BrowseProjectBaseCommand
         {

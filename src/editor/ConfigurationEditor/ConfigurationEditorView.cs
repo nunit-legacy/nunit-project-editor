@@ -95,6 +95,8 @@ namespace NUnit.ProjectEditor
 
         public ISelectionList ConfigList { get; private set; }
 
+        public IViewElement NewName { get; private set; }
+
         #endregion
 
         #region Methods

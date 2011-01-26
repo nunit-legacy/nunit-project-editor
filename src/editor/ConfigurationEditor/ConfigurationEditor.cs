@@ -87,6 +87,8 @@ namespace NUnit.ProjectEditor
         public void RenameConfig()
         {
             string oldName = view.ConfigList.SelectedItem;
+            if (oldName.EndsWith(" (active)"))
+                oldName = oldName.Substring(0, oldName.Length - 9);
 
             string newName = view.GetNewNameForRename(oldName);
 

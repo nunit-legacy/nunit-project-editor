@@ -23,14 +23,16 @@
 
 using System;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.ViewElements
 {
     public interface IDialogManager
     {
+        void DisplayError(string message);
+
         bool AskYesNoQuestion(string question);
-        bool AskYesNoQuestion(string question, string caption);
 
         string GetFileOpenPath(string title, string filter, string initialDirectory);
+
         string GetSaveAsPath(string title, string filter);
 
         string GetFolderPath(string message, string initialPath);

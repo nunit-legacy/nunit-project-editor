@@ -32,7 +32,6 @@ namespace NUnit.ProjectEditor.Tests
     {
         private IProjectModel model;
         private PropertyViewStub view;
-        private IDialogManager dialogManager;
         private PropertyPresenter presenter;
 
         [SetUp]
@@ -45,9 +44,8 @@ namespace NUnit.ProjectEditor.Tests
             model.Configs.Add("Release");
             model.ActiveConfigName = "Release";
             view = new PropertyViewStub();
-            dialogManager = new DialogManagerStub();
 
-            presenter = new PropertyPresenter(model, view, dialogManager);
+            presenter = new PropertyPresenter(model, view);
             presenter.LoadViewFromModel();
         }
 

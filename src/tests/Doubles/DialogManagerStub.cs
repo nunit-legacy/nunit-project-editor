@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor.Tests
 {
@@ -29,12 +30,12 @@ namespace NUnit.ProjectEditor.Tests
     {
         #region IDialogManager Members
 
-        public bool AskYesNoQuestion(string question)
+        public void DisplayError(string message)
         {
             throw new NotImplementedException();
         }
 
-        public bool AskYesNoQuestion(string question, string caption)
+        public bool AskYesNoQuestion(string question)
         {
             throw new NotImplementedException();
         }

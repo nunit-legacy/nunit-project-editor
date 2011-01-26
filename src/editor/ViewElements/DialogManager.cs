@@ -24,29 +24,29 @@
 using System;
 using System.Windows.Forms;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.ViewElements
 {
     public class DialogManager : IDialogManager
     {
-        string defaultCaption;
+        string caption;
 
         #region Constructor
 
         public DialogManager(string defaultCaption)
         {
-            this.defaultCaption = defaultCaption;
+            this.caption = defaultCaption;
         }
 
         #endregion
 
         #region IDialogManager Members
 
-        public bool AskYesNoQuestion(string question)
+        public void DisplayError(string message)
         {
-            return AskYesNoQuestion(question, defaultCaption);
+            MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        public bool AskYesNoQuestion(string question, string caption)
+        public bool AskYesNoQuestion(string question)
         {
             return MessageBox.Show(question, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
         }
