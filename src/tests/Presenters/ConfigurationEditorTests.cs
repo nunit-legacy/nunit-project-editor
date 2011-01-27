@@ -23,12 +23,15 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.ProjectEditor.ViewElements;
+using NSubstitute;
 
 namespace NUnit.ProjectEditor.Tests
 {
     public class ConfigurationEditorTests
     {
-        private ConfigurationEditorViewStub view;
+        private IConfigurationEditorView view;
+
         private ProjectModel model;
         private ConfigurationEditor editor;
 
@@ -37,29 +40,27 @@ namespace NUnit.ProjectEditor.Tests
         {
             ProjectDocument doc = new ProjectDocument();
             doc.LoadXml(NUnitProjectXml.NormalProject);
-            view = new ConfigurationEditorViewStub();
             model = new ProjectModel(doc);
+
+            view = Substitute.For<IConfigurationEditorView>();
+
             editor = new ConfigurationEditor(model, view);
         }
 
         [Test]
         public void PresenterSubscribesToRequiredEvents()
         {
-            VerifyHasSubscribers(view.AddCommand);
-            VerifyHasSubscribers(view.RemoveCommand);
-            VerifyHasSubscribers(view.RenameCommand);
-            VerifyHasSubscribers(view.ActiveCommand);
-            VerifyHasSubscribers(view.ConfigList);
+            view.AddCommand.Received().Execute += editor.AddConfig;
+            view.RemoveCommand.Received().Execute += editor.RemoveConfig;
+            view.RenameCommand.Received().Execute += editor.RenameConfig;
+            view.ActiveCommand.Received().Execute += editor.MakeActive;
+            view.ConfigList.Received().SelectionChanged += editor.SelectedConfigChanged;
         }
 
         [Test]
         public void ConfigListIsCorrectlyInitialized()
         {
-            Assert.AreEqual(
-                new string[] { "Debug (active)", "Release" },
-                view.ConfigList.SelectionList);
-            Assert.AreEqual(0, view.ConfigList.SelectedIndex);
-            Assert.AreEqual("Debug (active)", view.ConfigList.SelectedItem);
+            Assert.That(view.ConfigList.SelectionList, Is.EqualTo( new[] { "Debug (active)", "Release" }));
         }
 
         [Test]
@@ -71,11 +72,45 @@ namespace NUnit.ProjectEditor.Tests
             Assert.False(view.ActiveCommand.Enabled, "Active button should be disabled");
         }
 
-        private void VerifyHasSubscribers(IViewElement element)
+        [Test]
+        public void ClickingAddAddsNewConfig()
         {
-            ViewElementStub stub = (ViewElementStub)element;
-            if (!stub.HasSubscribers)
-                Assert.Fail("{0} has no subscribers", stub.Name);
+            view.GetAddConfigData().Returns( new AddConfigData("New", "Release") );
+
+            view.AddCommand.Execute += Raise.Event<CommandDelegate>();
+
+            Assert.That(model.Configs.Count, Is.EqualTo(3));
+            Assert.That(model.ConfigNames, Is.EqualTo(new[] { "Debug", "Release", "New" }));
+        }
+
+        [Test]
+        public void ClickingRemoveRemovesConfig()
+        {
+            view.RemoveCommand.Execute += Raise.Event<CommandDelegate>();
+            Assert.That(model.Configs.Count, Is.EqualTo(1));
+            Assert.That(model.Configs[0].Name, Is.EqualTo("Release"));
+        }
+
+        private void RaiseExecute(ICommand command)
+        {
+            command.Execute += Raise.Event<CommandDelegate>();
+        }
+
+        [Test]
+        public void ClickingRenamePerformsRename()
+        {
+            view.ConfigList.SelectedItem.Returns("Debug (active)");
+            view.GetNewNameForRename("Debug").Returns("NewName");
+            RaiseExecute(view.RenameCommand);
+            Assert.That(model.Configs[0].Name, Is.EqualTo("NewName"));
+        }
+
+        [Test]
+        public void ClickingActiveMakesConfigActive()
+        {
+            view.ConfigList.SelectedItem = "Release";
+            RaiseExecute(view.ActiveCommand);
+            Assert.That(model.ActiveConfigName, Is.EqualTo("Release"));
         }
     }
 }

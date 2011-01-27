@@ -57,8 +57,8 @@ namespace NUnit.ProjectEditor
 
         public void AddConfig()
         {
-            AddConfigData data = new AddConfigData();
-            if (view.GetAddConfigData(ref data))
+            AddConfigData data = view.GetAddConfigData();
+            if (data != null)
             {
                 model.Configs.Add(data.ConfigToCreate);
                 IProjectConfig newConfig = model.Configs[data.ConfigToCreate];

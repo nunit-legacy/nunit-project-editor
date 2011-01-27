@@ -451,6 +451,20 @@ namespace NUnit.ProjectEditor
             }
         }
 
+        public string[] ConfigNames
+        {
+            get
+            {
+                ConfigList configs = model.Configs;
+
+                string[] configList = new string[configs.Count];
+                for (int i = 0; i < configs.Count; i++)
+                    configList[i] = configs[i].Name;
+
+                return configList;
+            }
+        }
+        
         #endregion
     }
 }

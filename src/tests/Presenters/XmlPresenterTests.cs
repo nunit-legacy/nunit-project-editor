@@ -23,14 +23,14 @@
 
 using System;
 using NUnit.Framework;
-using Rhino.Mocks;
+using NSubstitute;
 
 namespace NUnit.ProjectEditor.Tests.XmlEditor
 {
     public class XmlPresenterTests
     {
         private IProjectDocument model;
-        private XmlViewStub view;
+        private IXmlView view;
         private XmlPresenter presenter;
 
         private static readonly string initialText = "<NUnitProject/>";
@@ -41,7 +41,7 @@ namespace NUnit.ProjectEditor.Tests.XmlEditor
         {
             model = new ProjectDocument();
             model.LoadXml(initialText);
-            view = new XmlViewStub();
+            view = Substitute.For<IXmlView>();
             presenter = new XmlPresenter(model, view);
             presenter.LoadViewFromModel();
         }
@@ -55,16 +55,17 @@ namespace NUnit.ProjectEditor.Tests.XmlEditor
         [Test]
         public void WhenXmlChangesModelIsUpdated()
         {
-            view.SimulateXmlChange(changedText);
+            view.Xml.Text = changedText;
+            view.Xml.Validated += Raise.Event<ActionDelegate>();
             Assert.AreEqual(changedText, model.XmlText);
         }
 
         //[Test]
-        public void BadXmlSetsException()
-        {
-            model.Exception = new ProjectFormatException();
-            view.SimulateXmlChange("<NUnitProject>"); // Missing slash
-            Assert.NotNull(view.Exception);
-        }
+        //public void BadXmlSetsException()
+        //{
+        //    view.Xml.Text = "<NUnitProject>"; // Missing slash
+        //    view.Xml.Validated += Raise.Event<ActionDelegate>();
+            
+        //}
     }
 }

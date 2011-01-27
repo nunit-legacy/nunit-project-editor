@@ -42,13 +42,19 @@ namespace NUnit.ProjectEditor
         #region Methods
 
         string GetNewNameForRename(string oldName);
-        bool GetAddConfigData(ref AddConfigData data);
+        AddConfigData GetAddConfigData();
 
         #endregion
     }
 
-    public struct AddConfigData
+    public class AddConfigData
     {
+        public AddConfigData(string create, string copy)
+        {
+            ConfigToCreate = create;
+            ConfigToCopy = copy;
+        }
+
         public string ConfigToCreate;
         public string ConfigToCopy;
     }

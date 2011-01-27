@@ -25,13 +25,14 @@ using System;
 using System.Reflection;
 using NUnit.Framework;
 using NUnit.ProjectEditor.ViewElements;
+using NSubstitute;
 
 namespace NUnit.ProjectEditor.Tests
 {
     public class PropertyPresenterTests
     {
         private IProjectModel model;
-        private PropertyViewStub view;
+        private IPropertyView view;
         private PropertyPresenter presenter;
 
         [SetUp]
@@ -43,44 +44,17 @@ namespace NUnit.ProjectEditor.Tests
             model.Configs.Add("Debug");
             model.Configs.Add("Release");
             model.ActiveConfigName = "Release";
-            view = new PropertyViewStub();
+
+            view = Substitute.For<IPropertyView>();
+            view.ConfigList.SelectedItem.Returns(delegate
+            {
+                return view.ConfigList.SelectedIndex >= 0
+                    ? view.ConfigList.SelectionList[view.ConfigList.SelectedIndex]
+                    : null;
+            });
 
             presenter = new PropertyPresenter(model, view);
             presenter.LoadViewFromModel();
-        }
-
-        [Test]
-        public void AllViewElementsAreInitializedCorrectly()
-        {
-            foreach (PropertyInfo prop in typeof(PropertyViewStub).GetProperties())
-            {
-                if (typeof(ViewElementStub).IsAssignableFrom(prop.PropertyType))
-                {
-                    ViewElementStub element = prop.GetValue(view, new object[0]) as ViewElementStub;
-                    if (element == null)
-                        Assert.Fail("{0} was not initialized", prop.Name);
-                    //VerifyHasSubscribers(element);
-                }
-            }
-        }
-
-        [Test]
-        public void PresenterSubscribesToRequiredViewEvents()
-        {
-            VerifyHasSubscribers(view.BrowseProjectBaseCommand);
-            VerifyHasSubscribers(view.EditConfigsCommand);
-            VerifyHasSubscribers(view.BrowseConfigBaseCommand);
-            VerifyHasSubscribers(view.AddAssemblyCommand);
-            VerifyHasSubscribers(view.RemoveAssemblyCommand);
-            VerifyHasSubscribers(view.BrowseAssemblyPathCommand);
-
-            VerifyHasSubscribers(view.ProjectBase);
-            VerifyHasSubscribers(view.ProcessModel);
-            VerifyHasSubscribers(view.DomainUsage);
-            VerifyHasSubscribers(view.ApplicationBase);
-            VerifyHasSubscribers(view.ConfigurationFile);
-            VerifyHasSubscribers(view.Runtime);
-            VerifyHasSubscribers(view.RuntimeVersion);
         }
 
         [Test]
@@ -128,12 +102,12 @@ namespace NUnit.ProjectEditor.Tests
         public void WhenProjectModelIsChangedDomainUsageOptionsChanged()
         {
             view.ProcessModel.SelectedItem = "Single";
-            view.ProcessModel.RaiseSelectionChangedEvent();
+            view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
             Assert.That(view.DomainUsage.SelectionList, Is.EqualTo(
                 new string[] { "Default", "Single", "Multiple" }));
 
             view.ProcessModel.SelectedItem = "Multiple";
-            view.ProcessModel.RaiseSelectionChangedEvent();
+            view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
             Assert.That(view.DomainUsage.SelectionList, Is.EqualTo(
                 new string[] { "Default", "Single" }));
         }
@@ -142,7 +116,7 @@ namespace NUnit.ProjectEditor.Tests
         public void ChangingProcessModelUpdatesProject()
         {
             view.ProcessModel.SelectedItem = "Multiple";
-            view.ProcessModel.RaiseSelectionChangedEvent();
+            view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
             Assert.That(model.ProcessModel, Is.EqualTo(ProcessModel.Multiple));
         }
 
@@ -150,7 +124,7 @@ namespace NUnit.ProjectEditor.Tests
         public void ChangingDomainUsageUpdatesProject()
         {
             view.DomainUsage.SelectedItem = "Multiple";
-            view.DomainUsage.RaiseSelectionChangedEvent();
+            view.DomainUsage.SelectionChanged += Raise.Event<ActionDelegate>();
             Assert.That(model.DomainUsage, Is.EqualTo(DomainUsage.Multiple));
         }
 
@@ -158,7 +132,7 @@ namespace NUnit.ProjectEditor.Tests
         public void ChangingProjectBaseUpdatesProject()
         {
             view.ProjectBase.Text = "test.nunit";
-            view.ProjectBase.FireValidatedEvent();
+            view.ProjectBase.Validated += Raise.Event<ActionDelegate>();
             Assert.That(model.BasePath, Is.EqualTo("test.nunit"));
         }
 
@@ -170,7 +144,7 @@ namespace NUnit.ProjectEditor.Tests
             view.ConfigList.SelectedIndex = 0;
             view.Runtime.SelectedItem = "Mono";
             view.RuntimeVersion.SelectedItem = "1.1.4322";
-            view.Runtime.RaiseSelectionChangedEvent();
+            view.Runtime.SelectionChanged += Raise.Event<ActionDelegate>();
             RuntimeFramework framework = model.Configs[0].RuntimeFramework;
             Assert.That(framework.Runtime, Is.EqualTo(RuntimeType.Mono));
             Assert.That(framework.ClrVersion, Is.EqualTo(new Version("1.1.4322")));
@@ -181,7 +155,7 @@ namespace NUnit.ProjectEditor.Tests
         {
             view.Runtime.SelectedItem = "Mono";
             view.RuntimeVersion.SelectedItem = "1.1.4322";
-            view.RuntimeVersion.RaiseSelectionChangedEvent();
+            view.RuntimeVersion.SelectionChanged += Raise.Event<ActionDelegate>();
             RuntimeFramework framework = model.Configs[0].RuntimeFramework;
             Assert.That(framework.Runtime, Is.EqualTo(RuntimeType.Mono));
             Assert.That(framework.ClrVersion, Is.EqualTo(new Version(1, 1, 4322)));
@@ -189,12 +163,6 @@ namespace NUnit.ProjectEditor.Tests
 
         public void ChangingSelectedConfigUpdatesRuntime()
         {
-        }
-
-        private void VerifyHasSubscribers(ViewElementStub stub)
-        {
-            if (!stub.HasSubscribers)
-                Assert.Fail("{0} has no subscribers", stub.Name);
         }
     }
 }

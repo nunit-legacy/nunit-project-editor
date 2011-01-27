@@ -120,7 +120,7 @@ namespace NUnit.ProjectEditor
             }
         }
 
-        public bool GetAddConfigData(ref AddConfigData data)
+        public AddConfigData GetAddConfigData()
         {
             string[] configList = new string[configListBox.Items.Count];
             for (int i = 0; i < configListBox.Items.Count; i++)
@@ -135,15 +135,9 @@ namespace NUnit.ProjectEditor
             using (AddConfigurationDialog dlg = new AddConfigurationDialog(configList, (string)configListBox.SelectedItem))
             {
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    data.ConfigToCreate = dlg.ConfigToCreate;
-                    data.ConfigToCopy = dlg.ConfigToCopy;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                    return new AddConfigData(dlg.ConfigToCreate, dlg.ConfigToCopy);
+
+                return null;
             }
         }
 

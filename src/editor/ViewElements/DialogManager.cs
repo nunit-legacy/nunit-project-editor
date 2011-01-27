@@ -61,9 +61,10 @@ namespace NUnit.ProjectEditor.ViewElements
                 dlg.InitialDirectory = initialDirectory;
             dlg.FilterIndex = 1;
             dlg.FileName = "";
+            dlg.Multiselect = false;
 
             return dlg.ShowDialog() == DialogResult.OK
-                ? dlg.FileName
+                ? dlg.FileNames[0]
                 : null;
         }
 
