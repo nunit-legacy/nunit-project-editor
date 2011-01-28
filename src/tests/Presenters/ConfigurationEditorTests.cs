@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.Windows.Forms;
 using NUnit.Framework;
 using NUnit.ProjectEditor.ViewElements;
 using NSubstitute;
@@ -75,7 +76,13 @@ namespace NUnit.ProjectEditor.Tests
         [Test]
         public void ClickingAddAddsNewConfig()
         {
-            view.GetAddConfigData().Returns( new AddConfigData("New", "Release") );
+            view.AddConfigurationDialog.ShowDialog().Returns(delegate
+            {
+                view.AddConfigurationDialog.OkButton.Execute += Raise.Event<CommandDelegate>();
+                return DialogResult.OK;
+            });
+            view.AddConfigurationDialog.ConfigToCreate.Returns("New");
+            view.AddConfigurationDialog.ConfigToCopy.Returns("Release");
 
             view.AddCommand.Execute += Raise.Event<CommandDelegate>();
 

@@ -30,18 +30,14 @@ namespace NUnit.ProjectEditor.Tests
 	[TestFixture]
 	public class AddConfigurationDialogTests : FormTester
 	{
-		private IProjectModel project;
 		private AddConfigurationDialog dlg;
 
 		[SetUp]
 		public void SetUp()
 		{
-            IProjectDocument doc = new ProjectDocument();
-            doc.CreateNewProject();
-			project = new ProjectModel( doc );
-			project.Configs.Add( "Debug" );
-			project.Configs.Add( "Release" );
-			dlg = new AddConfigurationDialog( new[] { "Debug", "Release" }, "Debug" );
+            dlg = new AddConfigurationDialog();
+            dlg.ConfigList = new[] { "Debug", "Release" };
+            dlg.ConfigToCopy = "Debug";
             this.Form = dlg;
 		}
 
@@ -104,7 +100,7 @@ namespace NUnit.ProjectEditor.Tests
 
             okButton.PerformClick();
             Assert.AreEqual("Super", dlg.ConfigToCreate);
-            Assert.IsNull(dlg.ConfigToCopy);
+            Assert.Null(dlg.ConfigToCopy);
         }
 	}
 }

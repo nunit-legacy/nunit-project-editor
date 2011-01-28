@@ -66,6 +66,11 @@ namespace NUnit.ProjectEditor
 
         public IViewElement NewName { get; private set; }
 
+        public IAddConfigurationDialog AddConfigurationDialog
+        {
+            get { return new AddConfigurationDialog(); }
+        }
+
         #endregion
 
         #region Methods
@@ -86,27 +91,6 @@ namespace NUnit.ProjectEditor
             {
                 return dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK
                     ? dlg.ConfigurationName : null;
-            }
-        }
-
-        public AddConfigData GetAddConfigData()
-        {
-            string[] configList = new string[configListBox.Items.Count];
-            for (int i = 0; i < configListBox.Items.Count; i++)
-            {
-                string config = configListBox.Items[i].ToString();
-                if (config.EndsWith(" (active)"))
-                    config = config.Substring(0, config.Length - 9);
-                configList[i] = config;
-            }
-
-
-            using (AddConfigurationDialog dlg = new AddConfigurationDialog(configList, (string)configListBox.SelectedItem))
-            {
-                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    return new AddConfigData(dlg.ConfigToCreate, dlg.ConfigToCopy);
-
-                return null;
             }
         }
 

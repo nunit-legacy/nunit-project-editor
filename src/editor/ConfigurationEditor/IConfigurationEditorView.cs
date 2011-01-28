@@ -37,26 +37,14 @@ namespace NUnit.ProjectEditor
 
         ISelectionList ConfigList { get; }
 
+        IAddConfigurationDialog AddConfigurationDialog{ get; }
+
         #endregion
 
         #region Methods
 
         string GetNewNameForRename(string oldName);
-        AddConfigData GetAddConfigData();
 
         #endregion
     }
-
-    public class AddConfigData
-    {
-        public AddConfigData(string create, string copy)
-        {
-            ConfigToCreate = create;
-            ConfigToCopy = copy;
-        }
-
-        public string ConfigToCreate;
-        public string ConfigToCopy;
-    }
-
 }

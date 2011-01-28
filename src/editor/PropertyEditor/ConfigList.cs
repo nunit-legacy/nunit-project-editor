@@ -76,7 +76,7 @@ namespace NUnit.ProjectEditor
 
 		#region Methods
 
-        public ProjectConfig Add( string name )
+        public IProjectConfig Add( string name )
 		{
             XmlNode configNode = XmlHelper.AddElement(projectNode, "Config");
             XmlHelper.AddAttribute(configNode, "name", name);

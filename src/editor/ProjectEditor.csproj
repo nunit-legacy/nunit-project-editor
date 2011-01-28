@@ -49,6 +49,7 @@
     <Compile Include="ConfigurationEditor\AddConfigurationDialog.Designer.cs">
       <DependentUpon>AddConfigurationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigurationEditor\AddConfiguratonPresenter.cs" />
     <Compile Include="ConfigurationEditor\ConfigurationEditorView.Designer.cs">
       <DependentUpon>ConfigurationEditorView.cs</DependentUpon>
     </Compile>

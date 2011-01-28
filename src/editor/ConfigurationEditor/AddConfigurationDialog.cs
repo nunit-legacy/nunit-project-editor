@@ -26,6 +26,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
@@ -38,87 +39,91 @@ namespace NUnit.ProjectEditor
     /// A DialogResult of DialogResult.OK indicates that the
     /// configuration was added successfully.
     /// </summary>
-	public partial class AddConfigurationDialog : System.Windows.Forms.Form
+	public partial class AddConfigurationDialog : System.Windows.Forms.Form, IAddConfigurationDialog
 	{
-		#region Instance variables
-
-		private string[] configList;
-        private string initialCopyConfig;
-
-		#endregion
+        private static readonly string NONE_SELECTED = "<none>";
 
 		#region Constructor
 
-		public AddConfigurationDialog( string[] configList, string initialCopyConfig )
+		public AddConfigurationDialog()
 		{ 
 			InitializeComponent();
 
-			this.configList = configList;
-            this.initialCopyConfig = initialCopyConfig;
-		}
+            OkButton = new ButtonElement(okButton);
+        }
 
 		#endregion
 
 		#region Properties
 
-		public string ConfigToCreate { get; private set; }
+        private string[] configList;
+        public string[] ConfigList 
+        {
+            get { return configList; }
+            set 
+            { 
+                configList = value;
 
-		public string ConfigToCopy { get; private set; }
+                configurationComboBox.Items.Clear();
+                configurationComboBox.Items.Add(NONE_SELECTED);
+                configurationComboBox.SelectedIndex = 0;
 
-		#endregion
+                foreach (string config in configList)
+                    configurationComboBox.Items.Add(config);
+            } 
+        }
 
-		#region Methods
+		public string ConfigToCreate 
+        {
+            get { return configurationNameTextBox.Text; }
+        }
 
-		private void ConfigurationNameDialog_Load(object sender, System.EventArgs e)
-		{
-			configurationComboBox.Items.Add( "<none>" );
-			configurationComboBox.SelectedIndex = 0;
-
-			foreach( string config in configList )
-			{
-				int index = configurationComboBox.Items.Add( config );
-				if ( config == initialCopyConfig )
-					configurationComboBox.SelectedIndex = index;
-			}
-		}
-
-		private void okButton_Click(object sender, System.EventArgs e)
-		{
-            ConfigToCreate = configurationNameTextBox.Text;
-            int index = configurationComboBox.SelectedIndex;
-            ConfigToCopy = index > 0
-                ? (string)configurationComboBox.SelectedItem
-                : null;
-            
-            if (ConfigToCreate == string.Empty)
-			{
-				MessageBox.Show( 
-                    "No configuration name provided", 
-                    "Configuration Name Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-				return;
-			}
-
-            foreach (string config in configList)
-            {
-                if (config == ConfigToCreate)
-                {
-                    // TODO: Need general error message display
-                    MessageBox.Show(
-                        "A configuration with that name already exists", 
-                        "Configuration Name Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    return;
-                }
+		public string ConfigToCopy 
+        {
+            get 
+            { 
+                string config = (string)configurationComboBox.SelectedItem;
+                return config == NONE_SELECTED ? null : config;
             }
+            set 
+            {
+                string config = string.IsNullOrEmpty(value) ? NONE_SELECTED : value;
+                configurationComboBox.SelectedItem = config;
+            }
+        }
 
-			DialogResult = DialogResult.OK;
-
-			Close();
-		}
+        public ICommand OkButton { get; private set; }
 
 		#endregion
-	}
+
+        #region Methods
+
+        public void DisplayError(string message)
+        {
+            MessageBox.Show(message, "Add Configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        #endregion
+    }
+
+    public interface IAddConfigurationDialog : IDialog
+    {
+        string[] ConfigList { get; set; }
+
+        string ConfigToCreate { get; }
+        string ConfigToCopy { get; }
+
+        ICommand OkButton { get; }
+    }
+
+    public interface IDialog : IView
+    {
+        DialogResult ShowDialog();
+        void Close();
+    }
+
+    public interface IView
+    {
+        void DisplayError(string message);
+    }
 }

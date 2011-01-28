@@ -73,13 +73,13 @@ namespace NUnit.ProjectEditor.Tests
         [Test]
         public void NormalProject()
         {
-            ProjectConfig config1 = project.Configs.Add("Debug");
+            var config1 = project.Configs.Add("Debug");
             config1.BasePath = "bin" + Path.DirectorySeparatorChar + "debug";
             config1.BinPathType = BinPathType.Auto;
             config1.Assemblies.Add("assembly1.dll");
             config1.Assemblies.Add("assembly2.dll");
 
-            ProjectConfig config2 = project.Configs.Add("Release");
+            var config2 = project.Configs.Add("Release");
             config2.BasePath = "bin" + Path.DirectorySeparatorChar + "release";
             config2.BinPathType = BinPathType.Auto;
             config2.Assemblies.Add("assembly1.dll");
@@ -100,14 +100,14 @@ namespace NUnit.ProjectEditor.Tests
         [Test]
         public void ProjectWithComplexSettings()
         {
-            ProjectConfig config1 = project.Configs.Add("Debug");
+            var config1 = project.Configs.Add("Debug");
             config1.BasePath = "debug";
             config1.BinPathType = BinPathType.Auto;
             config1.RuntimeFramework = new RuntimeFramework(RuntimeType.Any, new Version(2, 0));
             config1.Assemblies.Add("assembly1.dll");
             config1.Assemblies.Add("assembly2.dll");
 
-            ProjectConfig config2 = project.Configs.Add("Release");
+            var config2 = project.Configs.Add("Release");
             config2.BasePath = "release";
             config2.BinPathType = BinPathType.Auto;
             config2.RuntimeFramework = new RuntimeFramework(RuntimeType.Any, new Version(4, 0));

@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.Windows.Forms;
 
 namespace NUnit.ProjectEditor
 {
@@ -57,31 +58,12 @@ namespace NUnit.ProjectEditor
 
         public void AddConfig()
         {
-            AddConfigData data = view.GetAddConfigData();
-            if (data != null)
-            {
-                model.Configs.Add(data.ConfigToCreate);
-                IProjectConfig newConfig = model.Configs[data.ConfigToCreate];
+            var dlg = view.AddConfigurationDialog;
+            new AddConfigurationPresenter(model, dlg);
 
-                if (data.ConfigToCopy != null)
-                {
-                    IProjectConfig copyConfig = model.Configs[data.ConfigToCopy];
-                    if (copyConfig != null)
-                    {
-                        newConfig.BasePath = copyConfig.BasePath;
-                        newConfig.BinPathType = copyConfig.BinPathType;
-                        if (newConfig.BinPathType == BinPathType.Manual)
-                            newConfig.PrivateBinPath = copyConfig.PrivateBinPath;
-                        newConfig.ConfigurationFile = copyConfig.ConfigurationFile;
-                        newConfig.RuntimeFramework = copyConfig.RuntimeFramework;
+            dlg.ShowDialog();
 
-                        foreach (string assembly in copyConfig.Assemblies)
-                            newConfig.Assemblies.Add(assembly);
-                    }
-                }
-
-                UpdateConfigList();
-            }
+            UpdateConfigList();
         }
 
         public void RenameConfig()
