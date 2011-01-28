@@ -46,6 +46,9 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigurationEditor\AddConfigurationDialog.Designer.cs">
+      <DependentUpon>AddConfigurationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Delegates.cs" />
     <Compile Include="Main\IProjectDocument.cs" />
     <Compile Include="Main\IMainView.cs" />
