@@ -49,6 +49,12 @@
     <Compile Include="ConfigurationEditor\AddConfigurationDialog.Designer.cs">
       <DependentUpon>AddConfigurationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigurationEditor\ConfigurationEditorView.Designer.cs">
+      <DependentUpon>ConfigurationEditorView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConfigurationEditor\RenameConfigurationDialog.Designer.cs">
+      <DependentUpon>RenameConfigurationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Delegates.cs" />
     <Compile Include="Main\IProjectDocument.cs" />
     <Compile Include="Main\IMainView.cs" />
