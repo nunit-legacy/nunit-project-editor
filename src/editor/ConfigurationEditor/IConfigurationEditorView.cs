@@ -26,7 +26,7 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IConfigurationEditorView
+    public interface IConfigurationEditorView : IView
     {
         #region Properties
 
@@ -37,13 +37,8 @@ namespace NUnit.ProjectEditor
 
         ISelectionList ConfigList { get; }
 
-        IAddConfigurationDialog AddConfigurationDialog{ get; }
-
-        #endregion
-
-        #region Methods
-
-        string GetNewNameForRename(string oldName);
+        IAddConfigurationDialog AddConfigurationDialog { get; }
+        IRenameConfigurationDialog RenameConfigurationDialog { get; }
 
         #endregion
     }

@@ -41,10 +41,10 @@ namespace NUnit.ProjectEditor
 
 		// TODO: Rewrite using generics when we move to .NET 2.0
 
-		// The control we are testing
+		// The textBox we are testing
 		private Control control;
 
-		// Various ways of looking at this control's controls
+		// Various ways of looking at this textBox's controls
 		private ControlCollection controls;
 		private ButtonCollection buttons;
 		private LabelCollection labels;
@@ -53,7 +53,7 @@ namespace NUnit.ProjectEditor
 
 		#region Properties
 		/// <summary>
-		/// Get and set the control to be tested
+		/// Get and set the textBox to be tested
 		/// </summary>
 		public Control Control
 		{
@@ -77,7 +77,7 @@ namespace NUnit.ProjectEditor
 		}
 
 		/// <summary>
-		/// Get our collection of all the controls on this control.
+		/// Get our collection of all the controls on this textBox.
 		/// </summary>
 		public ControlCollection Controls
 		{
@@ -85,7 +85,7 @@ namespace NUnit.ProjectEditor
 		}
 
 		/// <summary>
-		/// Get our collection of all the buttons on this control.
+		/// Get our collection of all the buttons on this textBox.
 		/// </summary>
 		public ButtonCollection Buttons
 		{
@@ -99,7 +99,7 @@ namespace NUnit.ProjectEditor
 		}
 
 		/// <summary>
-		/// Get our collection of all the labels on this control.
+		/// Get our collection of all the labels on this textBox.
 		/// </summary>
 		public LabelCollection Labels
 		{
@@ -113,7 +113,7 @@ namespace NUnit.ProjectEditor
 		}
 
 		/// <summary>
-		/// Get our collection of all the TextBoxes on this control.
+		/// Get our collection of all the TextBoxes on this textBox.
 		/// </summary>
 		public TextBoxCollection TextBoxes
 		{
@@ -143,9 +143,9 @@ namespace NUnit.ProjectEditor
 
 		#region Assertions
 		/// <summary>
-		/// Assert that a control with a given name exists on this control.
+		/// Assert that a textBox with a given name exists on this textBox.
 		/// </summary>
-		/// <param name="name">The name of the control.</param>
+		/// <param name="name">The name of the textBox.</param>
 		public void AssertControlExists( string targetName )
 		{
 			AssertControlExists( targetName, null );

@@ -56,7 +56,10 @@
     <Compile Include="ConfigurationEditor\RenameConfigurationDialog.Designer.cs">
       <DependentUpon>RenameConfigurationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigurationEditor\RenameConfigurationPresenter.cs" />
     <Compile Include="Delegates.cs" />
+    <Compile Include="IDialog.cs" />
+    <Compile Include="IView.cs" />
     <Compile Include="Main\IProjectDocument.cs" />
     <Compile Include="Main\IMainView.cs" />
     <Compile Include="Main\MainForm.cs">
@@ -83,10 +86,10 @@
     <Compile Include="ViewElements\ControlElement.cs" />
     <Compile Include="ViewElements\DialogManager.cs" />
     <Compile Include="ViewElements\IDialogManager.cs" />
+    <Compile Include="ViewElements\IMessageDisplay.cs" />
     <Compile Include="ViewElements\ISelection.cs" />
     <Compile Include="ViewElements\ISelectionList.cs" />
     <Compile Include="ViewElements\ITextElement.cs" />
-    <Compile Include="ViewElements\IValidatedElement.cs" />
     <Compile Include="ViewElements\IViewElement.cs" />
     <Compile Include="ViewElements\ListControlWrapper.cs" />
     <Compile Include="ViewElements\ICommand.cs" />
@@ -161,8 +164,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ViewElements\MessageDisplay.cs" />
     <Compile Include="ViewElements\RadioButtonGroup.cs" />
-    <Compile Include="ViewElements\ValidatedELement.cs" />
+    <Compile Include="ViewElements\TextElement.cs" />
     <Compile Include="XmlEditor\IXmlModel.cs" />
     <Compile Include="XmlEditor\IXmlView.cs" />
     <Compile Include="XmlEditor\XmlPresenter.cs" />

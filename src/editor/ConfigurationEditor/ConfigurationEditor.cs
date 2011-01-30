@@ -72,13 +72,12 @@ namespace NUnit.ProjectEditor
             if (oldName.EndsWith(" (active)"))
                 oldName = oldName.Substring(0, oldName.Length - 9);
 
-            string newName = view.GetNewNameForRename(oldName);
+            var dlg = view.RenameConfigurationDialog;
+            new RenameConfigurationPresenter(model, dlg, oldName);
 
-            if (newName != null)
-            {
-                model.Configs[oldName].Name = newName;
-                UpdateConfigList();
-            }
+            dlg.ShowDialog();
+
+            UpdateConfigList();
         }
 
         public void RemoveConfig()

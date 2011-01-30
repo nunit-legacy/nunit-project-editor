@@ -49,6 +49,8 @@ namespace NUnit.ProjectEditor
             ActiveCommand = new ButtonElement(activeButton);
 
             ConfigList = new ListControlWrapper(configListBox);
+
+            MessageDisplay = new MessageDisplay("NUnit Configuration Editor");
 		}
 
 		#endregion
@@ -71,27 +73,11 @@ namespace NUnit.ProjectEditor
             get { return new AddConfigurationDialog(); }
         }
 
-        #endregion
-
-        #region Methods
-
-        public string GetNewNameForRename(string oldName)
+        public IMessageDisplay MessageDisplay { get; private set; }
+        
+        public IRenameConfigurationDialog RenameConfigurationDialog
         {
-            string[] configList = new string[configListBox.Items.Count];
-            for (int i = 0; i < configListBox.Items.Count; i++)
-            {
-                string config = configListBox.Items[i].ToString();
-                if (config.EndsWith(" (active)"))
-                    config = config.Substring(0, config.Length - 9);
-                configList[i] = config;
-            }
-
-            using (RenameConfigurationDialog dlg =
-                       new RenameConfigurationDialog(oldName, configList))
-            {
-                return dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK
-                    ? dlg.ConfigurationName : null;
-            }
+            get { return new RenameConfigurationDialog(); }
         }
 
         #endregion

@@ -27,10 +27,6 @@ namespace NUnit.ProjectEditor.ViewElements
 {
     public interface IDialogManager
     {
-        void DisplayError(string message);
-
-        bool AskYesNoQuestion(string question);
-
         string GetFileOpenPath(string title, string filter, string initialDirectory);
 
         string GetSaveAsPath(string title, string filter);

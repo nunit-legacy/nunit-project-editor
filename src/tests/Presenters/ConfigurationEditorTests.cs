@@ -94,6 +94,7 @@ namespace NUnit.ProjectEditor.Tests
         public void ClickingRemoveRemovesConfig()
         {
             view.RemoveCommand.Execute += Raise.Event<CommandDelegate>();
+
             Assert.That(model.Configs.Count, Is.EqualTo(1));
             Assert.That(model.Configs[0].Name, Is.EqualTo("Release"));
         }
@@ -106,9 +107,16 @@ namespace NUnit.ProjectEditor.Tests
         [Test]
         public void ClickingRenamePerformsRename()
         {
-            view.ConfigList.SelectedItem.Returns("Debug (active)");
-            view.GetNewNameForRename("Debug").Returns("NewName");
-            RaiseExecute(view.RenameCommand);
+            view.ConfigList.SelectedItem.Returns("Debug");
+            view.RenameConfigurationDialog.ShowDialog().Returns(delegate
+            {
+                view.RenameConfigurationDialog.ConfigurationName.Text = "NewName";
+                view.RenameConfigurationDialog.OkButton.Execute += Raise.Event<CommandDelegate>();
+                return DialogResult.OK;
+            });
+
+            view.RenameCommand.Execute += Raise.Event<CommandDelegate>();
+
             Assert.That(model.Configs[0].Name, Is.EqualTo("NewName"));
         }
 

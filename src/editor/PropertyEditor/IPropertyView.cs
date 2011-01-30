@@ -27,11 +27,9 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IPropertyView
+    public interface IPropertyView : IView
     {
         #region Properties
-
-        bool Visible { get; set; }
 
         IDialogManager DialogManager { get; }
 
@@ -50,7 +48,7 @@ namespace NUnit.ProjectEditor
         #region Properties of the Model as a Whole
 
         ITextElement ProjectPath { get; }
-        IValidatedElement ProjectBase { get; }
+        ITextElement ProjectBase { get; }
         ISelectionList ProcessModel { get; }
         ISelectionList DomainUsage { get; }
         ITextElement ActiveConfigName { get; }
@@ -63,14 +61,14 @@ namespace NUnit.ProjectEditor
 
         ISelectionList Runtime { get; }
         ISelectionList RuntimeVersion { get; }
-        IValidatedElement ApplicationBase { get; }
-        IValidatedElement ConfigurationFile { get; }
+        ITextElement ApplicationBase { get; }
+        ITextElement ConfigurationFile { get; }
 
         ISelection BinPathType { get; }
-        IValidatedElement PrivateBinPath { get; }
+        ITextElement PrivateBinPath { get; }
 
         ISelectionList AssemblyList { get; }
-        IValidatedElement AssemblyPath { get; }
+        ITextElement AssemblyPath { get; }
 
         #endregion
 

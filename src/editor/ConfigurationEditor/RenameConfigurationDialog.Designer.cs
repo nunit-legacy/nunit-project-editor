@@ -40,8 +40,6 @@
             this.configurationNameTextBox.Name = "configurationNameTextBox";
             this.configurationNameTextBox.Size = new System.Drawing.Size(264, 22);
             this.configurationNameTextBox.TabIndex = 0;
-            this.configurationNameTextBox.Text = "";
-            this.configurationNameTextBox.TextChanged += new System.EventHandler(this.configurationNameTextBox_TextChanged);
             // 
             // okButton
             // 
@@ -50,7 +48,6 @@
             this.okButton.Size = new System.Drawing.Size(75, 24);
             this.okButton.TabIndex = 1;
             this.okButton.Text = "OK";
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // cancelButton
             // 
@@ -74,7 +71,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Rename Configuration";
-            this.Load += new System.EventHandler(this.ConfigurationNameDialog_Load);
             this.ResumeLayout(false);
 
         }

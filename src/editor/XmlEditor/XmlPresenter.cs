@@ -44,7 +44,17 @@ namespace NUnit.ProjectEditor
         public void LoadViewFromModel()
         {
             view.Xml.Text = model.XmlText;
-            view.Exception = model.Exception;
+
+            if (model.Exception != null)
+            {
+                var ex = model.Exception as ProjectFormatException;
+                if (ex != null)
+                    view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
+                else
+                    view.DisplayError(ex.Message);
+            }
+            else
+                view.RemoveError();
         }
 
         public void UpdateModelFromView()

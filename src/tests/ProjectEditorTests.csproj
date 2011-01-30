@@ -57,9 +57,11 @@
     </Compile>
     <Compile Include="Model\NUnitProjectXml.cs" />
     <Compile Include="Model\ProjectModelTests.cs" />
+    <Compile Include="Presenters\AddConfigurationPresenterTests.cs" />
     <Compile Include="Presenters\ConfigurationEditorTests.cs" />
     <Compile Include="Presenters\ProjectPresenterTests.cs" />
     <Compile Include="Presenters\PropertyPresenterTests.cs" />
+    <Compile Include="Presenters\RenameConfigurationPresenterTests.cs" />
     <Compile Include="Presenters\XmlPresenterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\AddConfigurationDialogTests.cs" />

@@ -56,6 +56,9 @@ namespace NUnit.ProjectEditor
 
 		#region Properties
 
+        private MessageDisplay mbox = new MessageDisplay("Add Configuration");
+        public IMessageDisplay MessageDisplay { get { return mbox; } }
+
         private string[] configList;
         public string[] ConfigList 
         {
@@ -98,11 +101,6 @@ namespace NUnit.ProjectEditor
 
         #region Methods
 
-        public void DisplayError(string message)
-        {
-            MessageBox.Show(message, "Add Configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
         #endregion
     }
 
@@ -114,16 +112,5 @@ namespace NUnit.ProjectEditor
         string ConfigToCopy { get; }
 
         ICommand OkButton { get; }
-    }
-
-    public interface IDialog : IView
-    {
-        DialogResult ShowDialog();
-        void Close();
-    }
-
-    public interface IView
-    {
-        void DisplayError(string message);
     }
 }

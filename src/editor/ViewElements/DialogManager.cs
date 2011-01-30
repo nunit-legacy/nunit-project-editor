@@ -41,16 +41,6 @@ namespace NUnit.ProjectEditor.ViewElements
 
         #region IDialogManager Members
 
-        public void DisplayError(string message)
-        {
-            MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        public bool AskYesNoQuestion(string question)
-        {
-            return MessageBox.Show(question, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
-        }
-
         public string GetFileOpenPath(string title, string filter, string initialDirectory)
         {
             OpenFileDialog dlg = new OpenFileDialog();

@@ -120,7 +120,7 @@ namespace NUnit.ProjectEditor
         private void CloseProject()
         {
             if (doc.HasUnsavedChanges &&
-                view.DialogManager.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", doc.Name)))
+                view.MessageDisplay.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", doc.Name)))
                     SaveProject();
 
             doc.CloseProject();

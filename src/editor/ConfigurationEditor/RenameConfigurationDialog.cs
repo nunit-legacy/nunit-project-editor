@@ -26,6 +26,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
@@ -35,85 +36,40 @@ namespace NUnit.ProjectEditor
     /// validates the name. The caller is responsible for
     /// actually renaming the cofiguration.
     /// </summary>
-	public partial class RenameConfigurationDialog : System.Windows.Forms.Form
+	public partial class RenameConfigurationDialog : System.Windows.Forms.Form, IRenameConfigurationDialog
 	{
-		#region Instance Variables
-
-		/// <summary>
-		/// The new name to give the configuration
-		/// </summary>
-		private string configurationName;
-
-		/// <summary>
-		/// The original name of the configuration
-		/// </summary>
-		private string originalName;
-
-        /// <summary>
-        /// An array of existing config names used for validation
-        /// </summary>
-        private string[] configList;
-
-		#endregion
-
 		#region Constructor
 
-		public RenameConfigurationDialog( string configurationName, string[] configList )
+		public RenameConfigurationDialog()
 		{
 			InitializeComponent();
-			this.configurationName = configurationName;
-			this.originalName = configurationName;
-            this.configList = configList;
+
+            ConfigurationName = new TextElement(configurationNameTextBox);
+            OkButton = new ButtonElement(okButton);
+
+            MessageDisplay = new MessageDisplay("Rename Configuration");
         }
 
 		#endregion
 
-		#region Properties & Methods
+		#region IRenameConfigurationDialogMembers
 
-		public string ConfigurationName
-		{
-			get{ return configurationName; }
-			set{ configurationName = value; }
-		}
-		
-		private void ConfigurationNameDialog_Load(object sender, System.EventArgs e)
-		{
-			if ( configurationName != null )
-			{
-				configurationNameTextBox.Text = configurationName;
-				configurationNameTextBox.SelectAll();
-			}
-		}
+		public ITextElement ConfigurationName { get; private set; }
 
-		private void okButton_Click(object sender, System.EventArgs e)
-		{
-			configurationName = configurationNameTextBox.Text;
-		
-            foreach(string existingName in configList)
-            {
-                if (existingName == configurationName)
-                {
-    				// TODO: Need general error message display
-	    			MessageBox.Show(
-                        "A configuration with that name already exists", 
-                        "Configuration Name Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    return;
-                }
-            }
-
-            DialogResult = DialogResult.OK;
-    		Close();
-		}
-
-		private void configurationNameTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-			okButton.Enabled = 
-				configurationNameTextBox.TextLength > 0 &&
-				configurationNameTextBox.Text != originalName;
-		}
+        public ICommand OkButton { get; private set; }
 
 		#endregion
-	}
+
+        #region IView Members
+
+        public IMessageDisplay MessageDisplay { get; private set; }
+
+        #endregion
+    }
+
+    public interface IRenameConfigurationDialog : IDialog
+    {
+        ITextElement ConfigurationName { get; }
+        ICommand OkButton { get; }
+    }
 }

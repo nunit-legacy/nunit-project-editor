@@ -22,38 +22,17 @@
 // ***********************************************************************
 
 using System;
-using NUnit.ProjectEditor.ViewElements;
+using System.Windows.Forms;
 
 namespace NUnit.ProjectEditor
 {
     /// <summary>
-    /// IMainView represents the top level view for the
-    /// Project editor. It provides a menu commands and several
-    /// utility methods used in opening and saving files. It
-    /// aggregates the property and xml views.
+    /// Common interface implemented by all modal dialog views used in
+    /// the ProjectEditor application
     /// </summary>
-    public interface IMainView : IView
+    public interface IDialog : IView
     {
-        IDialogManager DialogManager { get; }
-
-        ICommand NewProjectCommand { get; }
-        ICommand OpenProjectCommand { get; }
-        ICommand CloseProjectCommand { get; }
-        ICommand SaveProjectCommand { get; }
-        ICommand SaveProjectAsCommand { get; }
-
-        event ActionStartingDelegate ActiveViewChanging;
-        event ActionDelegate ActiveViewChanged;
-
-        IPropertyView PropertyView { get; }
-        IXmlView XmlView { get; }
-
-        SelectedView SelectedView { get; }
-    }
-
-    public enum SelectedView
-    {
-        PropertyView = 0,
-        XmlView = 1
+        DialogResult ShowDialog();
+        void Close();
     }
 }

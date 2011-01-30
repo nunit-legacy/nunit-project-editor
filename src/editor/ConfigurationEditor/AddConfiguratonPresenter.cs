@@ -41,7 +41,7 @@ namespace NUnit.ProjectEditor
             {
                 if (dlg.ConfigToCreate == string.Empty)
                 {
-                    dlg.DisplayError("No configuration name provided");
+                    dlg.MessageDisplay.Error("No configuration name provided");
                     return;
                 }
 
@@ -49,7 +49,7 @@ namespace NUnit.ProjectEditor
                 {
                     if (config == dlg.ConfigToCreate)
                     {
-                        dlg.DisplayError("A configuration with that name already exists");
+                        dlg.MessageDisplay.Error("A configuration with that name already exists");
                         return;
                     }
                 }

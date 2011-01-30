@@ -142,7 +142,7 @@ namespace NUnit.ProjectEditor
             view.RemoveAssemblyCommand.Execute += delegate
             {
                 string question = string.Format("Remove {0} from project?", view.AssemblyList.SelectedItem);
-                if (view.DialogManager.AskYesNoQuestion(question))
+                if (view.MessageDisplay.AskYesNoQuestion(question))
                 {
                     selectedConfig.Assemblies.Remove(view.AssemblyList.SelectedItem);
                     SetAssemblyList();
@@ -198,7 +198,7 @@ namespace NUnit.ProjectEditor
                     }
                     catch (Exception ex)
                     {
-                        view.DialogManager.DisplayError("Invalid RuntimeVersion: " + ex.Message);
+                        view.MessageDisplay.Error("Invalid RuntimeVersion: " + ex.Message);
                     }
                 }
             };
@@ -216,7 +216,7 @@ namespace NUnit.ProjectEditor
                     }
                     catch (Exception ex)
                     {
-                        view.DialogManager.DisplayError("Invalid RuntimeVersion: " + ex.Message);
+                        view.MessageDisplay.Error("Invalid RuntimeVersion: " + ex.Message);
                     }
                 }
             };
@@ -260,7 +260,7 @@ namespace NUnit.ProjectEditor
                         if (configFile == Path.GetFileName(configFile))
                             selectedConfig.ConfigurationFile = view.ConfigurationFile.Text;
                         else
-                            view.DialogManager.DisplayError("ConfigurationFile must be specified as a file name only - without directory path. The configuration file is always located in the application base directory.");
+                            view.MessageDisplay.Error("ConfigurationFile must be specified as a file name only - without directory path. The configuration file is always located in the application base directory.");
                     }
                 }
             };
@@ -327,7 +327,7 @@ namespace NUnit.ProjectEditor
                                 return;
                             if (Path.IsPathRooted(dir))
                             {
-                                view.DialogManager.DisplayError("Path " + dir + " is an absolute path. PrivateBinPath components must all be relative paths.");
+                                view.MessageDisplay.Error("Path " + dir + " is an absolute path. PrivateBinPath components must all be relative paths.");
                                 return;
                             }
                         }
@@ -432,7 +432,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.DialogManager.DisplayError(string.Format("Invalid directory path for {0}: {1}", property, ex.Message));
+                view.MessageDisplay.Error(string.Format("Invalid directory path for {0}: {1}", property, ex.Message));
                 return false;
             }
         }
@@ -446,7 +446,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.DialogManager.DisplayError(string.Format("Invalid file path for {0}: {1}", property, ex.Message));
+                view.MessageDisplay.Error(string.Format("Invalid file path for {0}: {1}", property, ex.Message));
                 return false;
             }
         }

@@ -31,5 +31,18 @@ namespace NUnit.ProjectEditor.ViewElements
         /// Gets or sets the text of the element
         /// </summary>
         string Text { get; set; }
+
+        void Select(int offset, int length);
+
+        /// <summary>
+        /// Changed event is raised whenever the text changes
+        /// </summary>
+        event ActionDelegate Changed;
+        
+        /// <summary>
+        /// Validated event is raised when the text has been
+        /// changed and focus has left the UI element.
+        /// </summary>
+        event ActionDelegate Validated;
     }
 }

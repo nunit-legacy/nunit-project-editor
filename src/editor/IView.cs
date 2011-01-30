@@ -22,21 +22,25 @@
 // ***********************************************************************
 
 using System;
+using NUnit.ProjectEditor.ViewElements;
 
-namespace NUnit.ProjectEditor.ViewElements
+namespace NUnit.ProjectEditor
 {
     /// <summary>
-    /// The IValidatedElement interface is exposed by the view
-    /// for any element that requires presenter action 
-    /// when the Validated event is fired.
+    /// Common interface implemented by all views used in
+    /// the ProjectEditor application
     /// </summary>
-    public interface IValidatedElement : ITextElement
+    public interface IView
     {
         /// <summary>
-        /// Validated event is raised when the item has been
-        /// changed and focus has left the UI element.
+        /// Object that knows how to display various messages
+        /// in a MessageBox.
         /// </summary>
-        event ActionDelegate Validated;
-    }
+        IMessageDisplay MessageDisplay { get; }
 
+        /// <summary>
+        /// Gets or sets the visibility of the view
+        /// </summary>
+        bool Visible { get; set; }
+    }
 }

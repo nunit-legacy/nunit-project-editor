@@ -41,6 +41,7 @@ namespace NUnit.ProjectEditor
         {
             InitializeComponent();
 
+            this.MessageDisplay = new MessageDisplay("Nunit Project Editor");
             this.DialogManager = new DialogManager("NUnit Project Editor");
 
             this.NewProjectCommand = new MenuElement(newToolStripMenuItem);
@@ -85,6 +86,8 @@ namespace NUnit.ProjectEditor
         {
             get { return (SelectedView)tabControl1.SelectedIndex; }
         }
+
+        public IMessageDisplay MessageDisplay { get; private set; }
 
         #endregion
 

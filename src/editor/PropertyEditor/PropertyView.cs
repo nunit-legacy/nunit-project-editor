@@ -46,6 +46,7 @@ namespace NUnit.ProjectEditor
         private void InitializeViewElements()
         {
             DialogManager = new DialogManager("NUnit Project Editor");
+            MessageDisplay = new MessageDisplay("NUnit Project Editor");
 
             BrowseProjectBaseCommand = new ButtonElement(projectBaseBrowseButton);
             EditConfigsCommand = new ButtonElement(editConfigsButton);
@@ -54,21 +55,21 @@ namespace NUnit.ProjectEditor
             RemoveAssemblyCommand = new ButtonElement(removeAssemblyButton);
             BrowseAssemblyPathCommand = new ButtonElement(assemblyPathBrowseButton);
 
-            ProjectPath = new ControlElement(projectPathLabel);
-            ProjectBase = new ValidatedElement(projectBaseTextBox);
+            ProjectPath = new TextElement(projectPathLabel);
+            ProjectBase = new TextElement(projectBaseTextBox);
             ProcessModel = new ListControlWrapper(processModelComboBox);
             DomainUsage = new ListControlWrapper(domainUsageComboBox);
             Runtime = new ListControlWrapper(runtimeComboBox);
             RuntimeVersion = new ListControlWrapper(runtimeVersionComboBox);
-            ActiveConfigName = new ControlElement(activeConfigLabel);
+            ActiveConfigName = new TextElement(activeConfigLabel);
 
             ConfigList = new ListControlWrapper(configComboBox);
 
-            ApplicationBase = new ValidatedElement(applicationBaseTextBox);
-            ConfigurationFile = new ValidatedElement(configFileTextBox);
+            ApplicationBase = new TextElement(applicationBaseTextBox);
+            ConfigurationFile = new TextElement(configFileTextBox);
             BinPathType = new RadioButtonGroup("BinPathType", autoBinPathRadioButton, manualBinPathRadioButton, noBinPathRadioButton);
-            PrivateBinPath = new ValidatedElement(privateBinPathTextBox);
-            AssemblyPath = new ValidatedElement(assemblyPathTextBox);
+            PrivateBinPath = new TextElement(privateBinPathTextBox);
+            AssemblyPath = new TextElement(assemblyPathTextBox);
             AssemblyList = new ListControlWrapper(assemblyListBox);
         }
 
@@ -79,6 +80,7 @@ namespace NUnit.ProjectEditor
         #region Properties
 
         public IDialogManager DialogManager { get; private set; }
+        public IMessageDisplay MessageDisplay { get; private set; }
 
         public ICommand BrowseProjectBaseCommand { get; private set; }
         public ICommand EditConfigsCommand { get; private set; }
@@ -88,7 +90,7 @@ namespace NUnit.ProjectEditor
         public ICommand BrowseAssemblyPathCommand { get; private set; }
 
         public ITextElement ProjectPath{ get; private set; }
-        public IValidatedElement ProjectBase { get; private set; }
+        public ITextElement ProjectBase { get; private set; }
 
         public ISelectionList ProcessModel { get; private set; }
 
@@ -100,15 +102,15 @@ namespace NUnit.ProjectEditor
 
         public ISelectionList Runtime { get; private set; }
         public ISelectionList RuntimeVersion { get; private set; }
-        public IValidatedElement ApplicationBase { get; private set; }
-        public IValidatedElement ConfigurationFile { get; private set; }
+        public ITextElement ApplicationBase { get; private set; }
+        public ITextElement ConfigurationFile { get; private set; }
         public ISelection BinPathType { get; private set; }
 
-        public IValidatedElement PrivateBinPath { get; private set;  }
+        public ITextElement PrivateBinPath { get; private set; }
 
         public ISelectionList AssemblyList { get; private set; }
 
-        public IValidatedElement AssemblyPath { get; private set; }
+        public ITextElement AssemblyPath { get; private set; }
 
         #endregion
 

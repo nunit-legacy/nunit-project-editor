@@ -30,9 +30,9 @@ namespace NUnit.ProjectEditor.ViewElements
     /// ControlWrapper is a general wrapper for controls used
     /// by the view. It implements several different interfaces
     /// so that the view may choose which one to expose, based
-    /// on the type of control and how it is used.
+    /// on the type of textBox and how it is used.
     /// </summary>
-    public class ControlElement : ITextElement
+    public class ControlElement : IViewElement
     {
         private Control control;
 

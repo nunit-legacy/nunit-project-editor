@@ -22,27 +22,45 @@
 // ***********************************************************************
 
 using System;
-using System.Windows.Forms;
 
-namespace NUnit.ProjectEditor.ViewElements
+namespace NUnit.ProjectEditor
 {
-    /// <summary>
-    /// ControlWrapper is a general wrapper for controls used
-    /// by the view. It implements several different interfaces
-    /// so that the view may choose which one to expose, based
-    /// on the type of control and how it is used.
-    /// </summary>
-    public class ValidatedElement : ControlElement, IValidatedElement
+    public class RenameConfigurationPresenter
     {
-        public ValidatedElement(Control control) : base(control)
+        private IProjectModel model;
+        private IRenameConfigurationDialog dlg;
+        private string originalName;
+
+        public RenameConfigurationPresenter(IProjectModel model, IRenameConfigurationDialog dlg, string originalName)
         {
-            control.Validated += delegate
+            this.model = model;
+            this.dlg = dlg;
+            this.originalName = originalName;
+
+            dlg.ConfigurationName.Text = originalName;
+            dlg.ConfigurationName.Select(0, originalName.Length);
+
+            dlg.ConfigurationName.Changed += delegate
             {
-                if (Validated != null)
-                    Validated();
+                string text = dlg.ConfigurationName.Text;
+                dlg.OkButton.Enabled = text != string.Empty && text != originalName;
+            };
+
+            dlg.OkButton.Execute += delegate
+            {
+                string newName = dlg.ConfigurationName.Text;
+
+                foreach (string existingName in model.ConfigNames)
+                {
+                    if (existingName == newName)
+                    {
+                        dlg.MessageDisplay.Error("A configuration with that name already exists");
+                        return;
+                    }
+                }
+
+                model.Configs[originalName].Name = newName;
             };
         }
-
-        public event ActionDelegate Validated;
     }
 }

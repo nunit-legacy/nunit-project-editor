@@ -39,7 +39,7 @@ namespace NUnit.ProjectEditor
         {
             InitializeComponent();
 
-            Xml = new ValidatedElement(richTextBox1);
+            Xml = new TextElement(richTextBox1);
         }
 
         #endregion
@@ -50,39 +50,32 @@ namespace NUnit.ProjectEditor
         /// <summary>
         /// Gets or sets the XML text
         /// </summary>
-        public IValidatedElement Xml { get; private set; }
+        public ITextElement Xml { get; private set; }
 
-        /// <summary>
-        /// Sets an exception arising in validating
-        /// the XmlText.
-        /// </summary>
-        public Exception Exception
+        public void DisplayError(string message)
         {
-            // TODO: Is this doing too much for a view?
-            set
-            {
-                if (value != null)
-                {
-                    errorMessageLabel.Visible = true;
-                    errorMessageLabel.Text = value.Message;
+            errorMessageLabel.Visible = true;
+            errorMessageLabel.Text = message;
 
-                    richTextBox1.Dock = DockStyle.Top;
-                    richTextBox1.Height = this.ClientSize.Height - errorMessageLabel.Height;
-
-                    ProjectFormatException ex = value as ProjectFormatException;
-                    if (ex != null)
-                    {
-                        int offset = richTextBox1.GetFirstCharIndexFromLine(ex.LineNumber) + ex.LinePosition - 1;
-                        richTextBox1.Select(offset, 3);
-                    }
-                }
-                else
-                {
-                    errorMessageLabel.Visible = false;
-                    richTextBox1.Dock = DockStyle.Fill;
-                }
-            }
+            richTextBox1.Dock = DockStyle.Top;
+            richTextBox1.Height = this.ClientSize.Height - errorMessageLabel.Height;
         }
+
+        public void DisplayError(string message, int lineNumber, int linePosition)
+        {
+            DisplayError(message);
+
+            int offset = richTextBox1.GetFirstCharIndexFromLine(lineNumber) + linePosition - 1;
+            richTextBox1.Select(offset, 3); // TODO: Determine true length of area to highlight
+        }
+
+        public void RemoveError()
+        {
+            errorMessageLabel.Visible = false;
+            richTextBox1.Dock = DockStyle.Fill;
+        }
+
+        public IMessageDisplay MessageDisplay { get; private set; }
 
         #endregion
 
