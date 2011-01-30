@@ -25,7 +25,7 @@ using System;
 using System.Windows.Forms;
 using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.Tests.Views
 {
 	[TestFixture]
 	public class AddConfigurationDialogTests : FormTester

@@ -25,7 +25,7 @@ using System;
 using NUnit.Framework;
 using NSubstitute;
 
-namespace NUnit.ProjectEditor.Tests.XmlEditor
+namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class XmlPresenterTests
     {

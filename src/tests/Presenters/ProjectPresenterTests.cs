@@ -28,7 +28,7 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.Tests.Presenters
 {
     [TestFixture]
     public class ProjectPresenterTests

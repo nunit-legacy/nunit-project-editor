@@ -27,7 +27,7 @@ using System.Xml;
 using System.IO;
 using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.Tests.Model
 {
 	[TestFixture]
 	public class NUnitProjectSave

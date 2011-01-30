@@ -27,7 +27,7 @@ using NUnit.Framework;
 using NUnit.ProjectEditor.ViewElements;
 using NSubstitute;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class ConfigurationEditorTests
     {

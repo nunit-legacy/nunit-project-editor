@@ -25,7 +25,7 @@ using System;
 using System.Xml;
 using NUnit.Framework;
 
-namespace NUnit.ProjectEditor.Tests
+namespace NUnit.ProjectEditor.Tests.Model
 {
 	/// <summary>
 	/// This fixture tests AssemblyList
