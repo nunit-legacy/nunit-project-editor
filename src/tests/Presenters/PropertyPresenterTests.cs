@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 using NUnit.ProjectEditor.ViewElements;
@@ -31,18 +32,17 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class PropertyPresenterTests
     {
+        IProjectDocument doc;
         private IProjectModel model;
         private IPropertyView view;
         private PropertyPresenter presenter;
 
         [SetUp]
-        public void Initialize()
+        public void SetUp()
         {
-            ProjectDocument doc = new ProjectDocument();
-            doc.CreateNewProject();
+            doc = new ProjectDocument();
+            doc.LoadXml(NUnitProjectXml.NormalProject);
             model = new ProjectModel(doc);
-            model.Configs.Add("Debug");
-            model.Configs.Add("Release");
             model.ActiveConfigName = "Release";
 
             view = Substitute.For<IPropertyView>();
@@ -52,54 +52,143 @@ namespace NUnit.ProjectEditor.Tests.Presenters
                     ? view.ConfigList.SelectionList[view.ConfigList.SelectedIndex]
                     : null;
             });
+            view.ConfigList.WhenForAnyArgs(x => x.SelectedIndex = 0).Do(delegate
+            {
+                view.ConfigList.SelectionChanged += Raise.Event<ActionDelegate>();
+            });
+            view.AssemblyList.WhenForAnyArgs(x => x.SelectedIndex = 0).Do(delegate
+            {
+                view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
+            });
 
             presenter = new PropertyPresenter(model, view);
             presenter.LoadViewFromModel();
         }
 
         [Test]
-        public void ProcessModelOptionsAreInitializedCorrectly()
-        {
-            Assert.That(view.ProcessModel.SelectionList, Is.EqualTo(
-                new string[] { "Default", "Single", "Separate", "Multiple" }));
-        }
-
-        [Test]
-        public void RuntimesAreInitializedCorrectly()
-        {
-            Assert.That(view.Runtime.SelectionList, Is.EqualTo(
-                new string[] { "Any", "Net", "Mono" }));
-        }
-
-        [Test]
-        public void RuntimeVersionsAreInitializedCorrectly()
-        {
-            Assert.That(view.RuntimeVersion.SelectionList, Is.EqualTo(
-                new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" }));
-        }
-
-        [Test]
-        public void ActiveConfigIsSetCorrectly()
+        public void ActiveConfigName_LoadFromModel_SetsViewCorrectly()
         {
             Assert.That(view.ActiveConfigName.Text, Is.EqualTo("Release"));
         }
 
         [Test]
-        public void SelectedConfigIsSetCorrectly()
+        public void ApplicationBase_LoadFromModel_SetsViewCorrectly()
+        {
+            Assert.That(view.ApplicationBase.Text, Is.EqualTo(model.Configs[0].BasePath));
+        }
+
+        [Test]
+        public void AssemblyPath_LoadFromModel_SetsViewCorrectly()
+        {
+            Assert.That(view.AssemblyPath.Text, Is.EqualTo(model.Configs[0].Assemblies[0]));
+        }
+
+        [Test]
+        public void AssemblyList_LoadFromModel_SetsListCorrectly()
+        {
+            Assert.That(view.AssemblyList.SelectionList, 
+                Is.EqualTo(new[] {"assembly1.dll", "assembly2.dll"}));
+        }
+
+        [Test]
+        public void AssemblyList_WhenEmpty_AddIsEnabled()
+        {
+            view.AssemblyList.SelectionList = new string[0];
+            view.AssemblyList.SelectedIndex = -1;
+            view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
+            Assert.True(view.AddAssemblyCommand.Enabled);
+        }
+
+        [Test]
+        public void AssemblyList_WhenEmpty_RemoveIsDisabled()
+        {
+            view.AssemblyList.SelectionList = new string[0];
+            view.AssemblyList.SelectedIndex = -1;
+            view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
+            Assert.False(view.RemoveAssemblyCommand.Enabled);
+        }
+
+        [Test]
+        public void AssemblyList_WhenEmpty_AssemblyPathBrowseIsDisabled()
+        {
+            view.AssemblyList.SelectionList = new string[0];
+            view.AssemblyList.SelectedIndex = -1;
+            view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
+            Assert.False(view.BrowseAssemblyPathCommand.Enabled);
+        }
+
+        [Test]
+        public void BinPathType_LoadFromModel_SetsViewCorrectly()
+        {
+            Assert.That(view.BinPathType.SelectedIndex, Is.EqualTo((int)model.Configs[0].BinPathType));
+        }
+
+        [Test]
+        public void ConfigList_LoadFromModel_SelectsFirstConfig()
         {
             Assert.That(view.ConfigList.SelectedIndex, Is.EqualTo(0));
             Assert.That(view.ConfigList.SelectedItem, Is.EqualTo("Debug"));
         }
 
         [Test]
-        public void ConfigListIsSetCorrectly()
+        public void ConfigList_LoadFromModel_SetsListCorrectly()
         {
             Assert.That(view.ConfigList.SelectionList, Is.EqualTo(
                 new string[] { "Debug", "Release" }));
         }
 
+        public void ConfigList_SelectionChanged_UpdatesRuntime()
+        {
+        }
+
         [Test]
-        public void WhenProjectModelIsChangedDomainUsageOptionsChanged()
+        public void ConfigurationFile_LoadFromModel_SetsViewCorrectly()
+        {
+            Assert.That(view.ConfigurationFile.Text, Is.EqualTo(model.Configs[0].ConfigurationFile));
+        }
+
+        [Test]
+        public void DomainUsage_LoadFromModel_SetsOptionsCorrectly()
+        {
+            Assert.That(view.DomainUsage.SelectionList, Is.EqualTo(
+                new string[] { "Default", "Single", "Multiple" }));
+        }
+
+        [Test]
+        public void DomainUsage_LoadFromModel_SelectsDefaultEntry()
+        {
+            Assert.That(view.DomainUsage.SelectedItem, Is.EqualTo("Default"));
+        }
+
+        [Test]
+        public void DomainUsage_WhenChanged_UpdatesProject()
+        {
+            view.DomainUsage.SelectedItem = "Multiple";
+            view.DomainUsage.SelectionChanged += Raise.Event<ActionDelegate>();
+            Assert.That(model.DomainUsage, Is.EqualTo(DomainUsage.Multiple));
+        }
+
+        [Test]
+        public void PrivateBinPath_LoadFromModel_SetsViewCorrectly()
+        {
+            Assert.That(view.PrivateBinPath.Text, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void ProcessModel_LoadFromModel_SelectsDefaultEntry()
+        {
+            Assert.That(view.ProcessModel.SelectedItem, Is.EqualTo("Default"));
+        }
+
+        [Test]
+        public void ProcessModel_LoadFromModel_SetsOptionsCorrectly()
+        {
+            Assert.That(view.ProcessModel.SelectionList, Is.EqualTo(
+                new string[] { "Default", "Single", "Separate", "Multiple" }));
+        }
+
+        [Test]
+        public void ProcessModel_WhenChanged_UpdatesDomainUsageOptions()
         {
             view.ProcessModel.SelectedItem = "Single";
             view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
@@ -113,7 +202,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ChangingProcessModelUpdatesProject()
+        public void ProcessModel_WhenChanged_UpdatesProject()
         {
             view.ProcessModel.SelectedItem = "Multiple";
             view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
@@ -121,15 +210,13 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ChangingDomainUsageUpdatesProject()
+        public void ProjectBase_LoadFromModel_SetsViewCorrectly()
         {
-            view.DomainUsage.SelectedItem = "Multiple";
-            view.DomainUsage.SelectionChanged += Raise.Event<ActionDelegate>();
-            Assert.That(model.DomainUsage, Is.EqualTo(DomainUsage.Multiple));
+            Assert.That(view.ProjectBase.Text, Is.EqualTo(model.EffectiveBasePath));
         }
 
         [Test]
-        public void ChangingProjectBaseUpdatesProject()
+        public void ProjectBase_WhenChanged_UpdatesProject()
         {
             view.ProjectBase.Text = "test.nunit";
             view.ProjectBase.Validated += Raise.Event<ActionDelegate>();
@@ -137,7 +224,26 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ChangingRuntimeUpdatesProject()
+        public void ProjectPath_LoadFromModel_SetsViewCorrectly()
+        {
+            Assert.That(view.ProjectPath.Text, Is.EqualTo(model.ProjectPath));
+        }
+
+        [Test]
+        public void Runtime_LoadFromModel_SetsOptionsCorrectly()
+        {
+            Assert.That(view.Runtime.SelectionList, Is.EqualTo(
+                new string[] { "Any", "Net", "Mono" }));
+        }
+
+        [Test]
+        public void Runtime_LoadFromModel_SelectsAnyRuntime()
+        {
+            Assert.That(view.Runtime.SelectedIndex, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Runtime_WhenChanged_UpdatesProject()
         {
             model.Configs[0].RuntimeFramework = new RuntimeFramework(RuntimeType.Net, new Version("2.0.50727"));
 
@@ -151,7 +257,14 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ChangingRuntimeVersionUpdatesProject()
+        public void RuntimeVersion_LoadFromModel_SetsOptionsCorretly()
+        {
+            Assert.That(view.RuntimeVersion.SelectionList, Is.EqualTo(
+                new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" }));
+        }
+
+        [Test]
+        public void RuntimeVersion_WhenChanged_UpdatesProject()
         {
             view.Runtime.SelectedItem = "Mono";
             view.RuntimeVersion.SelectedItem = "1.1.4322";
@@ -159,10 +272,6 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             RuntimeFramework framework = model.Configs[0].RuntimeFramework;
             Assert.That(framework.Runtime, Is.EqualTo(RuntimeType.Mono));
             Assert.That(framework.ClrVersion, Is.EqualTo(new Version(1, 1, 4322)));
-        }
-
-        public void ChangingSelectedConfigUpdatesRuntime()
-        {
         }
     }
 }

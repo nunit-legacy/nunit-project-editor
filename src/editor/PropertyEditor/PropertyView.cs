@@ -81,6 +81,10 @@ namespace NUnit.ProjectEditor
 
         public IDialogManager DialogManager { get; private set; }
         public IMessageDisplay MessageDisplay { get; private set; }
+        public IConfigurationEditorDialog ConfigurationEditorDialog 
+        {
+            get { return new ConfigurationEditorDialog(); }
+        }
 
         public ICommand BrowseProjectBaseCommand { get; private set; }
         public ICommand EditConfigsCommand { get; private set; }
@@ -116,36 +120,36 @@ namespace NUnit.ProjectEditor
 
         #region Methods
 
-        public void SetAssemblyList(IEnumerable<string> list)
-        {
-            string selectedAssembly = (string)assemblyListBox.SelectedItem;
+        //public void SetAssemblyList(IEnumerable<string> list)
+        //{
+        //    string selectedAssembly = (string)assemblyListBox.SelectedItem;
 
-            assemblyListBox.Items.Clear();
-            int selectedIndex = -1;
+        //    assemblyListBox.Items.Clear();
+        //    int selectedIndex = -1;
 
-            foreach (string assembly in list)
-            {
-                int index = assemblyListBox.Items.Add(Path.GetFileName(assembly));
+        //    foreach (string assembly in list)
+        //    {
+        //        int index = assemblyListBox.Items.Add(Path.GetFileName(assembly));
 
-                if (assembly == selectedAssembly)
-                    selectedIndex = index;
-            }
+        //        if (assembly == selectedAssembly)
+        //            selectedIndex = index;
+        //    }
 
-            if (assemblyListBox.Items.Count > 0 && selectedIndex == -1)
-                selectedIndex = 0;
+        //    if (assemblyListBox.Items.Count > 0 && selectedIndex == -1)
+        //        selectedIndex = 0;
 
-            if (selectedIndex == -1)
-            {
-                removeAssemblyButton.Enabled = false;
-                assemblyPathBrowseButton.Enabled = false;
-            }
-            else
-            {
-                assemblyListBox.SelectedIndex = selectedIndex;
-                removeAssemblyButton.Enabled = true;
-                assemblyPathBrowseButton.Enabled = true;
-            }
-        }
+        //    if (selectedIndex == -1)
+        //    {
+        //        removeAssemblyButton.Enabled = false;
+        //        assemblyPathBrowseButton.Enabled = false;
+        //    }
+        //    else
+        //    {
+        //        assemblyListBox.SelectedIndex = selectedIndex;
+        //        removeAssemblyButton.Enabled = true;
+        //        assemblyPathBrowseButton.Enabled = true;
+        //    }
+        //}
        
         #endregion
 

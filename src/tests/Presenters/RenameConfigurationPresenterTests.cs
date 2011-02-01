@@ -14,31 +14,33 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [SetUp]
         public void Initialize()
         {
-            model = Substitute.For<IProjectModel>();
+            var doc = new ProjectDocument();
+            doc.LoadXml(NUnitProjectXml.EmptyConfigs);
+            model = new ProjectModel(doc);
             dlg = Substitute.For<IRenameConfigurationDialog>();
             presenter = new RenameConfigurationPresenter(model, dlg, "Debug");
         }
 
         [Test]
-        public void ConfigurationNameIsInitiallySetToOriginalName()
+        public void ConfigurationName_OnLoad_IsSetToOriginalName()
         {
             Assert.AreEqual("Debug", dlg.ConfigurationName.Text);
         }
 
         [Test]
-        public void ConfigurationNameIsInitiallySelected()
+        public void ConfigurationName_OnLoad_OriginalNameIsSelected()
         {
             dlg.ConfigurationName.Received().Select(0,5);
         }
 
         [Test]
-        public void OkButtonIsInitiallyDisabled()
+        public void OkButton_OnLoad_IsDisabled()
         {
             Assert.False(dlg.OkButton.Enabled);
         }
 
         [Test]
-        public void SettingNewConfigNameEnablesOK()
+        public void ConfigurationName_WhenSetToNewName_OkButtonIsEnabled()
         {
             dlg.ConfigurationName.Text = "New";
             dlg.ConfigurationName.Changed += Raise.Event<ActionDelegate>();
@@ -47,7 +49,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void SettingSameConfigNameDisablesOK()
+        public void ConfigurationName_WhenSetToOriginalName_OkButtonIsDisabled()
         {
             dlg.ConfigurationName.Text = "Debug";
             dlg.ConfigurationName.Changed += Raise.Event<ActionDelegate>();
@@ -56,7 +58,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ClearingNameDisablesOK()
+        public void ConfigurationName_WhenCleared_OkButtonIsDisabled()
         {
             dlg.ConfigurationName.Text = string.Empty;
             dlg.ConfigurationName.Changed += Raise.Event<ActionDelegate>();
@@ -64,11 +66,22 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             Assert.False(dlg.OkButton.Enabled);
         }
 
-        //[Test]
-        //public void ClickingOKPerformsRename()
-        //{
-        //    dlg.ConfigurationName.Text = "New";
-        //    dlg.OkButton.Execute += Raise.Event<CommandDelegate>();
-        //}
+        [Test]
+        public void OkButton_WhenClicked_PerformsRename()
+        {
+            dlg.ConfigurationName.Text = "New";
+            dlg.OkButton.Execute += Raise.Event<CommandDelegate>();
+
+            Assert.That(model.ConfigNames, Is.EqualTo(new[] { "New", "Release" }));
+        }
+
+        [Test]
+        public void Dialog_WhenClosedWithoutClickingOK_LeavesConfigsUnchanged()
+        {
+            dlg.ConfigurationName.Text = "New";
+            dlg.Close();
+
+            Assert.That(model.ConfigNames, Is.EqualTo(new[] { "Debug", "Release" }));
+        }
     }
 }

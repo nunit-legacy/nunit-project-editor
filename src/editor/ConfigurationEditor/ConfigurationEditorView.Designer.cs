@@ -1,6 +1,6 @@
 ﻿namespace NUnit.ProjectEditor
 {
-    partial class ConfigurationEditorView
+    partial class ConfigurationEditorDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(ConfigurationEditorView));
+            System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(ConfigurationEditorDialog));
             this.configListBox = new System.Windows.Forms.ListBox();
             this.removeButton = new System.Windows.Forms.Button();
             this.renameButton = new System.Windows.Forms.Button();

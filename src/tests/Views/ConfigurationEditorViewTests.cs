@@ -31,7 +31,7 @@ namespace NUnit.ProjectEditor.Tests.Views
         [Test]
         public void AllViewElementsAreWrapped()
         {
-            ConfigurationEditorView view = new ConfigurationEditorView();
+            ConfigurationEditorDialog view = new ConfigurationEditorDialog();
 
             Assert.NotNull(view.AddCommand);
             Assert.NotNull(view.RemoveCommand);

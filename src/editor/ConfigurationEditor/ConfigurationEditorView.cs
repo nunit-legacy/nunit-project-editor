@@ -35,11 +35,11 @@ namespace NUnit.ProjectEditor
 	/// ConfigurationEditor form is designed for adding, deleting
 	/// and renaming configurations from a doc.
 	/// </summary>
-	public partial class ConfigurationEditorView : System.Windows.Forms.Form, IConfigurationEditorView
+	public partial class ConfigurationEditorDialog : System.Windows.Forms.Form, IConfigurationEditorDialog
     {
 		#region Constructor
 
-		public ConfigurationEditorView()
+		public ConfigurationEditorDialog()
 		{
 			InitializeComponent();
 
@@ -55,7 +55,7 @@ namespace NUnit.ProjectEditor
 
 		#endregion
 
-        #region IConfigurationEditorView Members
+        #region IConfigurationEditorDialog Members
 
         #region Properties
 

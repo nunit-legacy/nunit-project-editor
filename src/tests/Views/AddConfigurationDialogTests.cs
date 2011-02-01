@@ -37,7 +37,6 @@ namespace NUnit.ProjectEditor.Tests.Views
 		{
             dlg = new AddConfigurationDialog();
             dlg.ConfigList = new[] { "Debug", "Release" };
-            dlg.ConfigToCopy = "Debug";
             this.Form = dlg;
 		}
 
@@ -57,14 +56,14 @@ namespace NUnit.ProjectEditor.Tests.Views
         }
 
         [Test]
-        public void CheckTextBox()
+        public void TextBox_OnLoad_IsEmpty()
         {
             TextBox configBox = TextBoxes["configurationNameTextBox"];
             Assert.AreEqual("", configBox.Text);
         }
 
         [Test]
-        public void CheckComboBox()
+        public void ComboBox_OnLoad_IsInitializedCorrectly()
         {
             ComboBox combo = Combos["configurationComboBox"];
             dlg.Show();
@@ -72,7 +71,7 @@ namespace NUnit.ProjectEditor.Tests.Views
             Assert.AreEqual("<none>", combo.Items[0]);
             Assert.AreEqual("Debug", combo.Items[1]);
             Assert.AreEqual("Release", combo.Items[2]);
-            Assert.AreEqual("Debug", combo.SelectedItem);
+            Assert.AreEqual("<none>", combo.SelectedItem);
         }
 
         [Test]
@@ -84,7 +83,7 @@ namespace NUnit.ProjectEditor.Tests.Views
             config.Text = "Super";
             okButton.PerformClick();
             Assert.AreEqual("Super", dlg.ConfigToCreate);
-            Assert.AreEqual("Debug", dlg.ConfigToCopy);
+            Assert.AreEqual(null, dlg.ConfigToCopy);
         }
 
         [Test]
@@ -96,11 +95,11 @@ namespace NUnit.ProjectEditor.Tests.Views
             ComboBox combo = Combos["configurationComboBox"];
 
             config.Text = "Super";
-            combo.SelectedIndex = combo.FindStringExact("<none>");
+            combo.SelectedIndex = combo.FindStringExact("Release");
 
             okButton.PerformClick();
             Assert.AreEqual("Super", dlg.ConfigToCreate);
-            Assert.Null(dlg.ConfigToCopy);
+            Assert.AreEqual("Release", dlg.ConfigToCopy);
         }
 	}
 }

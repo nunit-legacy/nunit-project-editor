@@ -32,6 +32,7 @@ namespace NUnit.ProjectEditor
         #region Properties
 
         IDialogManager DialogManager { get; }
+        IConfigurationEditorDialog ConfigurationEditorDialog { get; }
 
         #region Command Elements
 
@@ -71,12 +72,6 @@ namespace NUnit.ProjectEditor
         ITextElement AssemblyPath { get; }
 
         #endregion
-
-        #endregion
-
-        #region Methods
-
-        void SetAssemblyList(IEnumerable<string> list);
 
         #endregion
     }

@@ -76,8 +76,8 @@ namespace NUnit.ProjectEditor
         }
 
         /// <summary>
-        /// The base directory for this config - used
-        /// as the application base for loading tests.
+        /// The base directory for this config as stored
+        /// in the config element ofthe document. May be null.
         /// </summary>
         public string BasePath
         {
@@ -86,21 +86,28 @@ namespace NUnit.ProjectEditor
         }
 
         /// <summary>
-        /// The base path relative to the doc base
+        /// The base path relative to the doc base. This is what
+        /// is stored in the document unless the user edits the
+        /// xml directly.
         /// </summary>
         public string RelativeBasePath
         {
             get
             {
-                string basePath = BasePath;
+                //string basePath = BasePath;
 
-                if (project == null || basePath == null || !Path.IsPathRooted(basePath))
-                    return basePath;
+                //if (project == null || basePath == null || !Path.IsPathRooted(basePath))
+                //    return basePath;
 
-                return PathUtils.RelativePath(project.BasePath, basePath);
+                return PathUtils.RelativePath(project.EffectiveBasePath, EffectiveBasePath);
             }
         }
 
+        /// <summary>
+        /// The actual base path used in loading the tests. Its
+        /// value depends on the appbase entry of the config element
+        /// as well as the project EffectiveBasePath.
+        /// </summary>
         public string EffectiveBasePath
         {
             get
@@ -125,7 +132,7 @@ namespace NUnit.ProjectEditor
 
         /// <summary>
         /// The Path.PathSeparator-separated path containing all the
-        /// assemblies in the list.
+        /// assemblies in the list. May be null if not specified.
         /// </summary>
         public string PrivateBinPath
         {

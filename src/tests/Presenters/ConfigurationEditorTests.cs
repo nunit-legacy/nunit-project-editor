@@ -31,7 +31,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class ConfigurationEditorTests
     {
-        private IConfigurationEditorView view;
+        private IConfigurationEditorDialog view;
 
         private ProjectModel model;
         private ConfigurationEditor editor;
@@ -43,38 +43,73 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             doc.LoadXml(NUnitProjectXml.NormalProject);
             model = new ProjectModel(doc);
 
-            view = Substitute.For<IConfigurationEditorView>();
+            view = Substitute.For<IConfigurationEditorDialog>();
 
             editor = new ConfigurationEditor(model, view);
         }
 
         [Test]
-        public void PresenterSubscribesToRequiredEvents()
+        public void AddButton_OnLoad_IsSubscribed()
         {
             view.AddCommand.Received().Execute += editor.AddConfig;
+        }
+
+        [Test]
+        public void RemoveButton_OnLoad_IsSubscribed()
+        {
             view.RemoveCommand.Received().Execute += editor.RemoveConfig;
+        }
+
+        [Test]
+        public void RenameButton_OnLoad_IsSubscribed()
+        {
             view.RenameCommand.Received().Execute += editor.RenameConfig;
+        }
+
+        [Test]
+        public void ActiveButton_OnLoad_IsSubscribed()
+        {
             view.ActiveCommand.Received().Execute += editor.MakeActive;
+        }
+
+        [Test]
+        public void ConfigList_OnLoad_SelectionChangedIsSubscribed()
+        {
             view.ConfigList.Received().SelectionChanged += editor.SelectedConfigChanged;
         }
 
         [Test]
-        public void ConfigListIsCorrectlyInitialized()
+        public void ConfigList_OnLoad_IsCorrectlyInitialized()
         {
             Assert.That(view.ConfigList.SelectionList, Is.EqualTo( new[] { "Debug (active)", "Release" }));
         }
 
         [Test]
-        public void ButtonsAreCorrectlyInitialized()
+        public void AddButton_OnLoad_IsEnabled()
         {
-            Assert.True(view.AddCommand.Enabled, "Add button should be enabled");
-            Assert.True(view.RemoveCommand.Enabled, "Remove button should be enabled");
-            Assert.True(view.RenameCommand.Enabled, "Rename button should be enabled");
-            Assert.False(view.ActiveCommand.Enabled, "Active button should be disabled");
+            Assert.True(view.AddCommand.Enabled);
         }
 
         [Test]
-        public void ClickingAddAddsNewConfig()
+        public void RemoveButton_OnLoad_IsEnabled()
+        {
+            Assert.True(view.RemoveCommand.Enabled);
+        }
+
+        [Test]
+        public void RenameButton_OnLoad_IsEnabled()
+        {
+            Assert.True(view.RenameCommand.Enabled);
+        }
+
+        [Test]
+        public void ActiveButton_OnLoad_IsDisabled()
+        {
+            Assert.False(view.ActiveCommand.Enabled);
+        }
+
+        [Test]
+        public void AddButton_WhenClicked_AddsNewConfig()
         {
             view.AddConfigurationDialog.ShowDialog().Returns(delegate
             {
@@ -91,7 +126,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ClickingRemoveRemovesConfig()
+        public void RemoveButton_WhenClicked_RemovesConfig()
         {
             view.RemoveCommand.Execute += Raise.Event<CommandDelegate>();
 
@@ -105,7 +140,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ClickingRenamePerformsRename()
+        public void RenameButton_WhenClicked_PerformsRename()
         {
             view.ConfigList.SelectedItem.Returns("Debug");
             view.RenameConfigurationDialog.ShowDialog().Returns(delegate
@@ -121,7 +156,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ClickingActiveMakesConfigActive()
+        public void ActiveButton_WhenClicked_MakesConfigActive()
         {
             view.ConfigList.SelectedItem = "Release";
             RaiseExecute(view.ActiveCommand);

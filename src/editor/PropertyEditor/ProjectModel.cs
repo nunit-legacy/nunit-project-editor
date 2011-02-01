@@ -49,12 +49,20 @@ namespace NUnit.ProjectEditor
             set { doc.ProjectPath = value; }
         }
 
+        /// <summary>
+        /// BasePath is the base as it appears in the document
+        /// and may be null if there is no setting.
+        /// </summary>
         public string BasePath
         {
             get { return GetSettingsAttribute("appbase"); }
             set { SetSettingsAttribute("appbase", value); }
         }
 
+        /// <summary>
+        /// EffectiveBasePath uses the BasePath if present and otherwise
+        /// defaults to the directory part of the ProjectPath.
+        /// </summary>
         public string EffectiveBasePath
         {
             get { return this.BasePath ?? Path.GetDirectoryName(this.ProjectPath); }

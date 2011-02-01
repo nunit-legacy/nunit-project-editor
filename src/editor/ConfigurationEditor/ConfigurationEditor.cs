@@ -31,13 +31,13 @@ namespace NUnit.ProjectEditor
         #region Instance Variables
 
         private IProjectModel model;
-        private IConfigurationEditorView view;
+        private IConfigurationEditorDialog view;
 
         #endregion
 
         #region Constructor
 
-        public ConfigurationEditor(IProjectModel model, IConfigurationEditorView view)
+        public ConfigurationEditor(IProjectModel model, IConfigurationEditorDialog view)
         {
             this.model = model;
             this.view = view;

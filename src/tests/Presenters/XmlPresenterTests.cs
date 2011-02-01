@@ -47,13 +47,13 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         }
 
         [Test]
-        public void ViewIsInitializedCorrectly()
+        public void XmlText_OnLoad_IsInitializedCorrectly()
         {
             Assert.AreEqual(initialText, view.Xml.Text);
         }
 
         [Test]
-        public void WhenXmlChangesModelIsUpdated()
+        public void XmlText_WhenChanged_ModelIsUpdated()
         {
             view.Xml.Text = changedText;
             view.Xml.Validated += Raise.Event<ActionDelegate>();
