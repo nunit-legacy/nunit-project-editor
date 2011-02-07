@@ -34,14 +34,22 @@ namespace NUnit.ProjectEditor
         string ProjectPath { get; set; }
         string BasePath { get; set; }
         string EffectiveBasePath { get; }
-        bool AutoConfig { get; set; }
+
         string ActiveConfigName { get; set; }
 
-        ProcessModel ProcessModel { get; set; }
-        DomainUsage DomainUsage { get; set; }
+        string ProcessModel { get; set; }
+        string DomainUsage { get; set; }
 
         ConfigList Configs { get; }
         string[] ConfigNames { get; }
+
+        #endregion
+
+        #region Methods
+
+        IProjectConfig AddConfig(string name);
+        void RemoveConfig(string name);
+        void RemoveConfigAt(int index);
 
         #endregion
     }

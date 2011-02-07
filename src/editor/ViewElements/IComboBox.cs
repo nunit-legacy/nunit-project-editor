@@ -22,33 +22,29 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.ViewElements
 {
     /// <summary>
-    /// Represents the manner in which test assemblies use
-    /// AppDomains to provide isolation
+    /// IComboBox is implemented by view elements that associate
+    /// an editable TextBox with a SelectionList. The classic
+    /// implementation is System.Windows.Forms.ComboBox. This 
+    /// interface is only intended for use when the TextBox
+    /// is editable. Otherwise, ISelectionList provides all
+    /// the necessary functionality.
     /// </summary>
-    public enum DomainUsage
+    public interface IComboBox : ISelectionList
     {
         /// <summary>
-        /// Use the default setting, depending on the runner
-        /// and the nature of the tests to be loaded.
+        /// Gets or sets the value of the TextBox associated
+        /// with this ComboBox.
         /// </summary>
-        Default,
+        string Text { get; set; }
+
         /// <summary>
-        /// Don't create a test domain - run in the primary AppDomain
+        /// Event that is raised when the text has changed
+        /// and the focus is moved away.
         /// </summary>
-        None,
-        /// <summary>
-        /// Run tests in a single separate test domain
-        /// </summary>
-        Single,
-        /// <summary>
-        /// Run tests in a separate domain per assembly
-        /// </summary>
-        Multiple
+        event ActionDelegate TextValidated;
     }
 }

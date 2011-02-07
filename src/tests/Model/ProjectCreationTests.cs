@@ -108,7 +108,7 @@ namespace NUnit.ProjectEditor.Tests.Model
         [Test]
         public void SaveMakesProjectNotDirty()
         {
-            project.Configs.Add("Debug");
+            project.AddConfig("Debug");
             doc.Save(xmlfile);
             Assert.IsFalse(doc.HasUnsavedChanges);
         }
@@ -136,32 +136,17 @@ namespace NUnit.ProjectEditor.Tests.Model
         }
 
         [Test]
-        public void CanSetAutoConfig()
-        {
-            Assert.IsFalse(project.AutoConfig);
-            project.AutoConfig = true;
-            Assert.IsTrue(project.AutoConfig);
-        }
-
-        [Test]
         public void CanAddConfigs()
         {
-            project.Configs.Add("Debug");
-            project.Configs.Add("Release");
+            project.AddConfig("Debug");
+            project.AddConfig("Release");
             Assert.AreEqual(2, project.Configs.Count);
-        }
-
-        [Test]
-        public void DefaultActiveConfig()
-        {
-            project.Configs.Add("Debug");
-            Assert.AreEqual("Debug", project.ActiveConfigName);
         }
 
         [Test]
         public void LoadMakesProjectNotDirty()
         {
-            project.Configs.Add("Debug");
+            project.AddConfig("Debug");
             doc.Save(xmlfile);
             ProjectDocument doc2 = new ProjectDocument(xmlfile);
             doc2.Load();
@@ -171,14 +156,14 @@ namespace NUnit.ProjectEditor.Tests.Model
         [Test]
         public void AddConfigMakesProjectDirty()
         {
-            project.Configs.Add("Debug");
+            project.AddConfig("Debug");
             Assert.IsTrue(doc.HasUnsavedChanges);
         }
 
         [Test]
         public void AddConfigFiresChangedEvent()
         {
-            project.Configs.Add("Debug");
+            project.AddConfig("Debug");
             Assert.IsTrue(gotChangeNotice);
         }
     }

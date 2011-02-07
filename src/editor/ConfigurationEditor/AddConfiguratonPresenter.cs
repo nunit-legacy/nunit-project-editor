@@ -54,7 +54,7 @@ namespace NUnit.ProjectEditor
                     }
                 }
 
-                IProjectConfig newConfig = model.Configs.Add(dlg.ConfigToCreate);
+                IProjectConfig newConfig = model.AddConfig(dlg.ConfigToCreate);
 
                 if (dlg.ConfigToCopy != null)
                 {

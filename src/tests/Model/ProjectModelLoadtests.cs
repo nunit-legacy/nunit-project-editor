@@ -27,22 +27,18 @@ using NUnit.Framework;
 namespace NUnit.ProjectEditor.Tests.Model
 {
     [TestFixture]
-    public class ProjectModelTests
+    public class ProjectModelLoadtests
     {
         static readonly string xmlfile = "MyProject.nunit";
 
         private ProjectDocument doc;
         private ProjectModel project;
-        private bool gotChangeNotice;
 
         [SetUp]
         public void SetUp()
         {
             doc = new ProjectDocument(xmlfile);
             project = new ProjectModel(doc);
-
-            doc.ProjectChanged += OnProjectChange;
-            gotChangeNotice = false;
         }
 
         [TearDown]
@@ -52,24 +48,43 @@ namespace NUnit.ProjectEditor.Tests.Model
                 File.Delete(xmlfile);
         }
 
-        private void OnProjectChange()
-        {
-            gotChangeNotice = true;
-        }
-
         [Test]
         public void LoadEmptyProject()
         {
             doc.LoadXml(NUnitProjectXml.EmptyProject);
+
             Assert.AreEqual(Path.GetFullPath(xmlfile), project.ProjectPath);
+            
+            Assert.AreEqual(null, project.BasePath);
+            Assert.AreEqual(Path.GetDirectoryName(project.ProjectPath), project.EffectiveBasePath);
+
+            Assert.AreEqual("Default", project.ProcessModel);
+            Assert.AreEqual("Default", project.DomainUsage);
+
             Assert.AreEqual(0, project.Configs.Count);
+            Assert.AreEqual(0, project.ConfigNames.Length);
+
+            Assert.AreEqual(null, project.ActiveConfigName);
         }
 
         [Test]
         public void LoadEmptyConfigs()
         {
             doc.LoadXml(NUnitProjectXml.EmptyConfigs);
+
+            Assert.AreEqual(Path.GetFullPath(xmlfile), project.ProjectPath);
+
+            Assert.AreEqual(null, project.BasePath);
+            Assert.AreEqual(Path.GetDirectoryName(project.ProjectPath), project.EffectiveBasePath);
+
+            Assert.AreEqual("Default", project.ProcessModel);
+            Assert.AreEqual("Default", project.DomainUsage);
+
             Assert.AreEqual(2, project.Configs.Count);
+            Assert.AreEqual(new[] { "Debug", "Release" }, project.ConfigNames);
+
+            Assert.AreEqual("Debug", project.ActiveConfigName);
+
             Assert.AreEqual("Debug", project.Configs[0].Name);
             Assert.AreEqual("Release", project.Configs[1].Name);
         }
@@ -78,7 +93,19 @@ namespace NUnit.ProjectEditor.Tests.Model
         public void LoadNormalProject()
         {
             doc.LoadXml(NUnitProjectXml.NormalProject);
+
+            Assert.AreEqual(Path.GetFullPath(xmlfile), project.ProjectPath);
+
+            Assert.AreEqual(null, project.BasePath);
+            Assert.AreEqual(Path.GetDirectoryName(project.ProjectPath), project.EffectiveBasePath);
+
+            Assert.AreEqual("Default", project.ProcessModel);
+            Assert.AreEqual("Default", project.DomainUsage);
+
             Assert.AreEqual(2, project.Configs.Count);
+            Assert.AreEqual(new[] { "Debug", "Release" }, project.ConfigNames);
+
+            Assert.AreEqual("Debug", project.ActiveConfigName);
 
             IProjectConfig config1 = project.Configs[0];
             Assert.AreEqual(2, config1.Assemblies.Count);
@@ -103,7 +130,18 @@ namespace NUnit.ProjectEditor.Tests.Model
         public void LoadProjectWithManualBinPath()
         {
             doc.LoadXml(NUnitProjectXml.ManualBinPathProject);
+
+            Assert.AreEqual(Path.GetFullPath(xmlfile), project.ProjectPath);
+
+            Assert.AreEqual(null, project.BasePath);
+            Assert.AreEqual(Path.GetDirectoryName(project.ProjectPath), project.EffectiveBasePath);
+
+            Assert.AreEqual("Default", project.ProcessModel);
+            Assert.AreEqual("Default", project.DomainUsage);
+
             Assert.AreEqual(1, project.Configs.Count);
+            Assert.AreEqual(new[] { "Debug" }, project.ConfigNames);
+
             IProjectConfig config1 = project.Configs["Debug"];
             Assert.AreEqual("bin_path_value", config1.PrivateBinPath);
         }
@@ -113,8 +151,8 @@ namespace NUnit.ProjectEditor.Tests.Model
         {
             doc.LoadXml(NUnitProjectXml.ComplexSettingsProject);
             Assert.AreEqual("bin", project.BasePath);
-            Assert.AreEqual(ProcessModel.Separate, project.ProcessModel);
-            Assert.AreEqual(DomainUsage.Multiple, project.DomainUsage);
+            Assert.AreEqual("Separate", project.ProcessModel);
+            Assert.AreEqual("Multiple", project.DomainUsage);
 
             Assert.AreEqual(2, project.Configs.Count);
 
@@ -122,8 +160,8 @@ namespace NUnit.ProjectEditor.Tests.Model
             Assert.AreEqual(
                 "debug",
                 config1.BasePath);
-            Assert.AreEqual("v2.0", config1.RuntimeFramework.ToString());
-            Assert.AreEqual("2.0", config1.RuntimeFramework.ClrVersion.ToString(2));
+            Assert.AreEqual(RuntimeType.Any, config1.RuntimeFramework.Runtime);
+            Assert.AreEqual("2.0", config1.RuntimeFramework.Version.ToString(2));
             Assert.AreEqual(2, config1.Assemblies.Count);
             Assert.AreEqual(
                 "assembly1.dll",
@@ -137,116 +175,14 @@ namespace NUnit.ProjectEditor.Tests.Model
             Assert.AreEqual(
                 "release",
                 config2.BasePath);
-            Assert.AreEqual("v4.0", config2.RuntimeFramework.ToString());
-            Assert.AreEqual("4.0", config2.RuntimeFramework.ClrVersion.ToString(2));
+            Assert.AreEqual(RuntimeType.Any, config2.RuntimeFramework.Runtime);
+            Assert.AreEqual("4.0", config2.RuntimeFramework.Version.ToString(2));
             Assert.AreEqual(
                 "assembly1.dll",
                 config2.Assemblies[0]);
             Assert.AreEqual(
                 "assembly2.dll",
                 config2.Assemblies[1]);
-        }
-
-        [Test]
-        public void RenameConfigMakesProjectDirty()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.Configs[0].Name = "New";
-            Assert.IsTrue(doc.HasUnsavedChanges);
-        }
-
-        [Test]
-        public void RenameConfigFiresChangedEvent()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.Configs[0].Name = "New";
-            Assert.IsTrue(gotChangeNotice);
-        }
-
-        [Test]
-        public void RenamingActiveConfigChangesActiveConfigName()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.Configs[0].Name = "New";
-            Assert.AreEqual("New", project.ActiveConfigName);
-        }
-
-        [Test]
-        public void RemoveConfigMakesProjectDirty()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.Configs.Remove("Debug");
-            Assert.IsTrue(doc.HasUnsavedChanges);
-        }
-
-        [Test]
-        public void RemoveConfigFiresChangedEvent()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.Configs.Remove("Debug");
-            Assert.IsTrue(gotChangeNotice);
-        }
-
-        [Test]
-        public void RemovingActiveConfigChangesActiveConfigName()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.ActiveConfigName = "Debug";
-            project.Configs.Remove("Debug");
-            Assert.AreEqual("Release", project.ActiveConfigName);
-        }
-
-        [Test]
-        public void SettingActiveConfigMakesProjectDirty()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.ActiveConfigName = "Release";
-            Assert.IsTrue(doc.HasUnsavedChanges);
-        }
-
-        [Test]
-        public void SettingActiveConfigFiresChangedEvent()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.ActiveConfigName = "Release";
-            Assert.IsTrue(gotChangeNotice);
-        }
-
-        [Test]
-        public void CanSetActiveConfig()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.ActiveConfigName = "Release";
-            Assert.AreEqual("Release", project.ActiveConfigName);
-        }
-
-        [Test]
-        public void CanAddAssemblies()
-        {
-            doc.LoadXml(NUnitProjectXml.EmptyConfigs);
-            project.Configs["Debug"].Assemblies.Add(Path.GetFullPath(@"bin\debug\assembly1.dll"));
-            project.Configs["Debug"].Assemblies.Add(Path.GetFullPath(@"bin\debug\assembly2.dll"));
-            project.Configs["Release"].Assemblies.Add(Path.GetFullPath(@"bin\debug\assembly3.dll"));
-
-            Assert.AreEqual(2, project.Configs.Count);
-            Assert.AreEqual(2, project.Configs["Debug"].Assemblies.Count);
-            Assert.AreEqual(1, project.Configs["Release"].Assemblies.Count);
-        }
-
-        [Test]
-        public void AddingAssemblyFiresChangedEvent()
-        {
-            doc.LoadXml(NUnitProjectXml.EmptyConfigs);
-            project.Configs["Debug"].Assemblies.Add("assembly1.dll");
-            Assert.IsTrue(gotChangeNotice);
-        }
-
-        [Test]
-        public void RemoveAssemblyFiresChangedEvent()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.Configs["Debug"].Assemblies.Remove("assembly1.dll");
-            Assert.IsTrue(gotChangeNotice);
         }
 
         [Test]

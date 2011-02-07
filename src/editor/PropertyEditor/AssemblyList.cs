@@ -32,7 +32,7 @@ namespace NUnit.ProjectEditor
 	/// that are added and fires an event whenevever it
 	/// changes. All paths should be added as absolute paths.
 	/// </summary>
-	public class AssemblyList : IList<string>
+	public class AssemblyList
 	{
         private XmlNode configNode;
 
@@ -41,19 +41,29 @@ namespace NUnit.ProjectEditor
             this.configNode = configNode;
         }
 
-        #region IList<string> Members
+        #region Properties
 
-        public int IndexOf(string item)
+        public string this[int index]
         {
-            int index = -1;
-            foreach(string s in this)
-            {
-                ++index;
-                if (s == item)
-                    return index;
-            }
+            get { return XmlHelper.GetAttribute(AssemblyNodes[index], "path"); }
+            set { XmlHelper.SetAttribute(AssemblyNodes[index], "path", value); }
+        }
 
-            return -1;
+        public int Count
+        {
+            get { return AssemblyNodes.Count; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void Add(string assemblyPath)
+        {
+            XmlHelper.AddAttribute(
+                XmlHelper.AddElement(configNode, "assembly"),
+                "path",
+                assemblyPath);
         }
 
         public void Insert(int index, string assemblyPath)
@@ -64,84 +74,23 @@ namespace NUnit.ProjectEditor
                 assemblyPath);
         }
 
-        public void RemoveAt(int index)
+        public void Remove(string assemblyPath)
         {
-            configNode.RemoveChild(AssemblyNodes[index]);
+            foreach (XmlNode node in configNode.SelectNodes("assembly"))
+            {
+                string path = XmlHelper.GetAttribute(node, "path");
+                if (path == assemblyPath)
+                {
+                    configNode.RemoveChild(node);
+                    break;
+                }
+            }
         }
-
-        public string this[int index]
-        {
-            get { return XmlHelper.GetAttribute(AssemblyNodes[index], "path"); }
-            set { XmlHelper.SetAttribute(AssemblyNodes[index], "path", value); }
-        }
-
-        #endregion
-
-        #region ICollection<string> Members
-
-        public void Add(string assemblyPath)
-        {
-            XmlHelper.AddAttribute(
-                XmlHelper.AddElement(configNode, "assembly"),
-                "path",
-                assemblyPath);
-        }
-        public void Clear()
-        {
-            configNode.RemoveAll();
-        }
-
-        public bool Contains(string item)
-        {
-            return IndexOf(item) >= 0;
-        }
-
-        public void CopyTo(string[] array, int arrayIndex)
-        {
-            foreach(string item in this)
-                array[arrayIndex++] = item;
-        }
-
-        public int Count
-        {
-            get { return AssemblyNodes.Count; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
-
-        public bool Remove(string assemblyPath)
-        {
-            int index = IndexOf(assemblyPath);
-
-            if (index < 0)
-                return false;
-
-            RemoveAt(index);
-            return true;
-        }
-
-        #endregion
-
-        #region IEnumerable<string> Members
 
         public IEnumerator<string> GetEnumerator()
         {
-            var list = new List<string>();
             foreach (XmlNode node in AssemblyNodes)
-                list.Add(XmlHelper.GetAttribute(node, "path"));
-            return list.GetEnumerator();
-        }
-
-        #endregion
-
-        #region IEnumerable Members
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return (System.Collections.IEnumerator)this.GetEnumerator();
+                yield return XmlHelper.GetAttribute(node, "path");
         }
 
         #endregion

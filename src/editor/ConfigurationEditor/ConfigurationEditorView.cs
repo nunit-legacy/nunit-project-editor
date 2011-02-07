@@ -48,7 +48,7 @@ namespace NUnit.ProjectEditor
             RenameCommand = new ButtonElement(renameButton);
             ActiveCommand = new ButtonElement(activeButton);
 
-            ConfigList = new ListControlWrapper(configListBox);
+            ConfigList = new ListBoxElement(configListBox);
 
             MessageDisplay = new MessageDisplay("NUnit Configuration Editor");
 		}

@@ -22,8 +22,7 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
@@ -46,10 +45,16 @@ namespace NUnit.ProjectEditor
         /// </summary>
         string ProjectPath { get; set; }
 
-        System.Xml.XmlNode RootNode { get; }
+        XmlNode RootNode { get; }
+        XmlNode SettingsNode { get; }
+        XmlNodeList ConfigNodes { get; }
 
         bool HasUnsavedChanges { get; }
         bool IsValid { get; }
+
+        string GetSettingsAttribute(string name);
+        void SetSettingsAttribute(string name, string value);
+        void RemoveSettingsAttribute(string name);
 
         #endregion
 

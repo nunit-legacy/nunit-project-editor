@@ -151,6 +151,22 @@ namespace NUnit.ProjectEditor
             get { return xmlDoc.FirstChild; }
         }
 
+        /// <summary>
+        /// The Settings node if present, otherwise null
+        /// </summary>
+        public XmlNode SettingsNode
+        {
+            get { return RootNode.SelectSingleNode("Settings"); }
+        }
+
+        /// <summary>
+        /// The collection of Config nodes - may be empty
+        /// </summary>
+        public XmlNodeList ConfigNodes
+        {
+            get { return RootNode.SelectNodes("Config"); }
+        }
+
         public bool HasUnsavedChanges
         {
             get { return hasUnsavedChanges; }
@@ -228,6 +244,33 @@ namespace NUnit.ProjectEditor
                     UpdateXmlTextFromXmlDoc();
                     break;
             }
+        }
+
+        public string GetSettingsAttribute(string name)
+        {
+            if (SettingsNode == null)
+                return null;
+
+            return XmlHelper.GetAttribute(SettingsNode, name);
+        }
+
+        public void SetSettingsAttribute(string name, string value)
+        {
+            if (value == null)
+                RemoveSettingsAttribute(name);
+            else
+            {
+                if (SettingsNode == null)
+                    XmlHelper.InsertElement(RootNode, "Settings", 0);
+
+                XmlHelper.SetAttribute(SettingsNode, name, value);
+            }
+        }
+
+        public void RemoveSettingsAttribute(string name)
+        {
+            if (SettingsNode != null)
+                XmlHelper.RemoveAttribute(SettingsNode, name);
         }
 
         #region Load Methods

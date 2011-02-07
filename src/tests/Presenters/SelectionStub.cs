@@ -27,15 +27,40 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor.Tests
 {
-    public class SelectionStub : ISelectionList
+    public class SelectionStub : ISelectionList, IComboBox
     {
         private int selectedIndex = -1;
         private string[] selectionList;
+        private string text;
 
         public SelectionStub(string name)
         {
             this.Name = name;
         }
+
+        #region IComboBox Members
+
+        public string Text
+        {
+            get { return text; }
+            set 
+            { 
+                text = value;
+
+                int index = IndexOf(text);
+                selectedIndex = index >= 0 ? index : -1;
+
+                if (TextValidated != null)
+                    TextValidated();
+
+                if (SelectionChanged != null)
+                    SelectionChanged();
+            }
+        }
+
+        public event ActionDelegate TextValidated;
+
+        #endregion
 
         #region ISelectionList Members
 
@@ -46,18 +71,25 @@ namespace NUnit.ProjectEditor.Tests
         {
             get
             {
-                return selectedIndex >= 0 && selectedIndex < SelectionList.Length
-                    ? SelectionList[selectedIndex]
+                return selectedIndex >= 0 && selectedIndex < selectionList.Length
+                    ? selectionList[selectedIndex]
                     : null;
             }
             set
             {
-                for (int index = 0; index < SelectionList.Length; index++)
-                    if (value == SelectionList[index])
-                    {
-                        selectedIndex = index;
-                        return;
-                    }
+                int index = IndexOf(value);
+                
+                if (index >= 0)
+                {
+                    text = value;
+                    selectedIndex = index;
+
+                    if (TextValidated != null)
+                        TextValidated();
+
+                    if (SelectionChanged != null)
+                        SelectionChanged();
+                }
             }
         }
 
@@ -87,9 +119,15 @@ namespace NUnit.ProjectEditor.Tests
         public int SelectedIndex
         {
             get { return selectedIndex; }
-            set { selectedIndex = value < 0 || value >= SelectionList.Length ? -1 : value; }
-        }
+            set 
+            { 
+                selectedIndex = value < 0 || value >= SelectionList.Length ? -1 : value;
 
+                if (SelectionChanged != null)
+                    SelectionChanged();
+            }
+        }
+        
 
         /// <summary>
         /// Event raised when the selection is changed by the user
@@ -112,17 +150,15 @@ namespace NUnit.ProjectEditor.Tests
 
         #endregion 
 
-        #region Public Methods
+        #region Helper Methods
 
-        public void RaiseSelectionChangedEvent()
+        private int IndexOf(string item)
         {
-            if (SelectionChanged != null)
-                SelectionChanged();
-        }
+            for (int index = 0; index < selectionList.Length; index++)
+                if (item == selectionList[index])
+                    return index;
 
-        public bool HasSubscribers
-        {
-            get { return SelectionChanged != null; }
+            return -1;
         }
 
         #endregion

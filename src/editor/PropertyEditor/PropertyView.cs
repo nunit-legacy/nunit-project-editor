@@ -57,27 +57,25 @@ namespace NUnit.ProjectEditor
 
             ProjectPath = new TextElement(projectPathLabel);
             ProjectBase = new TextElement(projectBaseTextBox);
-            ProcessModel = new ListControlWrapper(processModelComboBox);
-            DomainUsage = new ListControlWrapper(domainUsageComboBox);
-            Runtime = new ListControlWrapper(runtimeComboBox);
-            RuntimeVersion = new ListControlWrapper(runtimeVersionComboBox);
+            ProcessModel = new ComboBoxElement(processModelComboBox);
+            DomainUsage = new ComboBoxElement(domainUsageComboBox);
+            Runtime = new ComboBoxElement(runtimeComboBox);
+            RuntimeVersion = new ComboBoxElement(runtimeVersionComboBox);
             ActiveConfigName = new TextElement(activeConfigLabel);
 
-            ConfigList = new ListControlWrapper(configComboBox);
+            ConfigList = new ComboBoxElement(configComboBox);
 
             ApplicationBase = new TextElement(applicationBaseTextBox);
             ConfigurationFile = new TextElement(configFileTextBox);
             BinPathType = new RadioButtonGroup("BinPathType", autoBinPathRadioButton, manualBinPathRadioButton, noBinPathRadioButton);
             PrivateBinPath = new TextElement(privateBinPathTextBox);
             AssemblyPath = new TextElement(assemblyPathTextBox);
-            AssemblyList = new ListControlWrapper(assemblyListBox);
+            AssemblyList = new ListBoxElement(assemblyListBox);
         }
 
         #endregion
         
         #region IPropertyView Members
-
-        #region Properties
 
         public IDialogManager DialogManager { get; private set; }
         public IMessageDisplay MessageDisplay { get; private set; }
@@ -105,7 +103,7 @@ namespace NUnit.ProjectEditor
         public ISelectionList ConfigList { get; private set; }
 
         public ISelectionList Runtime { get; private set; }
-        public ISelectionList RuntimeVersion { get; private set; }
+        public IComboBox RuntimeVersion { get; private set; }
         public ITextElement ApplicationBase { get; private set; }
         public ITextElement ConfigurationFile { get; private set; }
         public ISelection BinPathType { get; private set; }
@@ -115,43 +113,6 @@ namespace NUnit.ProjectEditor
         public ISelectionList AssemblyList { get; private set; }
 
         public ITextElement AssemblyPath { get; private set; }
-
-        #endregion
-
-        #region Methods
-
-        //public void SetAssemblyList(IEnumerable<string> list)
-        //{
-        //    string selectedAssembly = (string)assemblyListBox.SelectedItem;
-
-        //    assemblyListBox.Items.Clear();
-        //    int selectedIndex = -1;
-
-        //    foreach (string assembly in list)
-        //    {
-        //        int index = assemblyListBox.Items.Add(Path.GetFileName(assembly));
-
-        //        if (assembly == selectedAssembly)
-        //            selectedIndex = index;
-        //    }
-
-        //    if (assemblyListBox.Items.Count > 0 && selectedIndex == -1)
-        //        selectedIndex = 0;
-
-        //    if (selectedIndex == -1)
-        //    {
-        //        removeAssemblyButton.Enabled = false;
-        //        assemblyPathBrowseButton.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        assemblyListBox.SelectedIndex = selectedIndex;
-        //        removeAssemblyButton.Enabled = true;
-        //        assemblyPathBrowseButton.Enabled = true;
-        //    }
-        //}
-       
-        #endregion
 
         #endregion
 

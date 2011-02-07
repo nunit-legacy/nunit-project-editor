@@ -82,7 +82,7 @@ namespace NUnit.ProjectEditor
 
         public void RemoveConfig()
         {
-            model.Configs.RemoveAt(view.ConfigList.SelectedIndex);
+            model.RemoveConfigAt(view.ConfigList.SelectedIndex);
 
             UpdateConfigList();
         }

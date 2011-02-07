@@ -98,10 +98,6 @@ namespace NUnit.ProjectEditor
         public ICommand OkButton { get; private set; }
 
 		#endregion
-
-        #region Methods
-
-        #endregion
     }
 
     public interface IAddConfigurationDialog : IDialog

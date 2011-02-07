@@ -27,36 +27,53 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    /// <summary>
-    /// IMainView represents the top level view for the
-    /// Project editor. It provides a menu commands and several
-    /// utility methods used in opening and saving files. It
-    /// aggregates the property and xml views.
-    /// </summary>
-    public interface IMainView : IView
+    public class ListBoxElement : ControlElement, ISelectionList
     {
-        IDialogManager DialogManager { get; }
+        private ListBox listBox;
 
-        ICommand NewProjectCommand { get; }
-        ICommand OpenProjectCommand { get; }
-        ICommand CloseProjectCommand { get; }
-        ICommand SaveProjectCommand { get; }
-        ICommand SaveProjectAsCommand { get; }
+        public ListBoxElement(ListBox listBox)
+            : base(listBox)
+        {
+            this.listBox = listBox;
 
-        event ActionStartingDelegate ActiveViewChanging;
-        event ActionDelegate ActiveViewChanged;
+            listBox.SelectedIndexChanged += delegate
+            {
+                if (SelectionChanged != null)
+                    SelectionChanged();
+            };
+        }
 
-        event FormClosingEventHandler FormClosing;
+        public int SelectedIndex
+        {
+            get { return listBox.SelectedIndex; }
+            set { listBox.SelectedIndex = value; }
+        }
 
-        IPropertyView PropertyView { get; }
-        IXmlView XmlView { get; }
+        public string SelectedItem
+        {
+            get { return (string)listBox.SelectedItem; }
+            set { listBox.SelectedItem = value; }
+        }
 
-        SelectedView SelectedView { get; }
-    }
+        public string[] SelectionList
+        {
+            get
+            {
+                string[] list = new string[listBox.Items.Count];
+                int index = 0;
+                foreach (string item in listBox.Items)
+                    list[index++] = item;
 
-    public enum SelectedView
-    {
-        PropertyView = 0,
-        XmlView = 1
+                return list;
+            }
+            set
+            {
+                listBox.Items.Clear();
+                foreach (string item in value)
+                    listBox.Items.Add(item);
+            }
+        }
+
+        public event ActionDelegate SelectionChanged;
     }
 }

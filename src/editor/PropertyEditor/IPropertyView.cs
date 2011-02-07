@@ -61,7 +61,7 @@ namespace NUnit.ProjectEditor
         #region Properties of the Selected Config
 
         ISelectionList Runtime { get; }
-        ISelectionList RuntimeVersion { get; }
+        IComboBox RuntimeVersion { get; }
         ITextElement ApplicationBase { get; }
         ITextElement ConfigurationFile { get; }
 

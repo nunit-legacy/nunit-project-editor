@@ -45,12 +45,32 @@ namespace NUnit.ProjectEditor
             this.model = model;
             this.view = view;
 
-            SetProcessModelOptions();
-            SetDomainUsageOptions();
-            SetRuntimeOptions();
-            SetRuntimeVersionOptions();
+            view.ProcessModel.SelectionList = new string[] { "Default", "Single", "Separate", "Multiple" };
+            view.DomainUsage.SelectionList = new string[] { "Default", "Single", "Multiple" };
+            view.Runtime.SelectionList = new string[] { "Any", "Net", "Mono" };
+            view.RuntimeVersion.SelectionList = new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" };
 
-            WireUpEvents(view);
+            view.BrowseProjectBaseCommand.Execute += BrowseForProjectBase;
+            view.BrowseConfigBaseCommand.Execute += BrowseForConfigBase;
+            view.EditConfigsCommand.Execute += EditConfigs;
+
+            view.AddAssemblyCommand.Execute += AddAssembly;
+            view.RemoveAssemblyCommand.Execute += RemoveAssembly;
+            view.BrowseAssemblyPathCommand.Execute += BrowseForAssemblyPath;
+
+            view.ProjectBase.Validated += OnProjectBaseChange;
+            view.ProcessModel.SelectionChanged += OnProcessModelChange;
+            view.DomainUsage.SelectionChanged += OnDomainUsageChange;
+            view.ConfigList.SelectionChanged += OnSelectedConfigChange;
+
+            view.Runtime.SelectionChanged += OnRuntimeChange;
+            view.RuntimeVersion.TextValidated += OnRuntimeVersionChange;
+            view.ApplicationBase.Validated += OnApplicationBaseChange;
+            view.ConfigurationFile.Validated += OnConfigurationFileChange;
+            view.BinPathType.SelectionChanged += OnBinPathTypeChange;
+            view.PrivateBinPath.Validated += OnPrivateBinPathChange;
+            view.AssemblyList.SelectionChanged += OnSelectedAssemblyChange;
+            view.AssemblyPath.Validated += OnAssemblyPathChange;
         }
 
         public void LoadViewFromModel()
@@ -61,8 +81,8 @@ namespace NUnit.ProjectEditor
             view.ProjectBase.Text = model.EffectiveBasePath;
             view.ActiveConfigName.Text = model.ActiveConfigName;
 
-            view.ProcessModel.SelectedItem = model.ProcessModel.ToString();
-            view.DomainUsage.SelectedItem = model.DomainUsage.ToString();
+            view.ProcessModel.SelectedItem = model.ProcessModel;
+            view.DomainUsage.SelectedItem = model.DomainUsage;
 
             view.ConfigList.SelectionList = model.ConfigNames;
             if (model.ConfigNames.Length > 0)
@@ -71,7 +91,12 @@ namespace NUnit.ProjectEditor
                 selectedConfig = model.Configs[0];
             }
             else
+            {
                 view.ConfigList.SelectedIndex = -1;
+                selectedConfig = null;
+            }
+
+            //OnSelectedConfigChange();
         }
 
         #region Command Events
@@ -178,13 +203,15 @@ namespace NUnit.ProjectEditor
 
         private void OnProcessModelChange()
         {
-            model.ProcessModel = (ProcessModel)Enum.Parse(typeof(ProcessModel), view.ProcessModel.SelectedItem);
-            SetDomainUsageOptions();
+            model.ProcessModel = view.ProcessModel.SelectedItem;
+            view.DomainUsage.SelectionList = view.ProcessModel.SelectedItem == "Multiple"
+                ? new string[] { "Default", "Single" }
+                : new string[] { "Default", "Single", "Multiple" };
         }
 
         private void OnDomainUsageChange()
         {
-            model.DomainUsage = (DomainUsage)Enum.Parse(typeof(DomainUsage), view.DomainUsage.SelectedItem);
+            model.DomainUsage = view.DomainUsage.SelectedItem;
         }
 
         private void OnSelectedConfigChange()
@@ -196,15 +223,10 @@ namespace NUnit.ProjectEditor
             if (selectedConfig != null)
             {
                 RuntimeFramework framework = selectedConfig.RuntimeFramework;
-                if (framework == null)
-                {
-                    view.Runtime.SelectedItem = RuntimeType.Any.ToString();
-                }
-                else
-                {
-                    view.Runtime.SelectedItem = framework.Runtime.ToString();
-                    view.RuntimeVersion.SelectedItem = framework.ClrVersion.ToString();
-                }
+                view.Runtime.SelectedItem = framework.Runtime.ToString();
+                view.RuntimeVersion.Text = framework.Version == new Version()
+                    ? string.Empty
+                    : framework.Version.ToString();
 
                 view.ApplicationBase.Text = selectedConfig.RelativeBasePath;
                 view.ConfigurationFile.Text = selectedConfig.ConfigurationFile;
@@ -218,6 +240,9 @@ namespace NUnit.ProjectEditor
             }
             else
             {
+                view.Runtime.SelectedItem = "Any";
+                view.RuntimeVersion.Text = string.Empty;
+
                 view.ApplicationBase.Text = null;
                 view.ConfigurationFile.Text = string.Empty;
                 view.PrivateBinPath.Text = string.Empty;
@@ -230,19 +255,39 @@ namespace NUnit.ProjectEditor
 
         #region Changes Pertaining to Selected Config
 
-        private void OnRuntimeFrameworkChange()
+        private void OnRuntimeChange()
+        {
+            try
+            {
+                if (selectedConfig != null)
+                    selectedConfig.RuntimeFramework = new RuntimeFramework(
+                        (RuntimeType)Enum.Parse(typeof(RuntimeType), view.Runtime.SelectedItem),
+                        selectedConfig.RuntimeFramework.Version);
+            }
+            catch(Exception ex)
+            {
+                // Note: Should not be called with an invalid value,
+                // but we catch and report the error in any case
+                view.MessageDisplay.Error("Invalid Runtime: " + ex.Message);
+            }
+        }
+
+        private void OnRuntimeVersionChange()
         {
             if (selectedConfig != null)
             {
-                RuntimeType runtime = (RuntimeType)Enum.Parse(typeof(RuntimeType), view.Runtime.SelectedItem);
-
                 try
                 {
-                    Version version = new Version(view.RuntimeVersion.SelectedItem);
-                    selectedConfig.RuntimeFramework = new RuntimeFramework(runtime, version);
+                    Version version = string.IsNullOrEmpty(view.RuntimeVersion.Text)
+                        ? new Version()
+                        : new Version(view.RuntimeVersion.Text);
+                    selectedConfig.RuntimeFramework = new RuntimeFramework(
+                        selectedConfig.RuntimeFramework.Runtime,
+                        version);
                 }
                 catch (Exception ex)
                 {
+                    // User entered an bad value for the version
                     view.MessageDisplay.Error("Invalid RuntimeVersion: " + ex.Message);
                 }
             }
@@ -357,31 +402,6 @@ namespace NUnit.ProjectEditor
 
         #region Helper Methods
 
-        private void WireUpEvents(IPropertyView view)
-        {
-            view.BrowseProjectBaseCommand.Execute += BrowseForProjectBase;
-            view.BrowseConfigBaseCommand.Execute += BrowseForConfigBase;
-            view.EditConfigsCommand.Execute += EditConfigs;
-
-            view.AddAssemblyCommand.Execute += AddAssembly;
-            view.RemoveAssemblyCommand.Execute += RemoveAssembly;
-            view.BrowseAssemblyPathCommand.Execute += BrowseForAssemblyPath;
-
-            view.ProjectBase.Validated += OnProjectBaseChange;
-            view.ProcessModel.SelectionChanged += OnProcessModelChange;
-            view.DomainUsage.SelectionChanged += OnDomainUsageChange;
-            view.ConfigList.SelectionChanged += OnSelectedConfigChange;
-
-            view.Runtime.SelectionChanged += OnRuntimeFrameworkChange;
-            view.RuntimeVersion.SelectionChanged += OnRuntimeFrameworkChange;
-            view.ApplicationBase.Validated += OnApplicationBaseChange;
-            view.ConfigurationFile.Validated += OnConfigurationFileChange;
-            view.BinPathType.SelectionChanged += OnBinPathTypeChange;
-            view.PrivateBinPath.Validated += OnPrivateBinPathChange;
-            view.AssemblyList.SelectionChanged += OnSelectedAssemblyChange;
-            view.AssemblyPath.Validated += OnAssemblyPathChange;
-        }
-
         private void UpdateApplicationBase(string appbase)
         {
             string basePath = null;
@@ -403,33 +423,6 @@ namespace NUnit.ProjectEditor
             //    applicationBaseTextBox.Text = index.RelativeBasePath;
         }
 
-        private void SetProcessModelOptions()
-        {
-            view.ProcessModel.SelectionList = Enum.GetNames(typeof(ProcessModel));
-        }
-
-        private void SetDomainUsageOptions()
-        {
-            view.DomainUsage.SelectionList = view.ProcessModel.SelectedItem == ProcessModel.Multiple.ToString()
-                ? new string[] { "Default", "Single" }
-                : new string[] { "Default", "Single", "Multiple" };
-        }
-
-        private void SetRuntimeOptions()
-        {
-            view.Runtime.SelectionList = new string[] { "Any", "Net", "Mono" };
-        }
-
-        private void SetRuntimeVersionOptions()
-        {
-            string[] versions = new string[RuntimeFramework.KnownClrVersions.Length];
-
-            for (int i = 0; i < RuntimeFramework.KnownClrVersions.Length; i++)
-                versions[i] = RuntimeFramework.KnownClrVersions[i].ToString(3);
-
-            view.RuntimeVersion.SelectionList = versions;
-        }
-
         private void SetAssemblyList()
         {
             IProjectConfig config = model.Configs[view.ConfigList.SelectedIndex];
@@ -439,8 +432,16 @@ namespace NUnit.ProjectEditor
                 list[i] = config.Assemblies[i];
 
             view.AssemblyList.SelectionList = list;
-
-            view.AssemblyPath.Text = list.Length == 0 ? string.Empty : list[0];
+            if (list.Length > 0)
+            {
+                view.AssemblyList.SelectedIndex = 0;
+                view.AssemblyPath.Text = list[0];
+            }
+            else
+            {
+                view.AssemblyList.SelectedIndex = -1;
+                view.AssemblyPath.Text = string.Empty;
+            }
         }
 
         private bool ValidateDirectoryPath(string property, string path)
