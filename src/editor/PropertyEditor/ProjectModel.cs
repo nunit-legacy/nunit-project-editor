@@ -55,8 +55,8 @@ namespace NUnit.ProjectEditor
         /// </summary>
         public string BasePath
         {
-            get { return GetSettingsAttribute("appbase"); }
-            set { SetSettingsAttribute("appbase", value); }
+            get { return doc.GetSettingsAttribute("appbase"); }
+            set { doc.SetSettingsAttribute("appbase", value); }
         }
 
         /// <summary>
@@ -65,64 +65,32 @@ namespace NUnit.ProjectEditor
         /// </summary>
         public string EffectiveBasePath
         {
-            get { return this.BasePath ?? Path.GetDirectoryName(this.ProjectPath); }
-        }
-
-        public bool AutoConfig
-        {
-            get { return GetSettingsAttribute("autoconfig", false); }
-            set { SetSettingsAttribute("autoconfig", value.ToString()); }
+            get 
+            { 
+                return this.BasePath == null
+                    ? Path.GetDirectoryName(this.ProjectPath)
+                    : Path.Combine(
+                        Path.GetDirectoryName(this.ProjectPath),
+                        this.BasePath); 
+            }
         }
 
         public string ActiveConfigName
         {
-            get
-            {
-                string activeConfigName = GetSettingsAttribute("activeconfig");
-
-                // In case the previous active config was removed
-                if (!Configs.Contains(activeConfigName))
-                    activeConfigName = null;
-
-                // In case no active config is set or it was removed
-                if (activeConfigName == null && Configs.Count > 0)
-                    activeConfigName = Configs[0].Name;
-
-                return activeConfigName;
-            }
-            set
-            {
-                int index = -1;
-
-                if (value != null)
-                {
-                    for (int i = 0; i < Configs.Count; i++)
-                    {
-                        if (Configs[i].Name == value)
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-                }
-
-                if (index >= 0)
-                    SetSettingsAttribute("activeconfig", value);
-                else
-                    RemoveSettingsAttribute("activeconfig");
-            }
+            get { return doc.GetSettingsAttribute("activeconfig"); }
+            set { doc.SetSettingsAttribute("activeconfig", value); }
         }
 
-        public ProcessModel ProcessModel
+        public string ProcessModel
         {
-            get { return GetSettingsAttribute("processModel", ProcessModel.Default); }
-            set { SetSettingsAttribute("processModel", value); }
+            get { return doc.GetSettingsAttribute("processModel") ?? "Default"; }
+            set { doc.SetSettingsAttribute("processModel", value.ToString()); }
         }
 
-        public DomainUsage DomainUsage
+        public string DomainUsage
         {
-            get { return GetSettingsAttribute("domainUsage", DomainUsage.Default); }
-            set { SetSettingsAttribute("domainUsage", value); }
+            get { return doc.GetSettingsAttribute("domainUsage") ?? "Default"; }
+            set { doc.SetSettingsAttribute("domainUsage", value.ToString()); }
         }
 
         public ConfigList Configs
@@ -142,56 +110,46 @@ namespace NUnit.ProjectEditor
             }
         }
 
+        public IProjectConfig AddConfig(string name)
+        {
+            XmlNode configNode = XmlHelper.AddElement(doc.RootNode, "Config");
+            XmlHelper.AddAttribute(configNode, "name", name);
+
+            return new ProjectConfig(this, configNode);
+        }
+
+        public void RemoveConfigAt(int index)
+        {
+            bool itWasActive = ActiveConfigName == Configs[index].Name;
+
+            doc.RootNode.RemoveChild(doc.ConfigNodes[index]);
+            
+            if (itWasActive)
+                doc.RemoveSettingsAttribute("activeconfig");
+        }
+
+        public void RemoveConfig(string name)
+        {
+            int index = IndexOf(name);
+            if (index >= 0)
+            {
+                RemoveConfigAt(index);
+            }
+        }
+
         #endregion
 
         #region Helper Properties and Methods
 
-        /// <summary>
-        /// The Settings node in the xml doc
-        /// </summary>
-        private XmlNode SettingsNode
+        private int IndexOf(string name)
         {
-            get { return doc.RootNode.SelectSingleNode("Settings"); }
-        }
-
-        private string GetSettingsAttribute(string name)
-        {
-            if (SettingsNode == null)
-                return null;
-
-            return XmlHelper.GetAttribute(SettingsNode, name);
-        }
-
-        private bool GetSettingsAttribute(string name, bool defaultValue)
-        {
-            string val = GetSettingsAttribute(name);
-            return val == null
-                ? defaultValue
-                : bool.Parse(val);
-        }
-
-        private T GetSettingsAttribute<T>(string name, T defaultValue)
-        {
-            if (SettingsNode == null)
-                return defaultValue;
-
-            return XmlHelper.GetAttributeAsEnum(SettingsNode, name, defaultValue);
-        }
-
-        private void SetSettingsAttribute(string name, object value)
-        {
-            if (SettingsNode == null)
+            for (int index = 0; index < doc.ConfigNodes.Count; index++)
             {
-                XmlNode settingsNode = XmlHelper.InsertElement(doc.RootNode, "Settings", 0);
+                if (XmlHelper.GetAttribute(doc.ConfigNodes[index], "name") == name)
+                    return index;
             }
 
-            XmlHelper.SetAttribute(SettingsNode, name, value);
-        }
-
-        private void RemoveSettingsAttribute(string name)
-        {
-            if (SettingsNode != null)
-                XmlHelper.RemoveAttribute(SettingsNode, name);
+            return -1;
         }
 
         #endregion

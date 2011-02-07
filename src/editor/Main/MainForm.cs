@@ -33,6 +33,8 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
+    public delegate bool ViewClosingDelegate();
+
     public partial class MainForm : Form, IMainView
     {
         #region Constructor
@@ -94,12 +96,6 @@ namespace NUnit.ProjectEditor
         #endregion
 
         #region Event Handlers
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //if (CloseProjectCommand.Click != null)
-            //    CloseProjectCommand.Click();
-        }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {

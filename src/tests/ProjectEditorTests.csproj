@@ -55,7 +55,8 @@
     <Compile Include="Model\NUnitProjectSave.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\ProjectModelTests.cs" />
+    <Compile Include="Model\ProjectModelChangeTests.cs" />
+    <Compile Include="Model\ProjectModelLoadtests.cs" />
     <Compile Include="NUnitProjectXml.cs" />
     <Compile Include="Presenters\AddConfigurationPresenterTests.cs" />
     <Compile Include="Presenters\ConfigurationEditorTests.cs" />

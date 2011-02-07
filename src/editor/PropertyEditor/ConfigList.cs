@@ -76,27 +76,30 @@ namespace NUnit.ProjectEditor
 
 		#region Methods
 
-        public IProjectConfig Add( string name )
-		{
-            XmlNode configNode = XmlHelper.AddElement(projectNode, "Config");
-            XmlHelper.AddAttribute(configNode, "name", name);
+        //public IProjectConfig Add(string name)
+        //{
+        //    XmlNode configNode = XmlHelper.AddElement(projectNode, "Config");
+        //    XmlHelper.AddAttribute(configNode, "name", name);
 
-            return new ProjectConfig(project, configNode);
-		}
+        //    return new ProjectConfig(project, configNode);
+        //}
 
-        public void RemoveAt(int index)
-        {
-            projectNode.RemoveChild(ConfigNodes[index]);
-        }
+        //public void RemoveAt(int index)
+        //{
+        //    bool wasActive = project.ActiveConfigName == this[index].Name;
+        //    projectNode.RemoveChild(ConfigNodes[index]);
+        //    if (wasActive)
+        //        project.ActiveConfigName = null;
+        //}
 
-        public void Remove(string name)
-        {
-            int index = IndexOf(name);
-            if (index >= 0)
-            {
-                RemoveAt(index);
-            }
-        }
+        //public void Remove(string name)
+        //{
+        //    int index = IndexOf(name);
+        //    if (index >= 0)
+        //    {
+        //        RemoveAt(index);
+        //    }
+        //}
 
         private int IndexOf(string name)
         {
@@ -109,10 +112,10 @@ namespace NUnit.ProjectEditor
             return -1;
         }
 
-        public bool Contains(string name)
-        {
-            return IndexOf(name) >= 0;
-        }
+        //public bool Contains(string name)
+        //{
+        //    return IndexOf(name) >= 0;
+        //}
 
 		#endregion
 

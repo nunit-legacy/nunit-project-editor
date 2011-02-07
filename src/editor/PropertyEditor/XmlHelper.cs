@@ -34,7 +34,7 @@ namespace NUnit.ProjectEditor
         public static string GetAttribute(XmlNode node, string name)
         {
             XmlAttribute attr = node.Attributes[name];
-            return attr == null ? null : attr.Value.ToString();
+            return attr == null ? null : attr.Value;
         }
 
         public static T GetAttributeAsEnum<T>(XmlNode node, string name, T defaultValue)

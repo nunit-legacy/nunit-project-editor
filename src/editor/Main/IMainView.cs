@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.Windows.Forms;
 using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
@@ -44,6 +45,8 @@ namespace NUnit.ProjectEditor
 
         event ActionStartingDelegate ActiveViewChanging;
         event ActionDelegate ActiveViewChanged;
+
+        event FormClosingEventHandler FormClosing;
 
         IPropertyView PropertyView { get; }
         IXmlView XmlView { get; }

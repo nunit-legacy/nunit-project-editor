@@ -113,36 +113,37 @@ namespace NUnit.ProjectEditor.Tests.Model
             assemblies.Add(path1);
             assemblies.Add(path2);
             assemblies.Add(path3);
-            Assert.True(assemblies.Remove(path2));
+            
+            assemblies.Remove(path2);
 
             Assert.AreEqual(2, assemblies.Count);
             Assert.AreEqual(path1, assemblies[0]);
             Assert.AreEqual(path3, assemblies[1]);
         }
 
-        [Test]
-        public void CanRemoveAssemblyAtIndex()
-        {
-            assemblies.Add(path1);
-            assemblies.Add(path2);
-            assemblies.Add(path3);
-            assemblies.RemoveAt(1);
+        //[Test]
+        //public void CanRemoveAssemblyAtIndex()
+        //{
+        //    assemblies.Add(path1);
+        //    assemblies.Add(path2);
+        //    assemblies.Add(path3);
+        //    assemblies.RemoveAt(1);
 
-            Assert.AreEqual(2, assemblies.Count);
-            Assert.AreEqual(path1, assemblies[0]);
-            Assert.AreEqual(path3, assemblies[1]);
-        }
+        //    Assert.AreEqual(2, assemblies.Count);
+        //    Assert.AreEqual(path1, assemblies[0]);
+        //    Assert.AreEqual(path3, assemblies[1]);
+        //}
 
-        [Test]
-        public void CanFindIndexOfAssembly()
-        {
-            assemblies.Add(path1);
-            assemblies.Add(path2);
-            assemblies.Add(path3);
+        //[Test]
+        //public void CanFindIndexOfAssembly()
+        //{
+        //    assemblies.Add(path1);
+        //    assemblies.Add(path2);
+        //    assemblies.Add(path3);
 
-            Assert.AreEqual(1, assemblies.IndexOf(path2));
-            Assert.AreEqual(-1, assemblies.IndexOf("/Not/in/list"));
-        }
+        //    Assert.AreEqual(1, assemblies.IndexOf(path2));
+        //    Assert.AreEqual(-1, assemblies.IndexOf("/Not/in/list"));
+        //}
 
         private string CleanPath( string path )
         {

@@ -61,8 +61,8 @@ namespace NUnit.ProjectEditor.Tests.Model
 		[Test]
 		public void EmptyConfigs()
 		{
-            project.Configs.Add("Debug");
-            project.Configs.Add("Release");
+            project.AddConfig("Debug");
+            project.AddConfig("Release");
             project.ActiveConfigName = "Debug";
             project.Configs["Debug"].BinPathType = BinPathType.Auto;
             project.Configs["Release"].BinPathType = BinPathType.Auto;
@@ -73,13 +73,13 @@ namespace NUnit.ProjectEditor.Tests.Model
         [Test]
         public void NormalProject()
         {
-            var config1 = project.Configs.Add("Debug");
+            var config1 = project.AddConfig("Debug");
             config1.BasePath = "bin" + Path.DirectorySeparatorChar + "debug";
             config1.BinPathType = BinPathType.Auto;
             config1.Assemblies.Add("assembly1.dll");
             config1.Assemblies.Add("assembly2.dll");
 
-            var config2 = project.Configs.Add("Release");
+            var config2 = project.AddConfig("Release");
             config2.BasePath = "bin" + Path.DirectorySeparatorChar + "release";
             config2.BinPathType = BinPathType.Auto;
             config2.Assemblies.Add("assembly1.dll");
@@ -100,14 +100,14 @@ namespace NUnit.ProjectEditor.Tests.Model
         [Test]
         public void ProjectWithComplexSettings()
         {
-            var config1 = project.Configs.Add("Debug");
+            var config1 = project.AddConfig("Debug");
             config1.BasePath = "debug";
             config1.BinPathType = BinPathType.Auto;
             config1.RuntimeFramework = new RuntimeFramework(RuntimeType.Any, new Version(2, 0));
             config1.Assemblies.Add("assembly1.dll");
             config1.Assemblies.Add("assembly2.dll");
 
-            var config2 = project.Configs.Add("Release");
+            var config2 = project.AddConfig("Release");
             config2.BasePath = "release";
             config2.BinPathType = BinPathType.Auto;
             config2.RuntimeFramework = new RuntimeFramework(RuntimeType.Any, new Version(4, 0));
@@ -116,8 +116,8 @@ namespace NUnit.ProjectEditor.Tests.Model
 
             project.ActiveConfigName = "Release";
             project.BasePath = "bin";
-            project.ProcessModel = ProcessModel.Separate;
-            project.DomainUsage = DomainUsage.Multiple;
+            project.ProcessModel = "Separate";
+            project.DomainUsage = "Multiple";
 
             CheckContents(NUnitProjectXml.ComplexSettingsProject);
         }
@@ -133,7 +133,7 @@ namespace NUnit.ProjectEditor.Tests.Model
         public void ProjectWithComplexSettings_RoundTripWithChanges()
         {
             doc.LoadXml(NUnitProjectXml.ComplexSettingsProject);
-            project.ProcessModel = ProcessModel.Single;
+            project.ProcessModel = "Single";
             CheckContents(NUnitProjectXml.ComplexSettingsProject
                 .Replace("Separate", "Single"));
         }

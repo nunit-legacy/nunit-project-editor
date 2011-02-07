@@ -41,7 +41,7 @@ namespace NUnit.ProjectEditor
 
         BinPathType BinPathType { get; set; }
 
-        System.Collections.Generic.IList<string> Assemblies { get; }
+        AssemblyList Assemblies { get; }
 
         RuntimeFramework RuntimeFramework { get; set; }
     }

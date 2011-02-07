@@ -51,6 +51,8 @@ namespace NUnit.ProjectEditor
             this.view = view;
 
             // Set up handlers for view events
+            view.FormClosing += OnFormClosing;
+
             view.NewProjectCommand.Execute += CreateNewProject;
             view.OpenProjectCommand.Execute += OpenProject;
             view.SaveProjectCommand.Execute += SaveProject;
@@ -62,6 +64,11 @@ namespace NUnit.ProjectEditor
             // Set up handlers for doc events
             doc.ProjectCreated += new ActionDelegate(OnProjectCreated);
             doc.ProjectClosed += new ActionDelegate(OnProjectClosed);
+        }
+
+        public void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            CloseProject();
         }
 
         public bool ValidateActiveViewChange()

@@ -52,7 +52,7 @@ namespace NUnit.ProjectEditor
         /// <summary>
         /// List of the test assemblies in this config
         /// </summary>
-        private IList<string> assemblies;
+        private AssemblyList assemblies;
 
 		#endregion
 
@@ -72,7 +72,15 @@ namespace NUnit.ProjectEditor
         public string Name
         {
             get { return GetAttribute("name"); }
-            set { SetAttribute("name", value); }
+            set 
+            {
+                bool itWasActive = Name == project.ActiveConfigName;
+
+                SetAttribute("name", value);
+
+                if (itWasActive)
+                    project.ActiveConfigName = value;
+            }
         }
 
         /// <summary>
@@ -94,11 +102,6 @@ namespace NUnit.ProjectEditor
         {
             get
             {
-                //string basePath = BasePath;
-
-                //if (project == null || basePath == null || !Path.IsPathRooted(basePath))
-                //    return basePath;
-
                 return PathUtils.RelativePath(project.EffectiveBasePath, EffectiveBasePath);
             }
         }
@@ -160,7 +163,7 @@ namespace NUnit.ProjectEditor
         /// <summary>
         /// Return our AssemblyList
         /// </summary>
-        public IList<string> Assemblies
+        public AssemblyList Assemblies
         {
             get { return assemblies; }
         }
@@ -168,9 +171,11 @@ namespace NUnit.ProjectEditor
         public RuntimeFramework RuntimeFramework
         {
             get 
-            { 
+            {
                 string runtime = GetAttribute("runtimeFramework");
-                return runtime == null ? null : RuntimeFramework.Parse(runtime);
+                return runtime == null 
+                    ? RuntimeFramework.AnyRuntime 
+                    : new RuntimeFramework(runtime);
             }
             set { SetAttribute("runtimeFramework", value); }
         }

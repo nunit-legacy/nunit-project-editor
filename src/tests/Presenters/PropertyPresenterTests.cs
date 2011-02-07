@@ -46,20 +46,12 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             model.ActiveConfigName = "Release";
 
             view = Substitute.For<IPropertyView>();
-            view.ConfigList.SelectedItem.Returns(delegate
-            {
-                return view.ConfigList.SelectedIndex >= 0
-                    ? view.ConfigList.SelectionList[view.ConfigList.SelectedIndex]
-                    : null;
-            });
-            view.ConfigList.WhenForAnyArgs(x => x.SelectedIndex = 0).Do(delegate
-            {
-                view.ConfigList.SelectionChanged += Raise.Event<ActionDelegate>();
-            });
-            view.AssemblyList.WhenForAnyArgs(x => x.SelectedIndex = 0).Do(delegate
-            {
-                view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
-            });
+            view.ConfigList.Returns(new SelectionStub("ConfigList"));
+            view.ProcessModel.Returns(new SelectionStub("ProcessModel"));
+            view.DomainUsage.Returns(new SelectionStub("DomainUsage"));
+            view.Runtime.Returns(new SelectionStub("Runtime"));
+            view.RuntimeVersion.Returns(new SelectionStub("RuntimeVersion"));
+            view.AssemblyList.Returns(new SelectionStub("AssemblyList"));
 
             presenter = new PropertyPresenter(model, view);
             presenter.LoadViewFromModel();
@@ -95,7 +87,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             view.AssemblyList.SelectionList = new string[0];
             view.AssemblyList.SelectedIndex = -1;
-            view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
+
             Assert.True(view.AddAssemblyCommand.Enabled);
         }
 
@@ -104,7 +96,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             view.AssemblyList.SelectionList = new string[0];
             view.AssemblyList.SelectedIndex = -1;
-            view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
+
             Assert.False(view.RemoveAssemblyCommand.Enabled);
         }
 
@@ -113,7 +105,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             view.AssemblyList.SelectionList = new string[0];
             view.AssemblyList.SelectedIndex = -1;
-            view.AssemblyList.SelectionChanged += Raise.Event<ActionDelegate>();
+
             Assert.False(view.BrowseAssemblyPathCommand.Enabled);
         }
 
@@ -164,8 +156,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void DomainUsage_WhenChanged_UpdatesProject()
         {
             view.DomainUsage.SelectedItem = "Multiple";
-            view.DomainUsage.SelectionChanged += Raise.Event<ActionDelegate>();
-            Assert.That(model.DomainUsage, Is.EqualTo(DomainUsage.Multiple));
+            Assert.That(model.DomainUsage, Is.EqualTo("Multiple"));
         }
 
         [Test]
@@ -191,12 +182,10 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void ProcessModel_WhenChanged_UpdatesDomainUsageOptions()
         {
             view.ProcessModel.SelectedItem = "Single";
-            view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
             Assert.That(view.DomainUsage.SelectionList, Is.EqualTo(
                 new string[] { "Default", "Single", "Multiple" }));
 
             view.ProcessModel.SelectedItem = "Multiple";
-            view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
             Assert.That(view.DomainUsage.SelectionList, Is.EqualTo(
                 new string[] { "Default", "Single" }));
         }
@@ -205,8 +194,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void ProcessModel_WhenChanged_UpdatesProject()
         {
             view.ProcessModel.SelectedItem = "Multiple";
-            view.ProcessModel.SelectionChanged += Raise.Event<ActionDelegate>();
-            Assert.That(model.ProcessModel, Is.EqualTo(ProcessModel.Multiple));
+            Assert.That(model.ProcessModel, Is.EqualTo("Multiple"));
         }
 
         [Test]
@@ -219,6 +207,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void ProjectBase_WhenChanged_UpdatesProject()
         {
             view.ProjectBase.Text = "test.nunit";
+
             view.ProjectBase.Validated += Raise.Event<ActionDelegate>();
             Assert.That(model.BasePath, Is.EqualTo("test.nunit"));
         }
@@ -245,15 +234,15 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [Test]
         public void Runtime_WhenChanged_UpdatesProject()
         {
-            model.Configs[0].RuntimeFramework = new RuntimeFramework(RuntimeType.Net, new Version("2.0.50727"));
+            // Set to non-default values for this test
+            IProjectConfig config = model.Configs[0];
+            config.RuntimeFramework = new RuntimeFramework(RuntimeType.Net, new Version("2.0.50727"));
 
             view.ConfigList.SelectedIndex = 0;
             view.Runtime.SelectedItem = "Mono";
-            view.RuntimeVersion.SelectedItem = "1.1.4322";
-            view.Runtime.SelectionChanged += Raise.Event<ActionDelegate>();
-            RuntimeFramework framework = model.Configs[0].RuntimeFramework;
-            Assert.That(framework.Runtime, Is.EqualTo(RuntimeType.Mono));
-            Assert.That(framework.ClrVersion, Is.EqualTo(new Version("1.1.4322")));
+
+            Assert.That(config.RuntimeFramework.Runtime, Is.EqualTo(RuntimeType.Mono));
+            Assert.That(config.RuntimeFramework.Version, Is.EqualTo(new Version("2.0.50727")));
         }
 
         [Test]
@@ -261,17 +250,32 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             Assert.That(view.RuntimeVersion.SelectionList, Is.EqualTo(
                 new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" }));
+            //Assert.That(view.RuntimeVersion.SelectedItem, Is.EqualTo("2.0.50727"));
         }
 
         [Test]
-        public void RuntimeVersion_WhenChanged_UpdatesProject()
+        public void RuntimeVersion_WhenSelectionChanged_UpdatesProject()
         {
-            view.Runtime.SelectedItem = "Mono";
-            view.RuntimeVersion.SelectedItem = "1.1.4322";
-            view.RuntimeVersion.SelectionChanged += Raise.Event<ActionDelegate>();
-            RuntimeFramework framework = model.Configs[0].RuntimeFramework;
-            Assert.That(framework.Runtime, Is.EqualTo(RuntimeType.Mono));
-            Assert.That(framework.ClrVersion, Is.EqualTo(new Version(1, 1, 4322)));
+            // Set to non-default values for this test
+            IProjectConfig config = model.Configs[0];
+            config.RuntimeFramework = new RuntimeFramework(RuntimeType.Net, new Version("2.0.50727"));
+
+            view.RuntimeVersion.SelectedItem = "4.0.21006";
+
+            Assert.That(config.RuntimeFramework.Runtime, Is.EqualTo(RuntimeType.Net));
+            Assert.That(config.RuntimeFramework.Version, Is.EqualTo(new Version(4, 0, 21006)));
+        }
+
+        public void RuntimeVersion_WhenTextChanged_UpdatesProject()
+        {
+            // Set to non-default values for this test
+            IProjectConfig config = model.Configs[0];
+            config.RuntimeFramework = new RuntimeFramework(RuntimeType.Net, new Version("2.0.50727"));
+
+            view.RuntimeVersion.Text = "4.0";
+
+            Assert.That(config.RuntimeFramework.Runtime, Is.EqualTo(RuntimeType.Net));
+            Assert.That(config.RuntimeFramework.Version, Is.EqualTo(new Version(4, 0)));
         }
     }
 }
