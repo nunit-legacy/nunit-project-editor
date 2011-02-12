@@ -43,16 +43,6 @@ namespace NUnit.ProjectEditor
             MainForm view = new MainForm();
             new MainPresenter(doc, view);
 
-            //// Set up property editor triad
-            //ProjectModel project = new ProjectModel(doc);
-            //IPropertyView propertyView = view.PropertyView;
-            //new PropertyPresenter(project, propertyView, dialogManager);
-
-            //// Set up XML editor triad
-            //XmlModel xmlModel = new XmlModel();
-            //IXmlView xmlView = view.XmlView;
-            //new XmlPresenter(xmlModel, xmlView);
-
             if (args.Length > 0)
                 doc.OpenProject(args[0]);
 

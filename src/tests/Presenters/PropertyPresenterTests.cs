@@ -250,7 +250,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             Assert.That(view.RuntimeVersion.SelectionList, Is.EqualTo(
                 new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" }));
-            //Assert.That(view.RuntimeVersion.SelectedItem, Is.EqualTo("2.0.50727"));
+            //Assert.That(xmlView.RuntimeVersion.SelectedItem, Is.EqualTo("2.0.50727"));
         }
 
         [Test]

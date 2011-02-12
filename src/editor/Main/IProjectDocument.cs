@@ -26,7 +26,16 @@ using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IProjectDocument : IXmlModel
+    public enum DocumentState
+    {
+        Empty,
+        InvalidXml,
+        XmlTextHasChanges,
+        XmlDocHasChanges,
+        Updated
+    }
+
+    public interface IProjectDocument
     {
         #region Events
 
@@ -45,12 +54,16 @@ namespace NUnit.ProjectEditor
         /// </summary>
         string ProjectPath { get; set; }
 
+        DocumentState DocumentState { get; }
+
+        string XmlText { get; set; }
+        Exception Exception { get; set; }
+
         XmlNode RootNode { get; }
         XmlNode SettingsNode { get; }
         XmlNodeList ConfigNodes { get; }
 
         bool HasUnsavedChanges { get; }
-        bool IsValid { get; }
 
         string GetSettingsAttribute(string name);
         void SetSettingsAttribute(string name, string value);

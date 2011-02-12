@@ -59,5 +59,7 @@ namespace NUnit.ProjectEditor
         /// the edit box so it uses all the space.
         /// </summary>
         void RemoveError();
+
+        
     }
 }

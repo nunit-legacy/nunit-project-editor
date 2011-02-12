@@ -60,7 +60,7 @@
     <Compile Include="NUnitProjectXml.cs" />
     <Compile Include="Presenters\AddConfigurationPresenterTests.cs" />
     <Compile Include="Presenters\ConfigurationEditorTests.cs" />
-    <Compile Include="Presenters\ProjectPresenterTests.cs" />
+    <Compile Include="Presenters\MainPresenterTests.cs" />
     <Compile Include="Presenters\PropertyPresenterTests.cs" />
     <Compile Include="Presenters\RenameConfigurationPresenterTests.cs" />
     <Compile Include="Presenters\SelectionStub.cs" />

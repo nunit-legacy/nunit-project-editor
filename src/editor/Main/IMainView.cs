@@ -27,6 +27,9 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
+    public delegate bool ActiveViewChangingHandler();
+    public delegate void ActiveViewChangedHandler();
+
     /// <summary>
     /// IMainView represents the top level view for the
     /// Project editor. It provides a menu commands and several
@@ -43,15 +46,15 @@ namespace NUnit.ProjectEditor
         ICommand SaveProjectCommand { get; }
         ICommand SaveProjectAsCommand { get; }
 
-        event ActionStartingDelegate ActiveViewChanging;
-        event ActionDelegate ActiveViewChanged;
+        event ActiveViewChangingHandler ActiveViewChanging;
+        event ActiveViewChangedHandler ActiveViewChanged;
 
         event FormClosingEventHandler FormClosing;
 
         IPropertyView PropertyView { get; }
         IXmlView XmlView { get; }
 
-        SelectedView SelectedView { get; }
+        SelectedView SelectedView { get; set;  }
     }
 
     public enum SelectedView

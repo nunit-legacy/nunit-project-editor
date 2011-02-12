@@ -59,8 +59,8 @@ namespace NUnit.ProjectEditor
 
         #region Events
 
-        public event ActionStartingDelegate ActiveViewChanging;
-        public event ActionDelegate ActiveViewChanged;
+        public event ActiveViewChangingHandler ActiveViewChanging;
+        public event ActiveViewChangedHandler ActiveViewChanged;
 
         #endregion
 
@@ -87,6 +87,7 @@ namespace NUnit.ProjectEditor
         public SelectedView SelectedView
         {
             get { return (SelectedView)tabControl1.SelectedIndex; }
+            set { tabControl1.SelectedIndex = (int)value; }
         }
 
         public IMessageDisplay MessageDisplay { get; private set; }

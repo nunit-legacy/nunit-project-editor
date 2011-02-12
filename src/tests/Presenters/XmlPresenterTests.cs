@@ -29,8 +29,8 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class XmlPresenterTests
     {
-        private IProjectDocument model;
-        private IXmlView view;
+        private IProjectDocument doc;
+        private IXmlView xmlView;
         private XmlPresenter presenter;
 
         private static readonly string initialText = "<NUnitProject/>";
@@ -39,33 +39,37 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [SetUp]
         public void Initialize()
         {
-            model = new ProjectDocument();
-            model.LoadXml(initialText);
-            view = Substitute.For<IXmlView>();
-            presenter = new XmlPresenter(model, view);
+            doc = new ProjectDocument();
+            doc.LoadXml(initialText);
+            xmlView = Substitute.For<IXmlView>();
+            presenter = new XmlPresenter(doc, xmlView);
             presenter.LoadViewFromModel();
         }
 
         [Test]
         public void XmlText_OnLoad_IsInitializedCorrectly()
         {
-            Assert.AreEqual(initialText, view.Xml.Text);
+            Assert.AreEqual(initialText, xmlView.Xml.Text);
         }
 
         [Test]
         public void XmlText_WhenChanged_ModelIsUpdated()
         {
-            view.Xml.Text = changedText;
-            view.Xml.Validated += Raise.Event<ActionDelegate>();
-            Assert.AreEqual(changedText, model.XmlText);
+            xmlView.Xml.Text = changedText;
+            xmlView.Xml.Validated += Raise.Event<ActionDelegate>();
+            Assert.AreEqual(changedText, doc.XmlText);
         }
 
-        //[Test]
-        //public void BadXmlSetsException()
-        //{
-        //    view.Xml.Text = "<NUnitProject>"; // Missing slash
-        //    view.Xml.Validated += Raise.Event<ActionDelegate>();
+        [Test]
+        public void BadXmlSetsException()
+        {
+            xmlView.Xml.Text = "<NUnitProject>"; // Missing slash
+            xmlView.Xml.Validated += Raise.Event<ActionDelegate>();
             
-        //}
+            Assert.AreEqual("<NUnitProject>", doc.XmlText);
+            Assert.NotNull(doc.Exception);
+
+            xmlView.Received().DisplayError("");
+        }
     }
 }

@@ -27,39 +27,66 @@ namespace NUnit.ProjectEditor
 {
     public class XmlPresenter
     {
-        private IXmlModel model;
+        private IProjectDocument doc;
         private IXmlView view;
 
-        public XmlPresenter(IXmlModel model, IXmlView view)
+        public XmlPresenter(IProjectDocument doc, IXmlView view)
         {
-            this.model = model;
+            this.doc = doc;
             this.view = view;
 
             view.Xml.Validated += delegate
             {
                 UpdateModelFromView();
             };
+
+            doc.ProjectCreated += delegate
+            {
+                view.Visible = true;
+                LoadViewFromModel();
+            };
+
+            doc.ProjectClosed += delegate
+            {
+                view.Xml.Text = null;
+                view.Visible = false;
+            };
         }
 
         public void LoadViewFromModel()
         {
-            view.Xml.Text = model.XmlText;
+            view.Xml.Text = doc.XmlText;
 
-            if (model.Exception != null)
+            if (doc.Exception != null)
             {
-                var ex = model.Exception as ProjectFormatException;
+                var ex = doc.Exception as ProjectFormatException;
                 if (ex != null)
                     view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
                 else
-                    view.DisplayError(ex.Message);
+                    view.DisplayError(doc.Exception.Message);
             }
             else
                 view.RemoveError();
         }
 
+        private int GetOffset(int lineNumber, int charPosition)
+        {
+            int offset = 0;
+
+            for (int lineCount = 1; lineCount < lineNumber; lineCount++ )
+            {
+                int next = doc.XmlText.IndexOf(Environment.NewLine, offset);
+                if (next < 0) break;
+
+                offset = next + Environment.NewLine.Length;
+            }
+
+            return offset - lineNumber + charPosition;
+        }
+
         public void UpdateModelFromView()
         {
-            model.XmlText = view.Xml.Text;
+            doc.XmlText = view.Xml.Text;
         }
     }
 }

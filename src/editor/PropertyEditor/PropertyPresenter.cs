@@ -71,6 +71,9 @@ namespace NUnit.ProjectEditor
             view.PrivateBinPath.Validated += OnPrivateBinPathChange;
             view.AssemblyList.SelectionChanged += OnSelectedAssemblyChange;
             view.AssemblyPath.Validated += OnAssemblyPathChange;
+
+            model.Document.ProjectCreated += OnProjectCreated;
+            model.Document.ProjectClosed += OnProjectClosed;
         }
 
         public void LoadViewFromModel()
@@ -397,6 +400,22 @@ namespace NUnit.ProjectEditor
         }
 
         #endregion
+
+        #endregion
+
+        #region Model Change Events
+
+        private void OnProjectCreated()
+        {
+            view.Visible = true;
+            if (model.Document.RootNode != null)
+                LoadViewFromModel();
+        }
+
+        private void OnProjectClosed()
+        {
+            view.Visible = false;
+        }
 
         #endregion
 

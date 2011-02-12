@@ -46,7 +46,6 @@ namespace NUnit.ProjectEditor
 
         #region IXmlView Members
 
-
         /// <summary>
         /// Gets or sets the XML text
         /// </summary>
@@ -65,8 +64,17 @@ namespace NUnit.ProjectEditor
         {
             DisplayError(message);
 
-            int offset = richTextBox1.GetFirstCharIndexFromLine(lineNumber) + linePosition - 1;
-            richTextBox1.Select(offset, 3); // TODO: Determine true length of area to highlight
+            int offset = richTextBox1.GetFirstCharIndexFromLine(lineNumber - 1) + linePosition - 1;
+            int length = 0;
+
+            string text = richTextBox1.Text;
+            if (char.IsLetterOrDigit(text[offset]))
+                while (char.IsLetterOrDigit(text[offset + length]))
+                    length++;
+            else
+                length = 1;
+
+            richTextBox1.Select(offset, length);
         }
 
         public void RemoveError()

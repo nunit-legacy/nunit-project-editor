@@ -139,7 +139,7 @@ namespace NUnit.ProjectEditor.Tests
         #region IViewElement Members
 
         /// <summary>
-        /// Gets the name of the element in the view
+        /// Gets the name of the element in the xmlView
         /// </summary>
         public string Name { get; set; }
 

@@ -168,7 +168,6 @@
     <Compile Include="ViewElements\MessageDisplay.cs" />
     <Compile Include="ViewElements\RadioButtonGroup.cs" />
     <Compile Include="ViewElements\TextElement.cs" />
-    <Compile Include="XmlEditor\IXmlModel.cs" />
     <Compile Include="XmlEditor\IXmlView.cs" />
     <Compile Include="XmlEditor\XmlPresenter.cs" />
     <Compile Include="XmlEditor\XmlView.cs">

@@ -50,6 +50,22 @@ namespace NUnit.ProjectEditor
             this.doc = doc;
             this.view = view;
 
+            // Set up property editor triad
+            ProjectModel project = new ProjectModel(doc);
+            IPropertyView propertyView = view.PropertyView;
+            this.propertyPresenter = new PropertyPresenter(project, propertyView);
+
+            // Set up XML editor triad
+            IXmlView xmlView = view.XmlView;
+            this.xmlPresenter = new XmlPresenter(doc, xmlView);
+
+            // Enable and disable menu items
+            view.NewProjectCommand.Enabled = true;
+            view.OpenProjectCommand.Enabled = true;
+            view.CloseProjectCommand.Enabled = false;
+            view.SaveProjectCommand.Enabled = false;
+            view.SaveProjectAsCommand.Enabled = false;
+
             // Set up handlers for view events
             view.FormClosing += OnFormClosing;
 
@@ -61,9 +77,9 @@ namespace NUnit.ProjectEditor
             view.ActiveViewChanging += this.ValidateActiveViewChange;
             view.ActiveViewChanged += this.ActiveViewChanged;
 
-            // Set up handlers for doc events
-            doc.ProjectCreated += new ActionDelegate(OnProjectCreated);
-            doc.ProjectClosed += new ActionDelegate(OnProjectClosed);
+            // Set up handlers for model events
+            doc.ProjectCreated += OnProjectCreated;
+            doc.ProjectClosed += OnProjectClosed;
         }
 
         public void OnFormClosing(object sender, FormClosingEventArgs e)
@@ -74,12 +90,14 @@ namespace NUnit.ProjectEditor
         public bool ValidateActiveViewChange()
         {
             doc.SynchronizeModel();
-            if (doc.IsValid)
+
+            if (doc.DocumentState != DocumentState.InvalidXml)
                 return true;
 
             view.SaveProjectCommand.Enabled = false;
             view.SaveProjectAsCommand.Enabled = false;
-            return false;
+
+            return view.SelectedView == SelectedView.XmlView;
         }
 
         public void ActiveViewChanged()
@@ -87,7 +105,8 @@ namespace NUnit.ProjectEditor
             switch (view.SelectedView)
             {
                 case SelectedView.PropertyView:
-                    propertyPresenter.LoadViewFromModel();
+                    if (doc.RootNode != null)
+                        propertyPresenter.LoadViewFromModel();
                     break;
 
                 case SelectedView.XmlView:
@@ -103,9 +122,6 @@ namespace NUnit.ProjectEditor
         private void CreateNewProject()
         {
             doc.CreateNewProject();
-            view.CloseProjectCommand.Enabled = true;
-            view.SaveProjectCommand.Enabled = true;
-            view.SaveProjectAsCommand.Enabled = true;
         }
 
         private void OpenProject()
@@ -117,10 +133,14 @@ namespace NUnit.ProjectEditor
 
             if (path != null)
             {
-                doc.OpenProject(path);
-                view.CloseProjectCommand.Enabled = true;
-                view.SaveProjectCommand.Enabled = doc.IsValid;
-                view.SaveProjectAsCommand.Enabled = doc.IsValid;
+                try
+                {
+                    doc.OpenProject(path);
+                }
+                catch (Exception ex)
+                {
+                    view.MessageDisplay.Error(ex.Message);
+                }
             }
         }
 
@@ -131,9 +151,6 @@ namespace NUnit.ProjectEditor
                     SaveProject();
 
             doc.CloseProject();
-            view.CloseProjectCommand.Enabled = false;
-            view.SaveProjectCommand.Enabled = false;
-            view.SaveProjectAsCommand.Enabled = false;
         }
 
         private void SaveProject()
@@ -163,34 +180,30 @@ namespace NUnit.ProjectEditor
 
         #endregion
 
-        #region Model Event Handlers
+        #region Model EventHandlers
 
-        void OnProjectCreated()
+        private void OnProjectCreated()
         {
-            // Set up property editor triad
-            ProjectModel project = new ProjectModel(this.doc);
-            IPropertyView propertyView = view.PropertyView;
-            propertyPresenter = new PropertyPresenter(project, propertyView);
-            propertyView.Visible = true;
+            view.CloseProjectCommand.Enabled = true;
 
-            // Set up XML editor triad
-            //XmlModel xmlModel = new XmlModel();
-            //xmlModel.XmlText = doc.ToXml();
-            IXmlView xmlView = view.XmlView;
-            xmlPresenter = new XmlPresenter((IXmlModel)doc, xmlView);
-            xmlView.Visible = true;
-
-            propertyPresenter.LoadViewFromModel();
-            xmlPresenter.LoadViewFromModel();
+            if (doc.DocumentState == DocumentState.InvalidXml)
+            {
+                view.SaveProjectCommand.Enabled = false;
+                view.SaveProjectAsCommand.Enabled = false;
+                view.SelectedView = SelectedView.XmlView;
+            }
+            else
+            {
+                view.SaveProjectCommand.Enabled = true;
+                view.SaveProjectAsCommand.Enabled = true;
+            }
         }
 
-        void OnProjectClosed()
+        private void OnProjectClosed()
         {
-
-            view.XmlView.Xml.Text = null;
-
-            view.XmlView.Visible = false;
-            view.PropertyView.Visible = false;
+            view.CloseProjectCommand.Enabled = false;
+            view.SaveProjectCommand.Enabled = false;
+            view.SaveProjectAsCommand.Enabled = false;
         }
 
         #endregion
