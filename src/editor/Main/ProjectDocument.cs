@@ -30,6 +30,13 @@ namespace NUnit.ProjectEditor
 {
     public class ProjectDocument : IProjectDocument
     {
+        private enum DocumentState
+        {
+            Empty,
+            InvalidXml,
+            Valid
+        }
+
         #region Static Fields
 
         /// <summary>
@@ -75,12 +82,12 @@ namespace NUnit.ProjectEditor
         /// <summry>
         /// True if the Xml Document has been changed
         /// </summary>
-        private DocumentState documentState;
+        private DocumentState documentState = DocumentState.Empty;
 
         /// <summary>
         /// True if the doc has been changed and not yet saved
         /// </summary>
-        private bool hasUnsavedChanges;
+        private bool hasUnsavedChanges = false;
 
         #endregion
 
@@ -120,11 +127,6 @@ namespace NUnit.ProjectEditor
             get { return Path.GetFileNameWithoutExtension(projectPath); }
         }
 
-        public DocumentState DocumentState
-        {
-            get { return documentState; }
-        }
-
         /// <summary>
         /// Gets or sets the path to which a doc will be saved.
         /// </summary>
@@ -139,6 +141,17 @@ namespace NUnit.ProjectEditor
                     projectPath = newProjectPath;
                 }
             }
+        }
+
+        public string XmlText
+        {
+            get { return xmlText; }
+            set { LoadXml(value); }
+        }
+
+        public Exception Exception
+        {
+            get { return exception; }
         }
 
         /// <summary>
@@ -172,7 +185,12 @@ namespace NUnit.ProjectEditor
 
         public bool IsValid
         {
-            get { return documentState != DocumentState.Empty && documentState != DocumentState.InvalidXml; }
+            get { return documentState == DocumentState.Valid; }
+        }
+
+        public bool IsEmpty
+        {
+            get { return documentState == DocumentState.Empty; }
         }
 
         #endregion
@@ -181,9 +199,8 @@ namespace NUnit.ProjectEditor
 
         public void CreateNewProject()
         {
-            this.xmlText = "<NUnitProject />";
+            this.XmlText = "<NUnitProject />";
 
-            UpdateXmlDocFromXmlText();
             hasUnsavedChanges = false;
 
             if (ProjectCreated != null)
@@ -193,11 +210,10 @@ namespace NUnit.ProjectEditor
         public void OpenProject(string fileName)
         {
             StreamReader rdr = new StreamReader(fileName);
-            this.xmlText = rdr.ReadToEnd();
+            this.XmlText = rdr.ReadToEnd();
             rdr.Close();
 
             this.projectPath = Path.GetFullPath(fileName);
-            UpdateXmlDocFromXmlText();
 
             if (ProjectCreated != null)
                 ProjectCreated();
@@ -228,20 +244,6 @@ namespace NUnit.ProjectEditor
         {
             projectPath = fileName;
             SaveProject();
-        }
-
-        public void SynchronizeModel()
-        {
-            switch (this.documentState)
-            {
-                case DocumentState.XmlTextHasChanges:
-                    UpdateXmlDocFromXmlText();
-                    break;
-
-                case DocumentState.XmlDocHasChanges:
-                    UpdateXmlTextFromXmlDoc();
-                    break;
-            }
         }
 
         public string GetSettingsAttribute(string name)
@@ -276,36 +278,33 @@ namespace NUnit.ProjectEditor
         public void Load()
         {
             StreamReader rdr = new StreamReader(this.projectPath);
-            this.xmlText = rdr.ReadToEnd();
+            this.XmlText = rdr.ReadToEnd();
             rdr.Close();
-
-            LoadXml(this.xmlText);
 
             this.hasUnsavedChanges = false;
         }
 
         public void LoadXml(string xmlText)
         {
+            // Mark as empty to avoid double updates
+            // in the xmldoc_Changed method.
+            this.documentState = DocumentState.Empty;
+
+            this.xmlText = xmlText;
+
             try
             {
-                this.xmlText = xmlText;
                 this.xmlDoc.LoadXml(xmlText);
+                this.documentState = DocumentState.Valid;
+                this.exception = null;
 
                 if (RootNode.Name != "NUnitProject")
-                    throw new ProjectFormatException("Top level element must be <NUnitProject...>.");
+                    throw new XmlException("Top level element must be <NUnitProject...>.");
             }
-            catch (ProjectFormatException)
+            catch (Exception ex)
             {
-                throw;
-            }
-            catch (XmlException e)
-            {
-                throw new ProjectFormatException(e.Message, e.LineNumber, e.LinePosition);
-            }
-            catch (Exception e)
-            {
-                // TODO: Figure out line numbers
-                throw new ProjectFormatException(e.Message);
+                this.documentState = DocumentState.InvalidXml;
+                this.exception = ex;
             }
         }
 
@@ -315,8 +314,6 @@ namespace NUnit.ProjectEditor
 
         public void Save()
         {
-            xmlText = this.ToXml();
-
             using (StreamWriter writer = new StreamWriter(ProjectPathFromFile(projectPath), false, System.Text.Encoding.UTF8))
             {
                 writer.Write(xmlText);
@@ -331,7 +328,7 @@ namespace NUnit.ProjectEditor
             Save();
         }
 
-        public string ToXml()
+        private string ToXml()
         {
             StringWriter buffer = new StringWriter();
 
@@ -350,37 +347,14 @@ namespace NUnit.ProjectEditor
 
         #endregion
 
-        #region IXmlModel Members
-
-        public string XmlText
-        {
-            get { return xmlText; }
-            set
-            {
-                xmlText = value;
-                documentState = DocumentState.XmlTextHasChanges;
-                SynchronizeModel();
-            }
-        }
-
-        public Exception Exception
-        {
-            get { return exception; }
-            set
-            {
-                exception = value;
-                documentState = DocumentState.XmlTextHasChanges;
-            }
-        }
-
-        #endregion
-
         #region Event Handlers
 
         void xmlDoc_Changed(object sender, XmlNodeChangedEventArgs e)
         {
             hasUnsavedChanges = true;
-            documentState = DocumentState.XmlDocHasChanges;
+
+            if (this.IsValid)
+                xmlText = this.ToXml();
 
             if (this.ProjectChanged != null)
                 ProjectChanged();
@@ -409,28 +383,6 @@ namespace NUnit.ProjectEditor
         private static string GenerateProjectName()
         {
             return string.Format("Project{0}", ++projectSeed);
-        }
-
-        private void UpdateXmlDocFromXmlText()
-        {
-            try
-            {
-                LoadXml(xmlText);
-                exception = null;
-                documentState = DocumentState.Updated;
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-                documentState = DocumentState.InvalidXml;
-                //throw;
-            }
-        }
-
-        private void UpdateXmlTextFromXmlDoc()
-        {
-            xmlText = this.ToXml();
-            documentState = DocumentState.Updated;
         }
 
         #endregion

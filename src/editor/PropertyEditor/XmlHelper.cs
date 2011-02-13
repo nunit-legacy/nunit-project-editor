@@ -50,7 +50,7 @@ namespace NUnit.ProjectEditor
                         return (T)Enum.Parse(typeof(T), attrVal, true);
             }
 
-            throw new ProjectFormatException(
+            throw new XmlException(
                 string.Format("Invalid attribute value: {0}", node.Attributes[name].OuterXml));
         }
 

@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
@@ -38,6 +39,15 @@ namespace NUnit.ProjectEditor
             view.Xml.Validated += delegate
             {
                 UpdateModelFromView();
+
+                if (!doc.IsValid)
+                {
+                    var ex = doc.Exception as XmlException;
+                    if (ex != null)
+                        view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
+                    else
+                        view.DisplayError(doc.Exception.Message);
+                }
             };
 
             doc.ProjectCreated += delegate
@@ -59,7 +69,7 @@ namespace NUnit.ProjectEditor
 
             if (doc.Exception != null)
             {
-                var ex = doc.Exception as ProjectFormatException;
+                var ex = doc.Exception as XmlException;
                 if (ex != null)
                     view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
                 else

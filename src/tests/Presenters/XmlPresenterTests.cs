@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.Xml;
 using NUnit.Framework;
 using NSubstitute;
 
@@ -33,8 +34,8 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         private IXmlView xmlView;
         private XmlPresenter presenter;
 
-        private static readonly string initialText = "<NUnitProject/>";
-        private static readonly string changedText = "<NUnitProject processModel=\"Separate\"/>";
+        private static readonly string initialText = "<NUnitProject />";
+        private static readonly string changedText = "<NUnitProject processModel=\"Separate\" />";
 
         [SetUp]
         public void Initialize()
@@ -68,8 +69,10 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             
             Assert.AreEqual("<NUnitProject>", doc.XmlText);
             Assert.NotNull(doc.Exception);
+            Assert.IsInstanceOf<XmlException>(doc.Exception);
 
-            xmlView.Received().DisplayError("");
+            var ex = doc.Exception as XmlException;
+            xmlView.Received().DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
         }
     }
 }

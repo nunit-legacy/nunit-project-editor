@@ -26,15 +26,6 @@ using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
-    public enum DocumentState
-    {
-        Empty,
-        InvalidXml,
-        XmlTextHasChanges,
-        XmlDocHasChanges,
-        Updated
-    }
-
     public interface IProjectDocument
     {
         #region Events
@@ -54,10 +45,11 @@ namespace NUnit.ProjectEditor
         /// </summary>
         string ProjectPath { get; set; }
 
-        DocumentState DocumentState { get; }
+        bool IsEmpty { get; }
+        bool IsValid { get; }
 
         string XmlText { get; set; }
-        Exception Exception { get; set; }
+        Exception Exception { get; }
 
         XmlNode RootNode { get; }
         XmlNode SettingsNode { get; }
@@ -79,10 +71,7 @@ namespace NUnit.ProjectEditor
         void SaveProject();
         void SaveProject(string fileName);
 
-        void SynchronizeModel();
-
         void LoadXml(string xmlText);
-        string ToXml();
 
         #endregion
     }

@@ -116,7 +116,6 @@
     </Compile>
     <Compile Include="PathUtils.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProjectFormatException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>

@@ -68,7 +68,6 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             view.SelectedView.Returns(SelectedView.XmlView);
             view.ActiveViewChanged += Raise.Event<ActiveViewChangedHandler>();
 
-            //doc.DidNotReceive().SynchronizeModel();
             Assert.True(view.PropertyView.Visible);
             Assert.True(view.XmlView.Visible);
 

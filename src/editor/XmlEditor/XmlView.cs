@@ -64,17 +64,20 @@ namespace NUnit.ProjectEditor
         {
             DisplayError(message);
 
-            int offset = richTextBox1.GetFirstCharIndexFromLine(lineNumber - 1) + linePosition - 1;
-            int length = 0;
+            if (lineNumber > 0 && linePosition > 0)
+            {
+                int offset = richTextBox1.GetFirstCharIndexFromLine(lineNumber - 1) + linePosition - 1;
+                int length = 0;
 
-            string text = richTextBox1.Text;
-            if (char.IsLetterOrDigit(text[offset]))
-                while (char.IsLetterOrDigit(text[offset + length]))
-                    length++;
-            else
-                length = 1;
+                string text = richTextBox1.Text;
+                if (char.IsLetterOrDigit(text[offset]))
+                    while (char.IsLetterOrDigit(text[offset + length]))
+                        length++;
+                else
+                    length = 1;
 
-            richTextBox1.Select(offset, length);
+                richTextBox1.Select(offset, length);
+            }
         }
 
         public void RemoveError()

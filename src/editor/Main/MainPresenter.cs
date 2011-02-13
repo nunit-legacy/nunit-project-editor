@@ -89,9 +89,7 @@ namespace NUnit.ProjectEditor
 
         public bool ValidateActiveViewChange()
         {
-            doc.SynchronizeModel();
-
-            if (doc.DocumentState != DocumentState.InvalidXml)
+            if (doc.IsValid || doc.IsEmpty)
                 return true;
 
             view.SaveProjectCommand.Enabled = false;
@@ -146,7 +144,7 @@ namespace NUnit.ProjectEditor
 
         private void CloseProject()
         {
-            if (doc.HasUnsavedChanges &&
+            if (doc.IsValid && doc.HasUnsavedChanges &&
                 view.MessageDisplay.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", doc.Name)))
                     SaveProject();
 
@@ -186,16 +184,16 @@ namespace NUnit.ProjectEditor
         {
             view.CloseProjectCommand.Enabled = true;
 
-            if (doc.DocumentState == DocumentState.InvalidXml)
+            if (doc.IsValid)
+            {
+                view.SaveProjectCommand.Enabled = true;
+                view.SaveProjectAsCommand.Enabled = true;
+            }
+            else
             {
                 view.SaveProjectCommand.Enabled = false;
                 view.SaveProjectAsCommand.Enabled = false;
                 view.SelectedView = SelectedView.XmlView;
-            }
-            else
-            {
-                view.SaveProjectCommand.Enabled = true;
-                view.SaveProjectAsCommand.Enabled = true;
             }
         }
 
