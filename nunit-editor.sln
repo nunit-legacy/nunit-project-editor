@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectEditor", "src\editor\ProjectEditor.csproj", "{ED57DCEC-3C16-4A90-BD3C-4D5BE5AD70FB}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit-editor", "src\editor\nunit-editor.csproj", "{ED57DCEC-3C16-4A90-BD3C-4D5BE5AD70FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectEditorTests", "src\tests\ProjectEditorTests.csproj", "{A9E1C1E9-AE97-4510-AD94-EAFADE425FBE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit-editor.tests", "src\tests\nunit-editor.tests.csproj", "{A9E1C1E9-AE97-4510-AD94-EAFADE425FBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
