@@ -63,14 +63,14 @@
             this.assemblyListBox = new System.Windows.Forms.ListBox();
             this.addAssemblyButton = new System.Windows.Forms.Button();
             this.removeAssemblyButton = new System.Windows.Forms.Button();
+            this.downAssemblyButton = new System.Windows.Forms.Button();
+            this.upAssemblyButton = new System.Windows.Forms.Button();
             this.editConfigsButton = new System.Windows.Forms.Button();
             this.configComboBox = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.activeConfigLabel = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.upAssemblyButton = new System.Windows.Forms.Button();
-            this.downAssemblyButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.projectTabControl.SuspendLayout();
             this.generalTabPage.SuspendLayout();
@@ -434,6 +434,26 @@
             this.removeAssemblyButton.TabIndex = 5;
             this.removeAssemblyButton.Text = "&Remove";
             // 
+            // downAssemblyButton
+            // 
+            this.downAssemblyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.downAssemblyButton.Location = new System.Drawing.Point(386, 108);
+            this.downAssemblyButton.Name = "downAssemblyButton";
+            this.downAssemblyButton.Size = new System.Drawing.Size(57, 23);
+            this.downAssemblyButton.TabIndex = 13;
+            this.downAssemblyButton.Text = "Down";
+            this.downAssemblyButton.UseVisualStyleBackColor = true;
+            // 
+            // upAssemblyButton
+            // 
+            this.upAssemblyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.upAssemblyButton.Location = new System.Drawing.Point(386, 78);
+            this.upAssemblyButton.Name = "upAssemblyButton";
+            this.upAssemblyButton.Size = new System.Drawing.Size(57, 23);
+            this.upAssemblyButton.TabIndex = 12;
+            this.upAssemblyButton.Text = "Up";
+            this.upAssemblyButton.UseVisualStyleBackColor = true;
+            // 
             // editConfigsButton
             // 
             this.editConfigsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -488,26 +508,6 @@
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
-            // 
-            // upAssemblyButton
-            // 
-            this.upAssemblyButton.Location = new System.Drawing.Point(386, 78);
-            this.upAssemblyButton.Name = "upAssemblyButton";
-            this.upAssemblyButton.Size = new System.Drawing.Size(57, 23);
-            this.upAssemblyButton.TabIndex = 12;
-            this.upAssemblyButton.Text = "Up";
-            this.upAssemblyButton.UseVisualStyleBackColor = true;
-            //this.upAssemblyButton.Click += new System.EventHandler(this.upAssemblyButton_Click);
-            // 
-            // downAssemblyButton
-            // 
-            this.downAssemblyButton.Location = new System.Drawing.Point(386, 108);
-            this.downAssemblyButton.Name = "downAssemblyButton";
-            this.downAssemblyButton.Size = new System.Drawing.Size(57, 23);
-            this.downAssemblyButton.TabIndex = 13;
-            this.downAssemblyButton.Text = "Down";
-            this.downAssemblyButton.UseVisualStyleBackColor = true;
-            //this.downAssemblyButton.Click += new System.EventHandler(this.downAssemblyButton_Click);
             // 
             // PropertyView
             // 
