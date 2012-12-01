@@ -87,6 +87,16 @@ namespace NUnit.ProjectEditor
             }
         }
 
+        public XmlNode NextAssembly()
+        {
+            return configNode.NextSibling;
+        }
+
+        public XmlNode PreviousAssembly()
+        {
+            return configNode.PreviousSibling;
+        }
+
         public IEnumerator<string> GetEnumerator()
         {
             foreach (XmlNode node in AssemblyNodes)

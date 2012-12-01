@@ -42,6 +42,8 @@ namespace NUnit.ProjectEditor
 
         ICommand AddAssemblyCommand { get; }
         ICommand RemoveAssemblyCommand { get; }
+        ICommand MoveUpAssemblyCommand { get; }
+        ICommand MoveDownAssemblyCommand { get; }
         ICommand BrowseAssemblyPathCommand { get; }
 
         #endregion

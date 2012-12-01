@@ -56,6 +56,8 @@ namespace NUnit.ProjectEditor
 
             view.AddAssemblyCommand.Execute += AddAssembly;
             view.RemoveAssemblyCommand.Execute += RemoveAssembly;
+            view.MoveUpAssemblyCommand.Execute += MoveUpAssembly;
+            view.MoveDownAssemblyCommand.Execute += MoveDownAssembly;
             view.BrowseAssemblyPathCommand.Execute += BrowseForAssemblyPath;
 
             view.ProjectBase.Validated += OnProjectBaseChange;
@@ -173,6 +175,18 @@ namespace NUnit.ProjectEditor
                 selectedConfig.Assemblies.Remove(view.AssemblyList.SelectedItem);
                 SetAssemblyList();
             }
+        }
+
+        private void MoveUpAssembly()
+        {
+            var currentIndex = view.AssemblyList.SelectedIndex - 1;
+            view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
+        }
+
+        private void MoveDownAssembly()
+        {
+            var currentIndex = view.AssemblyList.SelectedIndex + 1;
+            view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
         }
 
         private void BrowseForAssemblyPath()
@@ -378,6 +392,8 @@ namespace NUnit.ProjectEditor
                 view.AssemblyPath.Text = null;
                 view.AddAssemblyCommand.Enabled = true;
                 view.RemoveAssemblyCommand.Enabled = false;
+                view.MoveUpAssemblyCommand.Enabled = false;
+                view.MoveDownAssemblyCommand.Enabled = false;
                 view.BrowseAssemblyPathCommand.Enabled = false;
             }
             else if (selectedConfig != null)
@@ -388,6 +404,11 @@ namespace NUnit.ProjectEditor
                 view.RemoveAssemblyCommand.Enabled = true;
                 view.BrowseAssemblyPathCommand.Enabled = true;
             }
+
+            //view.MoveDownAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex <
+            //                                       view.AssemblyList.SelectionList.GetLength(1);
+
+            //view.MoveDownAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex > 1;
         }
 
         private void OnAssemblyPathChange()

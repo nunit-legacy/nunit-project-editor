@@ -99,6 +99,24 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 
             Assert.False(view.RemoveAssemblyCommand.Enabled);
         }
+        
+        [Test]
+        public void AssemblyList_WhenEmpty_MoveUpIsDisabled()
+        {
+            view.AssemblyList.SelectionList = new string[0];
+            view.AssemblyList.SelectedIndex = -1;
+
+            Assert.False(view.MoveUpAssemblyCommand.Enabled);
+        }
+        
+        [Test]
+        public void AssemblyList_WhenEmpty_MoveDownIsDisabled()
+        {
+            view.AssemblyList.SelectionList = new string[0];
+            view.AssemblyList.SelectedIndex = -1;
+
+            Assert.False(view.MoveDownAssemblyCommand.Enabled);
+        }
 
         [Test]
         public void AssemblyList_WhenEmpty_AssemblyPathBrowseIsDisabled()

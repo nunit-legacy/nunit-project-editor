@@ -53,6 +53,8 @@ namespace NUnit.ProjectEditor
             BrowseConfigBaseCommand = new ButtonElement(configBaseBrowseButton);
             AddAssemblyCommand = new ButtonElement(addAssemblyButton);
             RemoveAssemblyCommand = new ButtonElement(removeAssemblyButton);
+            MoveUpAssemblyCommand = new ButtonElement(upAssemblyButton);
+            MoveDownAssemblyCommand = new ButtonElement(downAssemblyButton);
             BrowseAssemblyPathCommand = new ButtonElement(assemblyPathBrowseButton);
 
             ProjectPath = new TextElement(projectPathLabel);
@@ -89,6 +91,8 @@ namespace NUnit.ProjectEditor
         public ICommand BrowseConfigBaseCommand { get; private set; }
         public ICommand AddAssemblyCommand { get; private set; }
         public ICommand RemoveAssemblyCommand { get; private set; }
+        public ICommand MoveUpAssemblyCommand { get; private set; }
+        public ICommand MoveDownAssemblyCommand { get; private set; }
         public ICommand BrowseAssemblyPathCommand { get; private set; }
 
         public ITextElement ProjectPath{ get; private set; }
@@ -140,5 +144,14 @@ namespace NUnit.ProjectEditor
         }
 
         #endregion
+
+        //private void upAssemblyButton_Click(object sender, EventArgs e)
+        //{
+        //    AssemblyList.SelectedItem = AssemblyList.SelectionList[AssemblyList.SelectedIndex-1];
+        //}
+
+        //private void downAssemblyButton_Click(object sender, EventArgs e) {
+        //    AssemblyList.SelectedItem = AssemblyList.SelectionList[AssemblyList.SelectedIndex + 1];
+        //}
     }
 }
