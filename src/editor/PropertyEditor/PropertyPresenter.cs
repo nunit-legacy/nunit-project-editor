@@ -412,13 +412,10 @@ namespace NUnit.ProjectEditor
                     selectedConfig.Assemblies[view.AssemblyList.SelectedIndex];
                 view.AddAssemblyCommand.Enabled = true;
                 view.RemoveAssemblyCommand.Enabled = true;
+                view.MoveUpAssemblyCommand.Enabled = true;
+                view.MoveDownAssemblyCommand.Enabled = true;
                 view.BrowseAssemblyPathCommand.Enabled = true;
             }
-
-            //view.MoveDownAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex <
-            //                                       view.AssemblyList.SelectionList.GetLength(1);
-
-            //view.MoveDownAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex > 1;
         }
 
         private void OnAssemblyPathChange()

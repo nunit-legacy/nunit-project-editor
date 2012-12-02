@@ -36,15 +36,13 @@ namespace NUnit.ProjectEditor
     {
         #region Constructor
 
-        public PropertyView()
-        {
+        public PropertyView() {
             InitializeComponent();
 
             InitializeViewElements();
         }
 
-        private void InitializeViewElements()
-        {
+        private void InitializeViewElements() {
             DialogManager = new DialogManager("NUnit Project Editor");
             MessageDisplay = new MessageDisplay("NUnit Project Editor");
 
@@ -76,13 +74,12 @@ namespace NUnit.ProjectEditor
         }
 
         #endregion
-        
+
         #region IPropertyView Members
 
         public IDialogManager DialogManager { get; private set; }
         public IMessageDisplay MessageDisplay { get; private set; }
-        public IConfigurationEditorDialog ConfigurationEditorDialog 
-        {
+        public IConfigurationEditorDialog ConfigurationEditorDialog {
             get { return new ConfigurationEditorDialog(); }
         }
 
@@ -95,7 +92,7 @@ namespace NUnit.ProjectEditor
         public ICommand MoveDownAssemblyCommand { get; private set; }
         public ICommand BrowseAssemblyPathCommand { get; private set; }
 
-        public ITextElement ProjectPath{ get; private set; }
+        public ITextElement ProjectPath { get; private set; }
         public ITextElement ProjectBase { get; private set; }
 
         public ISelectionList ProcessModel { get; private set; }
@@ -122,8 +119,7 @@ namespace NUnit.ProjectEditor
 
         #region Helper Methods
 
-        private string[] GetComboBoxOptions(ComboBox comboBox)
-        {
+        private string[] GetComboBoxOptions(ComboBox comboBox) {
             string[] options = new string[comboBox.Items.Count];
 
             for (int i = 0; i < comboBox.Items.Count; i++)
@@ -132,8 +128,7 @@ namespace NUnit.ProjectEditor
             return options;
         }
 
-        private void SetComboBoxOptions(ComboBox comboBox, string[] options)
-        {
+        private void SetComboBoxOptions(ComboBox comboBox, string[] options) {
             comboBox.Items.Clear();
 
             foreach (object opt in options)
@@ -144,14 +139,5 @@ namespace NUnit.ProjectEditor
         }
 
         #endregion
-
-        //private void upAssemblyButton_Click(object sender, EventArgs e)
-        //{
-        //    AssemblyList.SelectedItem = AssemblyList.SelectionList[AssemblyList.SelectedIndex-1];
-        //}
-
-        //private void downAssemblyButton_Click(object sender, EventArgs e) {
-        //    AssemblyList.SelectedItem = AssemblyList.SelectionList[AssemblyList.SelectedIndex + 1];
-        //}
     }
 }
