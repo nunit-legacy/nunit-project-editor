@@ -180,13 +180,23 @@ namespace NUnit.ProjectEditor
         private void MoveUpAssembly()
         {
             var currentIndex = view.AssemblyList.SelectedIndex - 1;
-            view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
+            if (IsIndexInRange(currentIndex))
+            {
+                view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
+            }
         }
 
         private void MoveDownAssembly()
         {
             var currentIndex = view.AssemblyList.SelectedIndex + 1;
-            view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
+            if (IsIndexInRange(currentIndex))
+            {
+                view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
+            }
+        }
+
+        private bool IsIndexInRange(int currentIndex) {
+            return currentIndex > -1 && currentIndex < view.AssemblyList.SelectionList.Length;
         }
 
         private void BrowseForAssemblyPath()
