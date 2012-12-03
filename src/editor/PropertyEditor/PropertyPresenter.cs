@@ -179,20 +179,35 @@ namespace NUnit.ProjectEditor
 
         private void MoveUpAssembly()
         {
-            var currentIndex = view.AssemblyList.SelectedIndex - 1;
-            if (IsIndexInRange(currentIndex))
+            var newIndex = view.AssemblyList.SelectedIndex - 1;
+            
+            if (IsIndexInRange(newIndex))
             {
-                view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
+                SwapAssembly(newIndex);
+            }
+        }
+        
+        private void MoveDownAssembly()
+        {
+            var newIndex = view.AssemblyList.SelectedIndex + 1;
+            if (IsIndexInRange(newIndex))
+            {
+                SwapAssembly(newIndex);
             }
         }
 
-        private void MoveDownAssembly()
-        {
-            var currentIndex = view.AssemblyList.SelectedIndex + 1;
-            if (IsIndexInRange(currentIndex))
-            {
-                view.AssemblyList.SelectedItem = view.AssemblyList.SelectionList[currentIndex];
-            }
+        private void SwapAssembly(int newIndex) {
+            var selectedItem = view.AssemblyList.SelectedItem;
+            var selectedIndex = view.AssemblyList.SelectedIndex;
+
+            var assemblyList = new List<string>(view.AssemblyList.SelectionList);
+            assemblyList.RemoveAt(view.AssemblyList.SelectedIndex);
+            assemblyList.Insert(newIndex, selectedItem);
+            view.AssemblyList.SelectionList = assemblyList.ToArray();
+
+            view.AssemblyList.SelectedIndex = newIndex;
+            selectedConfig.Assemblies[view.AssemblyList.SelectedIndex] = selectedItem;
+            OnSelectedAssemblyChange();
         }
 
         private bool IsIndexInRange(int currentIndex) {
