@@ -101,7 +101,7 @@ namespace NUnit.ProjectEditor
                 selectedConfig = null;
             }
 
-            //OnSelectedConfigChange();
+            OnSelectedConfigChange();
         }
 
         #region Command Events
@@ -427,8 +427,8 @@ namespace NUnit.ProjectEditor
                     selectedConfig.Assemblies[view.AssemblyList.SelectedIndex];
                 view.AddAssemblyCommand.Enabled = true;
                 view.RemoveAssemblyCommand.Enabled = true;
-                view.MoveUpAssemblyCommand.Enabled = true;
-                view.MoveDownAssemblyCommand.Enabled = true;
+                view.MoveUpAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex > 0;
+                view.MoveDownAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex < view.AssemblyList.SelectionList.Length-1;
                 view.BrowseAssemblyPathCommand.Enabled = true;
             }
         }
