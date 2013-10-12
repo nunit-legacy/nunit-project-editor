@@ -47,7 +47,7 @@ namespace NUnit.ProjectEditor
 		/// <summary>
 		/// IProject interface of containing doc
 		/// </summary>
-		private IProjectModel project;
+		private IPropertyModel project;
 
         /// <summary>
         /// List of the test assemblies in this config
@@ -58,7 +58,7 @@ namespace NUnit.ProjectEditor
 
 		#region Constructor
 
-        public ProjectConfig(IProjectModel project, XmlNode configNode)
+        public ProjectConfig(IPropertyModel project, XmlNode configNode)
         {
             this.project = project;
             this.configNode = configNode;

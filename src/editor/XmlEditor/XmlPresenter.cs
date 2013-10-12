@@ -28,10 +28,10 @@ namespace NUnit.ProjectEditor
 {
     public class XmlPresenter
     {
-        private IProjectDocument doc;
+        private IProjectModel doc;
         private IXmlView view;
 
-        public XmlPresenter(IProjectDocument doc, IXmlView view)
+        public XmlPresenter(IProjectModel doc, IXmlView view)
         {
             this.doc = doc;
             this.view = view;

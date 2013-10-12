@@ -33,17 +33,17 @@ namespace NUnit.ProjectEditor.Tests.Model
     {
         static readonly string xmlfile = "test.nunit";
 
-        private ProjectDocument doc;
-        private ProjectModel project;
+        private ProjectModel doc;
+        private PropertyModel project;
 
         private bool gotChangeNotice;
 
         [SetUp]
         public void SetUp()
         {
-            doc = new ProjectDocument();
+            doc = new ProjectModel();
             doc.CreateNewProject();
-            project = new ProjectModel(doc);
+            project = new PropertyModel(doc);
 
             doc.ProjectChanged += OnProjectChange;
             gotChangeNotice = false;
@@ -76,7 +76,7 @@ namespace NUnit.ProjectEditor.Tests.Model
         [Test]
         public void NameIsUnique()
         {
-            ProjectDocument anotherProject = new ProjectDocument(xmlfile);
+            ProjectModel anotherProject = new ProjectModel(xmlfile);
             Assert.AreNotEqual(doc.Name, anotherProject.Name);
         }
 
@@ -147,7 +147,7 @@ namespace NUnit.ProjectEditor.Tests.Model
         {
             project.AddConfig("Debug");
             doc.Save(xmlfile);
-            ProjectDocument doc2 = new ProjectDocument(xmlfile);
+            ProjectModel doc2 = new ProjectModel(xmlfile);
             doc2.Load();
             Assert.IsFalse(doc2.HasUnsavedChanges);
         }

@@ -32,10 +32,10 @@ namespace NUnit.ProjectEditor
 	/// </summary>
 	public class ConfigList : IEnumerable<IProjectConfig>
 	{
-        private IProjectModel project;
+        private IPropertyModel project;
         private XmlNode projectNode;
 
-        public ConfigList(IProjectModel project)
+        public ConfigList(IPropertyModel project)
         {
             this.project = project;
             this.projectNode = project.Document.RootNode;

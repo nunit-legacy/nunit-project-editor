@@ -39,7 +39,7 @@ namespace NUnit.ProjectEditor
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Set up main editor triad
-            ProjectDocument doc = new ProjectDocument();
+            ProjectModel doc = new ProjectModel();
             MainForm view = new MainForm();
             new MainPresenter(doc, view);
 

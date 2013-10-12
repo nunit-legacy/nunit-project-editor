@@ -30,15 +30,15 @@ namespace NUnit.ProjectEditor.Tests.Model
     {
         static readonly string xmlfile = "MyProject.nunit";
 
-        private ProjectDocument doc;
-        private ProjectModel project;
+        private ProjectModel doc;
+        private PropertyModel project;
         private bool gotChangeNotice;
 
         [SetUp]
         public void SetUp()
         {
-            doc = new ProjectDocument(xmlfile);
-            project = new ProjectModel(doc);
+            doc = new ProjectModel(xmlfile);
+            project = new PropertyModel(doc);
 
             doc.ProjectChanged += OnProjectChange;
             gotChangeNotice = false;

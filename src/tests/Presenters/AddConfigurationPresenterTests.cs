@@ -7,16 +7,16 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class AddConfigurationPresenterTests
     {
-        IProjectModel model;
+        IPropertyModel model;
         IAddConfigurationDialog dlg;
         AddConfigurationPresenter presenter;
 
         [SetUp]
         public void SetUp()
         {
-            var doc = new ProjectDocument();
+            var doc = new ProjectModel();
             doc.LoadXml(NUnitProjectXml.NormalProject);
-            model = new ProjectModel(doc);
+            model = new PropertyModel(doc);
 
             dlg = Substitute.For<IAddConfigurationDialog>();
 

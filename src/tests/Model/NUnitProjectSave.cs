@@ -34,14 +34,14 @@ namespace NUnit.ProjectEditor.Tests.Model
 	{
 		static readonly string xmlfile = "test.nunit";
 
-        private ProjectDocument doc;
-        private ProjectModel project;
+        private ProjectModel doc;
+        private PropertyModel project;
 
 		[SetUp]
 		public void SetUp()
 		{
-            doc = new ProjectDocument();
-            project = new ProjectModel(doc);
+            doc = new ProjectModel();
+            project = new PropertyModel(doc);
             doc.CreateNewProject();
 		}
 

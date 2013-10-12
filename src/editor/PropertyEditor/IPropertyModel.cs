@@ -25,11 +25,11 @@ using System;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IProjectModel
+    public interface IPropertyModel
     {
         #region Properties
 
-        IProjectDocument Document { get; }
+        IProjectModel Document { get; }
 
         string ProjectPath { get; set; }
         string BasePath { get; set; }

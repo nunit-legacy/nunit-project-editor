@@ -31,14 +31,14 @@ namespace NUnit.ProjectEditor.Tests.Model
     {
         static readonly string xmlfile = "MyProject.nunit";
 
-        private ProjectDocument doc;
-        private ProjectModel project;
+        private ProjectModel doc;
+        private PropertyModel project;
 
         [SetUp]
         public void SetUp()
         {
-            doc = new ProjectDocument(xmlfile);
-            project = new ProjectModel(doc);
+            doc = new ProjectModel(xmlfile);
+            project = new PropertyModel(doc);
         }
 
         [TearDown]
@@ -192,9 +192,9 @@ namespace NUnit.ProjectEditor.Tests.Model
             doc.Save(xmlfile);
             Assert.IsTrue(File.Exists(xmlfile));
 
-            ProjectDocument doc2 = new ProjectDocument(xmlfile);
+            ProjectModel doc2 = new ProjectModel(xmlfile);
             doc2.Load();
-            ProjectModel project2 = new ProjectModel(doc2);
+            PropertyModel project2 = new PropertyModel(doc2);
 
             Assert.AreEqual(2, project2.Configs.Count);
 

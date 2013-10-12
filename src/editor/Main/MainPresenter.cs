@@ -38,20 +38,20 @@ namespace NUnit.ProjectEditor
     public class MainPresenter
     {
         private IMainView view;
-        private IProjectDocument doc;
+        private IProjectModel doc;
 
         private PropertyPresenter propertyPresenter;
         private XmlPresenter xmlPresenter;
 
         #region Constructor
 
-        public MainPresenter(IProjectDocument doc, IMainView view)
+        public MainPresenter(IProjectModel doc, IMainView view)
         {
             this.doc = doc;
             this.view = view;
 
             // Set up property editor triad
-            ProjectModel project = new ProjectModel(doc);
+            PropertyModel project = new PropertyModel(doc);
             IPropertyView propertyView = view.PropertyView;
             this.propertyPresenter = new PropertyPresenter(project, propertyView);
 
@@ -213,7 +213,7 @@ namespace NUnit.ProjectEditor
             if (!Path.IsPathRooted(path))
                 return false;
 
-            if (!ProjectDocument.IsProjectFile(path))
+            if (!ProjectModel.IsProjectFile(path))
                 return false;
 
             if (!File.Exists(path))

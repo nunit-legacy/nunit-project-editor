@@ -27,18 +27,18 @@ using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
-    public class ProjectModel : IProjectModel
+    public class PropertyModel : IPropertyModel
     {
-        private IProjectDocument doc;
+        private IProjectModel doc;
 
-        public ProjectModel(IProjectDocument doc)
+        public PropertyModel(IProjectModel doc)
         {
             this.doc = doc;
         }
 
-        #region IProjectModel Members
+        #region IPropertyModel Members
 
-        public IProjectDocument Document
+        public IProjectModel Document
         {
             get { return doc; }
         }

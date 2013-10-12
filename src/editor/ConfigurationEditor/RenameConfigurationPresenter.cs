@@ -27,11 +27,11 @@ namespace NUnit.ProjectEditor
 {
     public class RenameConfigurationPresenter
     {
-        private IProjectModel model;
+        private IPropertyModel model;
         private IRenameConfigurationDialog dlg;
         private string originalName;
 
-        public RenameConfigurationPresenter(IProjectModel model, IRenameConfigurationDialog dlg, string originalName)
+        public RenameConfigurationPresenter(IPropertyModel model, IRenameConfigurationDialog dlg, string originalName)
         {
             this.model = model;
             this.dlg = dlg;

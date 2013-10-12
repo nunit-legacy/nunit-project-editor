@@ -28,7 +28,7 @@ using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
-    public class ProjectDocument : IProjectDocument
+    public class ProjectModel : IProjectModel
     {
         private enum DocumentState
         {
@@ -93,9 +93,9 @@ namespace NUnit.ProjectEditor
 
         #region Constructors
 
-        public ProjectDocument() : this(GenerateProjectName()) { }
+        public ProjectModel() : this(GenerateProjectName()) { }
 
-        public ProjectDocument(string projectPath)
+        public ProjectModel(string projectPath)
         {
             this.xmlDoc = new XmlDocument();
             this.projectPath = Path.GetFullPath(projectPath);
@@ -107,7 +107,7 @@ namespace NUnit.ProjectEditor
 
         #endregion
 
-        #region IProjectDocument Members
+        #region IProjectModel Members
 
         #region Events
 

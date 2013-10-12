@@ -27,10 +27,10 @@ namespace NUnit.ProjectEditor
 {
     public class AddConfigurationPresenter
     {
-        private IProjectModel model;
+        private IPropertyModel model;
         private IAddConfigurationDialog dlg;
 
-        public AddConfigurationPresenter(IProjectModel model, IAddConfigurationDialog dlg)
+        public AddConfigurationPresenter(IPropertyModel model, IAddConfigurationDialog dlg)
         {
             this.model = model;
             this.dlg = dlg;

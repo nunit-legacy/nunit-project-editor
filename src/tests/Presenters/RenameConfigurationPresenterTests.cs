@@ -7,16 +7,16 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class RenameConfigurationPresenterTests
     {
-        IProjectModel model;
+        IPropertyModel model;
         IRenameConfigurationDialog dlg;
         RenameConfigurationPresenter presenter;
 
         [SetUp]
         public void Initialize()
         {
-            var doc = new ProjectDocument();
+            var doc = new ProjectModel();
             doc.LoadXml(NUnitProjectXml.EmptyConfigs);
-            model = new ProjectModel(doc);
+            model = new PropertyModel(doc);
             dlg = Substitute.For<IRenameConfigurationDialog>();
             presenter = new RenameConfigurationPresenter(model, dlg, "Debug");
         }

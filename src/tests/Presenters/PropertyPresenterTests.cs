@@ -32,17 +32,17 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class PropertyPresenterTests
     {
-        IProjectDocument doc;
-        private IProjectModel model;
+        IProjectModel doc;
+        private IPropertyModel model;
         private IPropertyView view;
         private PropertyPresenter presenter;
 
         [SetUp]
         public void SetUp()
         {
-            doc = new ProjectDocument();
+            doc = new ProjectModel();
             doc.LoadXml(NUnitProjectXml.NormalProject);
-            model = new ProjectModel(doc);
+            model = new PropertyModel(doc);
             model.ActiveConfigName = "Release";
 
             view = Substitute.For<IPropertyView>();

@@ -36,11 +36,11 @@ namespace NUnit.ProjectEditor
     /// </summary>
     public class PropertyPresenter
     {
-        private IProjectModel model;
+        private IPropertyModel model;
         private IProjectConfig selectedConfig;
         private IPropertyView view;
 
-        public PropertyPresenter(IProjectModel model, IPropertyView view)
+        public PropertyPresenter(IPropertyModel model, IPropertyView view)
         {
             this.model = model;
             this.view = view;

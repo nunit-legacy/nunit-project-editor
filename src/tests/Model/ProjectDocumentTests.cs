@@ -32,13 +32,13 @@ namespace NUnit.ProjectEditor.Tests.Model
     {
         static readonly string xmlfile = "test.nunit";
 
-        private ProjectDocument doc;
+        private ProjectModel doc;
         private bool gotChangeNotice;
 
         [SetUp]
         public void SetUp()
         {
-            doc = new ProjectDocument();
+            doc = new ProjectModel();
             doc.CreateNewProject();
             doc.ProjectChanged += new ActionDelegate(OnProjectChange);
 

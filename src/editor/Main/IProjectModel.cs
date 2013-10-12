@@ -26,7 +26,7 @@ using System.Xml;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IProjectDocument
+    public interface IProjectModel
     {
         #region Events
 

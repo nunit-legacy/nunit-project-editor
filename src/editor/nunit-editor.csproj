@@ -82,7 +82,7 @@
     <Compile Include="Delegates.cs" />
     <Compile Include="IDialog.cs" />
     <Compile Include="IView.cs" />
-    <Compile Include="Main\IProjectDocument.cs" />
+    <Compile Include="Main\IProjectModel.cs" />
     <Compile Include="Main\IMainView.cs" />
     <Compile Include="Main\MainForm.cs">
       <SubType>Form</SubType>
@@ -90,13 +90,13 @@
     <Compile Include="Main\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main\ProjectDocument.cs" />
+    <Compile Include="Main\ProjectModel.cs" />
     <Compile Include="Main\MainPresenter.cs" />
     <Compile Include="PropertyEditor\AssemblyList.cs" />
     <Compile Include="PropertyEditor\ConfigList.cs" />
     <Compile Include="PropertyEditor\IProjectConfig.cs" />
     <Compile Include="PropertyEditor\ProjectConfig.cs" />
-    <Compile Include="PropertyEditor\ProjectModel.cs" />
+    <Compile Include="PropertyEditor\PropertyModel.cs" />
     <Compile Include="PropertyEditor\RuntimeFramework.cs" />
     <Compile Include="PropertyEditor\VSProject.cs" />
     <Compile Include="PropertyEditor\VSProjectConfig.cs" />
@@ -127,7 +127,7 @@
     <Compile Include="ConfigurationEditor\RenameConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PropertyEditor\IProjectModel.cs" />
+    <Compile Include="PropertyEditor\IPropertyModel.cs" />
     <Compile Include="PropertyEditor\IPropertyView.cs" />
     <Compile Include="PropertyEditor\PropertyPresenter.cs" />
     <Compile Include="PropertyEditor\PropertyView.cs">

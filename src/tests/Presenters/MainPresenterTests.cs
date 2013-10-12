@@ -35,14 +35,14 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         private static readonly string NONEXISTENT_PROJECT = "NonExistent.nunit";
 
         private IMainView view;
-        private IProjectDocument doc;
+        private IProjectModel doc;
         private MainPresenter presenter;
 
         [SetUp]
         public void Initialize()
         {
             view = Substitute.For<IMainView>();
-            doc = new ProjectDocument();
+            doc = new ProjectModel();
             presenter = new MainPresenter(doc, view);
         }
 

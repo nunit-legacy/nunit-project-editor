@@ -30,7 +30,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class XmlPresenterTests
     {
-        private IProjectDocument doc;
+        private IProjectModel doc;
         private IXmlView xmlView;
         private XmlPresenter presenter;
 
@@ -40,7 +40,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [SetUp]
         public void Initialize()
         {
-            doc = new ProjectDocument();
+            doc = new ProjectModel();
             doc.LoadXml(initialText);
             xmlView = Substitute.For<IXmlView>();
             presenter = new XmlPresenter(doc, xmlView);

@@ -33,15 +33,15 @@ namespace NUnit.ProjectEditor.Tests.Presenters
     {
         private IConfigurationEditorDialog view;
 
-        private ProjectModel model;
+        private PropertyModel model;
         private ConfigurationEditor editor;
 
         [SetUp]
         public void Initialize()
         {
-            ProjectDocument doc = new ProjectDocument();
+            ProjectModel doc = new ProjectModel();
             doc.LoadXml(NUnitProjectXml.NormalProject);
-            model = new ProjectModel(doc);
+            model = new PropertyModel(doc);
 
             view = Substitute.For<IConfigurationEditorDialog>();
 
