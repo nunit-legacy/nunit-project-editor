@@ -29,24 +29,24 @@ namespace NUnit.ProjectEditor
 {
     public class PropertyModel : IPropertyModel
     {
-        private IProjectModel doc;
+        private IProjectModel project;
 
-        public PropertyModel(IProjectModel doc)
+        public PropertyModel(IProjectModel project)
         {
-            this.doc = doc;
+            this.project = project;
         }
 
         #region IPropertyModel Members
 
-        public IProjectModel Document
+        public IProjectModel Project
         {
-            get { return doc; }
+            get { return project; }
         }
 
         public string ProjectPath
         {
-            get { return doc.ProjectPath; }
-            set { doc.ProjectPath = value; }
+            get { return project.ProjectPath; }
+            set { project.ProjectPath = value; }
         }
 
         /// <summary>
@@ -55,8 +55,8 @@ namespace NUnit.ProjectEditor
         /// </summary>
         public string BasePath
         {
-            get { return doc.GetSettingsAttribute("appbase"); }
-            set { doc.SetSettingsAttribute("appbase", value); }
+            get { return project.GetSettingsAttribute("appbase"); }
+            set { project.SetSettingsAttribute("appbase", value); }
         }
 
         /// <summary>
@@ -77,25 +77,25 @@ namespace NUnit.ProjectEditor
 
         public string ActiveConfigName
         {
-            get { return doc.GetSettingsAttribute("activeconfig"); }
-            set { doc.SetSettingsAttribute("activeconfig", value); }
+            get { return project.GetSettingsAttribute("activeconfig"); }
+            set { project.SetSettingsAttribute("activeconfig", value); }
         }
 
         public string ProcessModel
         {
-            get { return doc.GetSettingsAttribute("processModel") ?? "Default"; }
-            set { doc.SetSettingsAttribute("processModel", value.ToString()); }
+            get { return project.GetSettingsAttribute("processModel") ?? "Default"; }
+            set { project.SetSettingsAttribute("processModel", value.ToString()); }
         }
 
         public string DomainUsage
         {
-            get { return doc.GetSettingsAttribute("domainUsage") ?? "Default"; }
-            set { doc.SetSettingsAttribute("domainUsage", value.ToString()); }
+            get { return project.GetSettingsAttribute("domainUsage") ?? "Default"; }
+            set { project.SetSettingsAttribute("domainUsage", value.ToString()); }
         }
 
         public ConfigList Configs
         {
-            get { return new ConfigList(this); }
+            get { return new ConfigList(Project.RootNode); }
         }
 
         public string[] ConfigNames
@@ -112,20 +112,20 @@ namespace NUnit.ProjectEditor
 
         public IProjectConfig AddConfig(string name)
         {
-            XmlNode configNode = XmlHelper.AddElement(doc.RootNode, "Config");
+            XmlNode configNode = XmlHelper.AddElement(project.RootNode, "Config");
             XmlHelper.AddAttribute(configNode, "name", name);
 
-            return new ProjectConfig(this, configNode);
+            return new ProjectConfig(configNode);
         }
 
         public void RemoveConfigAt(int index)
         {
             bool itWasActive = ActiveConfigName == Configs[index].Name;
 
-            doc.RootNode.RemoveChild(doc.ConfigNodes[index]);
+            project.RootNode.RemoveChild(project.ConfigNodes[index]);
             
             if (itWasActive)
-                doc.RemoveSettingsAttribute("activeconfig");
+                project.RemoveSettingsAttribute("activeconfig");
         }
 
         public void RemoveConfig(string name)
@@ -143,9 +143,9 @@ namespace NUnit.ProjectEditor
 
         private int IndexOf(string name)
         {
-            for (int index = 0; index < doc.ConfigNodes.Count; index++)
+            for (int index = 0; index < project.ConfigNodes.Count; index++)
             {
-                if (XmlHelper.GetAttribute(doc.ConfigNodes[index], "name") == name)
+                if (XmlHelper.GetAttribute(project.ConfigNodes[index], "name") == name)
                     return index;
             }
 

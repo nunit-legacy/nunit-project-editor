@@ -60,6 +60,11 @@ namespace NUnit.ProjectEditor
                 }
 
                 model.Configs[originalName].Name = newName;
+
+                if (model.ActiveConfigName == originalName)
+                    model.ActiveConfigName = newName;
+
+                dlg.Close();
             };
         }
     }

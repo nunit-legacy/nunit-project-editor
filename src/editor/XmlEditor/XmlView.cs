@@ -86,17 +86,36 @@ namespace NUnit.ProjectEditor
             richTextBox1.Dock = DockStyle.Fill;
         }
 
-        public IMessageDisplay MessageDisplay { get; private set; }
+        #endregion
+
+        #region ISelectableView Members
+
+        public event ActionStartingHandler Deselecting;
+        public event ActionHandler Selected;
+
+        void ISelectableView.NotifySelected()
+        {
+            if (Selected != null)
+                Selected();
+        }
+
+        public bool CanDeselect()
+        {
+            if (Deselecting != null)
+            {
+                var eventArgs = new ActionStartingEventArgs();
+                Deselecting(eventArgs);
+                return !eventArgs.Cancel;
+            }
+
+            return true;
+        }
 
         #endregion
 
-        #region Event Handlers
+        #region IView Members
 
-        //private void richTextBox1_Validated(object sender, EventArgs e)
-        //{
-        //    if (XmlChanged != null)
-        //        XmlChanged();
-        //}
+        public IMessageDisplay MessageDisplay { get; private set; }
 
         #endregion
     }

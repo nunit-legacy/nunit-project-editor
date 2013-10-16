@@ -43,7 +43,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void ConfigurationName_WhenSetToNewName_OkButtonIsEnabled()
         {
             dlg.ConfigurationName.Text = "New";
-            dlg.ConfigurationName.Changed += Raise.Event<ActionDelegate>();
+            dlg.ConfigurationName.Changed += Raise.Event<ActionHandler>();
 
             Assert.True(dlg.OkButton.Enabled);
         }
@@ -52,7 +52,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void ConfigurationName_WhenSetToOriginalName_OkButtonIsDisabled()
         {
             dlg.ConfigurationName.Text = "Debug";
-            dlg.ConfigurationName.Changed += Raise.Event<ActionDelegate>();
+            dlg.ConfigurationName.Changed += Raise.Event<ActionHandler>();
 
             Assert.False(dlg.OkButton.Enabled);
         }
@@ -61,7 +61,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void ConfigurationName_WhenCleared_OkButtonIsDisabled()
         {
             dlg.ConfigurationName.Text = string.Empty;
-            dlg.ConfigurationName.Changed += Raise.Event<ActionDelegate>();
+            dlg.ConfigurationName.Changed += Raise.Event<ActionHandler>();
 
             Assert.False(dlg.OkButton.Enabled);
         }
@@ -70,9 +70,18 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void OkButton_WhenClicked_PerformsRename()
         {
             dlg.ConfigurationName.Text = "New";
-            dlg.OkButton.Execute += Raise.Event<CommandDelegate>();
+            dlg.OkButton.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.ConfigNames, Is.EqualTo(new[] { "New", "Release" }));
+        }
+
+        [Test]
+        public void OkButton_RenameActiveConfig_ChangesActiveConfig()
+        {
+            dlg.ConfigurationName.Text = "New";
+            dlg.OkButton.Execute += Raise.Event<CommandHandler>();
+
+            Assert.That(model.ActiveConfigName, Is.EqualTo("New"));
         }
 
         [Test]

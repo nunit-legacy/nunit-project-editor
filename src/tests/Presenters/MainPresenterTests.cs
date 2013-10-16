@@ -35,42 +35,14 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         private static readonly string NONEXISTENT_PROJECT = "NonExistent.nunit";
 
         private IMainView view;
-        private IProjectModel doc;
-        private MainPresenter presenter;
+        private IProjectModel model;
 
         [SetUp]
         public void Initialize()
         {
             view = Substitute.For<IMainView>();
-            doc = new ProjectModel();
-            presenter = new MainPresenter(doc, view);
-        }
-
-        [Test]
-        public void ActiveViewChanged_WhenNoProjectIsOpen_TabViewsRemainHidden()
-        {
-            view.SelectedView.Returns(SelectedView.XmlView);
-            view.ActiveViewChanged += Raise.Event<ActiveViewChangedHandler>();
-            Assert.False(view.PropertyView.Visible);
-            Assert.False(view.XmlView.Visible);
-
-            view.SelectedView.Returns(SelectedView.PropertyView);
-            view.ActiveViewChanged += Raise.Event<ActiveViewChangedHandler>();
-            Assert.False(view.PropertyView.Visible);
-            Assert.False(view.XmlView.Visible);
-        }
-
-        [Test]
-        public void ActiveViewChanged_WhenProjectIsOpen_TabViewsAreVisible()
-        {
-            doc.CreateNewProject();
-
-            view.SelectedView.Returns(SelectedView.XmlView);
-            view.ActiveViewChanged += Raise.Event<ActiveViewChangedHandler>();
-
-            Assert.True(view.PropertyView.Visible);
-            Assert.True(view.XmlView.Visible);
-
+            model = new ProjectModel();
+            new MainPresenter(model, view);
         }
 
         [Test]
@@ -82,7 +54,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [Test]
         public void CloseProject_AfterCreatingNewProject_IsEnabled()
         {
-            view.NewProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.NewProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.True(view.CloseProjectCommand.Enabled);
         }
@@ -91,7 +63,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void CloseProject_AfterOpeningGoodProject_IsEnabled()
         {
             view.DialogManager.GetFileOpenPath("", "", "").ReturnsForAnyArgs(GOOD_PROJECT);
-            view.OpenProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.OpenProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.True(view.CloseProjectCommand.Enabled);
         }
@@ -105,10 +77,10 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [Test]
         public void NewProject_WhenClicked_CreatesNewProject()
         {
-            view.NewProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.NewProjectCommand.Execute += Raise.Event<CommandHandler>();
 
-            Assert.IsNotNull(doc.RootNode);
-            Assert.That(doc.Name, Is.StringMatching("Project\\d"));
+            Assert.IsNotNull(model.RootNode);
+            Assert.That(model.Name, Is.StringMatching("Project\\d"));
         }
 
         [Test]
@@ -121,36 +93,36 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void OpenProject_WhenClickedAndProjectIsValid_OpensProject()
         {
             view.DialogManager.GetFileOpenPath("Open", "", "").ReturnsForAnyArgs(GOOD_PROJECT);
-            view.OpenProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.OpenProjectCommand.Execute += Raise.Event<CommandHandler>();
 
-            Assert.NotNull(doc.XmlText);
-            Assert.NotNull(doc.RootNode);
-            Assert.AreEqual("NUnitTests", doc.Name);
+            Assert.NotNull(model.XmlText);
+            Assert.NotNull(model.RootNode);
+            Assert.AreEqual("NUnitTests", model.Name);
         }
 
         [Test]
         public void OpenProject_WhenClickedAndProjectXmlIsNotValid_OpensProject()
         {
             view.DialogManager.GetFileOpenPath("Open", "", "").ReturnsForAnyArgs(BAD_PROJECT);
-            view.OpenProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.OpenProjectCommand.Execute += Raise.Event<CommandHandler>();
 
-            Assert.NotNull(doc.XmlText);
-            Assert.Null(doc.RootNode);
-            Assert.AreEqual("BadProject", doc.Name);
+            Assert.NotNull(model.XmlText);
+            Assert.Null(model.RootNode);
+            Assert.AreEqual("BadProject", model.Name);
 
-            Assert.AreEqual(SelectedView.XmlView, view.SelectedView);
+            Assert.That(view.SelectedView, Is.EqualTo(EditorView.XmlView));
         }
 
         [Test]
         public void OpenProject_WhenClickedAndProjectDoesNotExist_DisplaysError()
         {
             view.DialogManager.GetFileOpenPath("Open", "", "").ReturnsForAnyArgs(NONEXISTENT_PROJECT);
-            view.OpenProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.OpenProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             view.MessageDisplay.Received().Error(Arg.Is((string x) => x.StartsWith("Could not find file")));
 
-            Assert.Null(doc.XmlText);
-            Assert.Null(doc.RootNode);
+            Assert.Null(model.XmlText);
+            Assert.Null(model.RootNode);
         }
 
         [Test]
@@ -162,7 +134,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [Test]
         public void SaveProject_AfterCreatingNewProject_IsEnabled()
         {
-            view.NewProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.NewProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.True(view.SaveProjectCommand.Enabled);
         }
@@ -171,7 +143,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void SaveProject_AfterOpeningGoodProject_IsEnabled()
         {
             view.DialogManager.GetFileOpenPath("", "", "").ReturnsForAnyArgs(GOOD_PROJECT);
-            view.OpenProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.OpenProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.True(view.SaveProjectCommand.Enabled);
         }
@@ -185,7 +157,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [Test]
         public void SaveProjectAs_AfterCreatingNewProject_IsEnabled()
         {
-            view.NewProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.NewProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.True(view.SaveProjectAsCommand.Enabled);
         }
@@ -194,7 +166,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void SaveProjectAs_AfterOpeningGoodProject_IsEnabled()
         {
             view.DialogManager.GetFileOpenPath("", "", "").ReturnsForAnyArgs(GOOD_PROJECT);
-            view.OpenProjectCommand.Execute += Raise.Event<CommandDelegate>();
+            view.OpenProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.True(view.SaveProjectAsCommand.Enabled);
         }

@@ -30,9 +30,9 @@ namespace NUnit.ProjectEditor
     {
         #region Events
 
-        event ActionDelegate ProjectCreated;
-        event ActionDelegate ProjectClosed;
-        event ActionDelegate ProjectChanged;
+        event ActionHandler Created;
+        event ActionHandler Closed;
+        event ActionHandler Changed;
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace NUnit.ProjectEditor
         string Name { get; }
 
         /// <summary>
-        /// Gets or sets the path to which a doc will be saved.
+        /// Gets or sets the path to which a project will be saved.
         /// </summary>
         string ProjectPath { get; set; }
 

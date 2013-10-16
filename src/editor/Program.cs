@@ -39,14 +39,20 @@ namespace NUnit.ProjectEditor
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Set up main editor triad
-            ProjectModel doc = new ProjectModel();
-            MainForm view = new MainForm();
-            new MainPresenter(doc, view);
+            ProjectModel project = new ProjectModel();
+            MainForm form = new MainForm();
+            new MainPresenter(project, form);
+
+            // Set up property editor triad
+            new PropertyPresenter(new PropertyModel(project), form.PropertyView);
+
+            // Set up XML editor triad
+            new XmlPresenter(project, form.XmlView);
 
             if (args.Length > 0)
-                doc.OpenProject(args[0]);
+                project.OpenProject(args[0]);
 
-            Application.Run(view);
+            Application.Run(form);
         }
     }
 }

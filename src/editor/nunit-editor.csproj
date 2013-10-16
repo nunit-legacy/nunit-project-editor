@@ -81,6 +81,7 @@
     <Compile Include="ConfigurationEditor\RenameConfigurationPresenter.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="IDialog.cs" />
+    <Compile Include="ISelectableView.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="Main\IProjectModel.cs" />
     <Compile Include="Main\IMainView.cs" />

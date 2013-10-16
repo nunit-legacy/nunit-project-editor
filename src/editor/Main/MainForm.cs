@@ -33,8 +33,6 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    public delegate bool ViewClosingDelegate();
-
     public partial class MainForm : Form, IMainView
     {
         #region Constructor
@@ -57,13 +55,6 @@ namespace NUnit.ProjectEditor
 
         #region IMainView Members
 
-        #region Events
-
-        public event ActiveViewChangingHandler ActiveViewChanging;
-        public event ActiveViewChangedHandler ActiveViewChanged;
-
-        #endregion
-
         #region Properties
 
         public IDialogManager DialogManager { get; private set; }
@@ -74,19 +65,11 @@ namespace NUnit.ProjectEditor
         public ICommand SaveProjectCommand { get; private set; }
         public ICommand SaveProjectAsCommand { get; private set; }
 
-        public IXmlView XmlView
+        public IXmlView XmlView { get { return xmlView; } }
+        public IPropertyView PropertyView { get { return propertyView; } }
+        public EditorView SelectedView 
         {
-            get { return xmlView; }
-        }
-
-        public IPropertyView PropertyView
-        {
-            get { return propertyView; }
-        }
-
-        public SelectedView SelectedView
-        {
-            get { return (SelectedView)tabControl1.SelectedIndex; }
+            get { return (EditorView)tabControl1.SelectedIndex; }
             set { tabControl1.SelectedIndex = (int)value; }
         }
 
@@ -111,14 +94,22 @@ namespace NUnit.ProjectEditor
 
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            if (ActiveViewChanging != null && !ActiveViewChanging())
-                e.Cancel = true;
+            if (tabControl1.Controls.Count > 0)
+            {
+                var selectedView = tabControl1.SelectedTab.Controls[0] as ISelectableView;
+                if (selectedView != null && !selectedView.CanDeselect())
+                    e.Cancel = true;
+            }
         }
 
         private void tabControl1_Selected(object sender, TabControlEventArgs e)
         {
-            if (ActiveViewChanged != null)
-                ActiveViewChanged();
+            if (tabControl1.Controls.Count > 0)
+            {
+                var selectedView = tabControl1.SelectedTab.Controls[0] as ISelectableView;
+                if (selectedView != null)
+                    selectedView.NotifySelected();
+            }
         }
 
         #endregion

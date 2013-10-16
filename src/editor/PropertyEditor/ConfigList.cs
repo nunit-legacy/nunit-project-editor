@@ -32,13 +32,11 @@ namespace NUnit.ProjectEditor
 	/// </summary>
 	public class ConfigList : IEnumerable<IProjectConfig>
 	{
-        private IPropertyModel project;
-        private XmlNode projectNode;
+        private XmlNode _projectNode;
 
-        public ConfigList(IPropertyModel project)
+        public ConfigList(XmlNode projectNode)
         {
-            this.project = project;
-            this.projectNode = project.Document.RootNode;
+            _projectNode = projectNode;
         }
 
 		#region Properties
@@ -50,7 +48,7 @@ namespace NUnit.ProjectEditor
 
 		public IProjectConfig this[int index]
 		{
-            get { return new ProjectConfig(project, ConfigNodes[index]); }
+            get { return new ProjectConfig(ConfigNodes[index]); }
 		}
 
         public IProjectConfig this[string name]
@@ -64,42 +62,17 @@ namespace NUnit.ProjectEditor
 
         private XmlNodeList ConfigNodes
         {
-            get { return projectNode.SelectNodes("Config"); }
+            get { return _projectNode.SelectNodes("Config"); }
         }
 
         private XmlNode SettingsNode
         {
-            get { return projectNode.SelectSingleNode("Settings"); }
+            get { return _projectNode.SelectSingleNode("Settings"); }
         }
 
 		#endregion
 
 		#region Methods
-
-        //public IProjectConfig Add(string name)
-        //{
-        //    XmlNode configNode = XmlHelper.AddElement(projectNode, "Config");
-        //    XmlHelper.AddAttribute(configNode, "name", name);
-
-        //    return new ProjectConfig(project, configNode);
-        //}
-
-        //public void RemoveAt(int index)
-        //{
-        //    bool wasActive = project.ActiveConfigName == this[index].Name;
-        //    projectNode.RemoveChild(ConfigNodes[index]);
-        //    if (wasActive)
-        //        project.ActiveConfigName = null;
-        //}
-
-        //public void Remove(string name)
-        //{
-        //    int index = IndexOf(name);
-        //    if (index >= 0)
-        //    {
-        //        RemoveAt(index);
-        //    }
-        //}
 
         private int IndexOf(string name)
         {
@@ -112,11 +85,6 @@ namespace NUnit.ProjectEditor
             return -1;
         }
 
-        //public bool Contains(string name)
-        //{
-        //    return IndexOf(name) >= 0;
-        //}
-
 		#endregion
 
         #region IEnumerable<IProjectConfig> Members
@@ -124,7 +92,7 @@ namespace NUnit.ProjectEditor
         public IEnumerator<IProjectConfig> GetEnumerator()
         {
             foreach (XmlNode node in ConfigNodes)
-                yield return new ProjectConfig(project, node);
+                yield return new ProjectConfig(node);
         }
 
         #endregion

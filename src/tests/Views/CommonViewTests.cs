@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2010 Charlie Poole
+// Copyright (c) 2013 Charlie Poole
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,23 +22,36 @@
 // ***********************************************************************
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
+using NUnit.Framework;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.Tests.Views
 {
-    public interface IProjectConfig
+    [TestFixture(typeof(MainForm))]
+    [TestFixture(typeof(XmlView))]
+    [TestFixture(typeof(PropertyView))]
+    [TestFixture(typeof(AddConfigurationDialog))]
+    [TestFixture(typeof(RenameConfigurationDialog))]
+    [TestFixture(typeof(ConfigurationEditorDialog))]
+    public class CommonViewTests<T> where T: IView, new()
     {
-        string Name { get; set; }
+        [TestCaseSource("viewProps")]
+        public void ViewElementsAreInitialized(PropertyInfo prop)
+        {
+            var view = new T();
 
-        string BasePath { get; set; }
+            if (prop.GetValue(view, new object[0]) == null)
+                Assert.Fail("{0} was not initialized", prop.Name);
+        }
 
-        string ConfigurationFile { get; set; }
-
-        string PrivateBinPath { get; set; }
-
-        BinPathType BinPathType { get; set; }
-
-        AssemblyList Assemblies { get; }
-
-        RuntimeFramework RuntimeFramework { get; set; }
+        private IEnumerable<PropertyInfo> viewProps()
+        {
+            foreach (PropertyInfo prop in typeof(T).GetProperties())
+            {
+                if (typeof(IViewElement).IsAssignableFrom(prop.PropertyType))
+                    yield return prop;
+            }
+        }
     }
 }

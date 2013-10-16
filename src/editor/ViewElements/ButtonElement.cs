@@ -28,8 +28,8 @@ namespace NUnit.ProjectEditor.ViewElements
 {
     /// <summary>
     /// ControlWrapper is a general wrapper for controls used
-    /// by the view. It implements several different interfaces
-    /// so that the view may choose which one to expose, based
+    /// by the _view. It implements several different interfaces
+    /// so that the _view may choose which one to expose, based
     /// on the type of textBox and how it is used.
     /// </summary>
     public class ButtonElement : ControlElement, ICommand
@@ -43,6 +43,6 @@ namespace NUnit.ProjectEditor.ViewElements
             };
         }
 
-        public event CommandDelegate Execute;
+        public event CommandHandler Execute;
     }
 }

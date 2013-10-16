@@ -30,156 +30,170 @@ using System.Text;
 namespace NUnit.ProjectEditor
 {
     /// <summary>
-    /// The ProjectPresenter handles presentation of the doc as
+    /// The ProjectPresenter handles presentation of the project as
     /// a set of properties, which the ProjectView is expected to
     /// display.
     /// </summary>
     public class PropertyPresenter
     {
-        private IPropertyModel model;
-        private IProjectConfig selectedConfig;
-        private IPropertyView view;
+        private IPropertyModel _model;
+        private IPropertyView _view;
+        private IProjectConfig _selectedConfig;
 
         public PropertyPresenter(IPropertyModel model, IPropertyView view)
         {
-            this.model = model;
-            this.view = view;
+            _model = model;
+            _view = view;
 
-            view.ProcessModel.SelectionList = new string[] { "Default", "Single", "Separate", "Multiple" };
-            view.DomainUsage.SelectionList = new string[] { "Default", "Single", "Multiple" };
-            view.Runtime.SelectionList = new string[] { "Any", "Net", "Mono" };
-            view.RuntimeVersion.SelectionList = new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" };
-
-            view.BrowseProjectBaseCommand.Execute += BrowseForProjectBase;
-            view.BrowseConfigBaseCommand.Execute += BrowseForConfigBase;
-            view.EditConfigsCommand.Execute += EditConfigs;
-
-            view.AddAssemblyCommand.Execute += AddAssembly;
-            view.RemoveAssemblyCommand.Execute += RemoveAssembly;
-            view.MoveUpAssemblyCommand.Execute += MoveUpAssembly;
-            view.MoveDownAssemblyCommand.Execute += MoveDownAssembly;
-            view.BrowseAssemblyPathCommand.Execute += BrowseForAssemblyPath;
-
-            view.ProjectBase.Validated += OnProjectBaseChange;
-            view.ProcessModel.SelectionChanged += OnProcessModelChange;
-            view.DomainUsage.SelectionChanged += OnDomainUsageChange;
-            view.ConfigList.SelectionChanged += OnSelectedConfigChange;
-
-            view.Runtime.SelectionChanged += OnRuntimeChange;
-            view.RuntimeVersion.TextValidated += OnRuntimeVersionChange;
-            view.ApplicationBase.Validated += OnApplicationBaseChange;
-            view.ConfigurationFile.Validated += OnConfigurationFileChange;
-            view.BinPathType.SelectionChanged += OnBinPathTypeChange;
-            view.PrivateBinPath.Validated += OnPrivateBinPathChange;
-            view.AssemblyList.SelectionChanged += OnSelectedAssemblyChange;
-            view.AssemblyPath.Validated += OnAssemblyPathChange;
-
-            model.Document.ProjectCreated += OnProjectCreated;
-            model.Document.ProjectClosed += OnProjectClosed;
+            InitializeView();
+            WireUpEvents();
         }
 
-        public void LoadViewFromModel()
+        private void InitializeView()
         {
-            view.Visible = true;
+            _view.ProcessModel.SelectionList = new string[] { "Default", "Single", "Separate", "Multiple" };
+            _view.DomainUsage.SelectionList = new string[] { "Default", "Single", "Multiple" };
+            _view.Runtime.SelectionList = new string[] { "Any", "Net", "Mono" };
+            _view.RuntimeVersion.SelectionList = new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" };
+        }
 
-            view.ProjectPath.Text = model.ProjectPath;
-            view.ProjectBase.Text = model.EffectiveBasePath;
-            view.ActiveConfigName.Text = model.ActiveConfigName;
+        private void WireUpEvents()
+        {
+            _view.Selected += view_Selected;
 
-            view.ProcessModel.SelectedItem = model.ProcessModel;
-            view.DomainUsage.SelectedItem = model.DomainUsage;
+            _view.BrowseProjectBaseCommand.Execute += BrowseProjectBaseCommand_Execute;
+            _view.BrowseConfigBaseCommand.Execute += BrowseConfigBaseCommand_Execute;
+            _view.EditConfigsCommand.Execute += EditConfigsCommand_Execute;
 
-            view.ConfigList.SelectionList = model.ConfigNames;
-            if (model.ConfigNames.Length > 0)
+            _view.AddAssemblyCommand.Execute += AddAssemblyCommand_Execute;
+            _view.RemoveAssemblyCommand.Execute += RemoveAssemblyCommand_Execute;
+            _view.MoveUpAssemblyCommand.Execute += MoveUpAssemblyCommand_Execute;
+            _view.MoveDownAssemblyCommand.Execute += MoveDownAssemblyCommand_Execute;
+            _view.BrowseAssemblyPathCommand.Execute += BrowseForAssemblyPathCommand_Execute;
+
+            _view.ProjectBase.Validated += ProjectBase_Validated;
+            _view.ProcessModel.SelectionChanged += ProcessModel_SelectionChanged;
+            _view.DomainUsage.SelectionChanged += DomainUsage_SelectionChanged;
+            _view.ConfigList.SelectionChanged += ConfigList_SelectionChanged;
+
+            _view.Runtime.SelectionChanged += RunTime_SelectionChanged;
+            _view.RuntimeVersion.TextValidated += RuntimeVersion_TextValidated;
+            _view.ApplicationBase.Validated += ApplicationBase_Validated;
+            _view.ConfigurationFile.Validated += ConfigurationFile_Validated;
+            _view.BinPathType.SelectionChanged += BinPathType_SelectionChanged;
+            _view.PrivateBinPath.Validated += PrivateBinPath_Validated;
+            _view.AssemblyList.SelectionChanged += AssemblyList_SelectionChanged;
+            _view.AssemblyPath.Validated += AssemblyPath_Validated;
+
+            _model.Project.Created += Project_Created;
+            _model.Project.Closed += Project_Closed;
+        }
+
+        private void LoadViewFromModel()
+        {
+            _view.Visible = true;
+
+            _view.ProjectPath.Text = _model.ProjectPath;
+            _view.ProjectBase.Text = _model.EffectiveBasePath;
+            _view.ActiveConfigName.Text = _model.ActiveConfigName;
+
+            _view.ProcessModel.SelectedItem = _model.ProcessModel;
+            _view.DomainUsage.SelectedItem = _model.DomainUsage;
+
+            _view.ConfigList.SelectionList = _model.ConfigNames;
+            if (_model.ConfigNames.Length > 0)
             {
-                view.ConfigList.SelectedIndex = 0;
-                selectedConfig = model.Configs[0];
+                _view.ConfigList.SelectedIndex = 0;
+                _selectedConfig = _model.Configs[0];
             }
             else
             {
-                view.ConfigList.SelectedIndex = -1;
-                selectedConfig = null;
+                _view.ConfigList.SelectedIndex = -1;
+                _selectedConfig = null;
             }
 
-            OnSelectedConfigChange();
+            ConfigList_SelectionChanged();
         }
 
         #region Command Events
 
-        private void BrowseForProjectBase()
+        private void BrowseProjectBaseCommand_Execute()
         {
             string message = "Select ApplicationBase for the model as a whole.";
-            string projectBase = view.DialogManager.GetFolderPath(message, view.ProjectBase.Text);
-            if (projectBase != null && projectBase != model.BasePath)
-                view.ProjectBase.Text = model.BasePath = projectBase;
+            string projectBase = _view.DialogManager.GetFolderPath(message, _view.ProjectBase.Text);
+            if (projectBase != null && projectBase != _model.BasePath)
+                _view.ProjectBase.Text = _model.BasePath = projectBase;
         }
 
-        private void BrowseForConfigBase()
+        private void BrowseConfigBaseCommand_Execute()
         {
             string message = string.Format(
                 "Select ApplicationBase for the {0} configuration, if different from the model as a whole.",
-                model.Configs[view.ConfigList.SelectedIndex].Name);
-            string initialFolder = view.ApplicationBase.Text;
+                _model.Configs[_view.ConfigList.SelectedIndex].Name);
+            string initialFolder = _view.ApplicationBase.Text;
             if (initialFolder == string.Empty)
-                initialFolder = view.ProjectBase.Text;
+                initialFolder = _view.ProjectBase.Text;
 
-            string appbase = view.DialogManager.GetFolderPath(message, initialFolder);
-            if (appbase != null && appbase != view.ApplicationBase.Text)
+            string appbase = _view.DialogManager.GetFolderPath(message, initialFolder);
+            if (appbase != null && appbase != _view.ApplicationBase.Text)
                 UpdateApplicationBase(appbase);
         }
 
-        private void EditConfigs()
+        private void EditConfigsCommand_Execute()
         {
-            var editorView = view.ConfigurationEditorDialog;
-            new ConfigurationEditor(model, editorView);
+            var editorView = _view.ConfigurationEditorDialog;
+            new ConfigurationEditor(_model, editorView);
             editorView.ShowDialog();
 
-            string selectedConfig = view.ConfigList.SelectedItem;
-            string[] configs = model.ConfigNames;
+            string selectedConfig = _view.ConfigList.SelectedItem;
+            string[] configs = _model.ConfigNames;
 
-            view.ConfigList.SelectionList = configs;
+            _view.ConfigList.SelectionList = configs;
 
             if (configs.Length > 0)
             {
-                view.ConfigList.SelectedIndex = 0;
+                _view.ConfigList.SelectedIndex = 0;
                 foreach (string config in configs)
                 {
                     if (config == selectedConfig)
-                        view.ConfigList.SelectedItem = config;
+                        _view.ConfigList.SelectedItem = config;
                 }
             }
 
-            view.ActiveConfigName.Text = model.ActiveConfigName;
+            _view.ActiveConfigName.Text = _model.ActiveConfigName;
         }
 
-        private void AddAssembly()
+        private void AddAssemblyCommand_Execute()
         {
-            string assemblyPath = view.DialogManager.GetFileOpenPath(
+            string assemblyPath = _view.DialogManager.GetFileOpenPath(
                 "Select Assembly",
                 "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
-                view.AssemblyPath.Text);
+                _view.AssemblyPath.Text);
 
             if (assemblyPath != null)
             {
-                assemblyPath = PathUtils.RelativePath(selectedConfig.EffectiveBasePath, assemblyPath);
-                selectedConfig.Assemblies.Add(assemblyPath);
+                var basePath = _model.EffectiveBasePath;
+                if (_selectedConfig.BasePath != null)
+                    basePath = Path.Combine(_model.EffectiveBasePath, _selectedConfig.BasePath);
+                assemblyPath = PathUtils.RelativePath(basePath, assemblyPath);
+                _selectedConfig.Assemblies.Add(assemblyPath);
                 SetAssemblyList();
             }
         }
 
-        private void RemoveAssembly()
+        private void RemoveAssemblyCommand_Execute()
         {
-            string question = string.Format("Remove {0} from project?", view.AssemblyList.SelectedItem);
-            if (view.MessageDisplay.AskYesNoQuestion(question))
+            string question = string.Format("Remove {0} from project?", _view.AssemblyList.SelectedItem);
+            if (_view.MessageDisplay.AskYesNoQuestion(question))
             {
-                selectedConfig.Assemblies.Remove(view.AssemblyList.SelectedItem);
+                _selectedConfig.Assemblies.Remove(_view.AssemblyList.SelectedItem);
                 SetAssemblyList();
             }
         }
 
-        private void MoveUpAssembly()
+        private void MoveUpAssemblyCommand_Execute()
         {
-            var newIndex = view.AssemblyList.SelectedIndex - 1;
+            var newIndex = _view.AssemblyList.SelectedIndex - 1;
             
             if (IsIndexInRange(newIndex))
             {
@@ -187,9 +201,9 @@ namespace NUnit.ProjectEditor
             }
         }
         
-        private void MoveDownAssembly()
+        private void MoveDownAssemblyCommand_Execute()
         {
-            var newIndex = view.AssemblyList.SelectedIndex + 1;
+            var newIndex = _view.AssemblyList.SelectedIndex + 1;
             if (IsIndexInRange(newIndex))
             {
                 SwapAssembly(newIndex);
@@ -197,33 +211,33 @@ namespace NUnit.ProjectEditor
         }
 
         private void SwapAssembly(int newIndex) {
-            var selectedItem = view.AssemblyList.SelectedItem;
-            var selectedIndex = view.AssemblyList.SelectedIndex;
+            var selectedItem = _view.AssemblyList.SelectedItem;
+            var selectedIndex = _view.AssemblyList.SelectedIndex;
 
-            var assemblyList = new List<string>(view.AssemblyList.SelectionList);
-            assemblyList.RemoveAt(view.AssemblyList.SelectedIndex);
+            var assemblyList = new List<string>(_view.AssemblyList.SelectionList);
+            assemblyList.RemoveAt(_view.AssemblyList.SelectedIndex);
             assemblyList.Insert(newIndex, selectedItem);
-            view.AssemblyList.SelectionList = assemblyList.ToArray();
+            _view.AssemblyList.SelectionList = assemblyList.ToArray();
 
-            view.AssemblyList.SelectedIndex = newIndex;
-            selectedConfig.Assemblies[view.AssemblyList.SelectedIndex] = selectedItem;
-            OnSelectedAssemblyChange();
+            _view.AssemblyList.SelectedIndex = newIndex;
+            _selectedConfig.Assemblies[_view.AssemblyList.SelectedIndex] = selectedItem;
+            AssemblyList_SelectionChanged();
         }
 
         private bool IsIndexInRange(int currentIndex) {
-            return currentIndex > -1 && currentIndex < view.AssemblyList.SelectionList.Length;
+            return currentIndex > -1 && currentIndex < _view.AssemblyList.SelectionList.Length;
         }
 
-        private void BrowseForAssemblyPath()
+        private void BrowseForAssemblyPathCommand_Execute()
         {
-            string assemblyPath = view.DialogManager.GetFileOpenPath(
+            string assemblyPath = _view.DialogManager.GetFileOpenPath(
                 "Select Assembly",
                 "Assemblies (*.dll,*.exe)|*.dll;*.exe|All Files (*.*)|*.*",
-                view.AssemblyPath.Text);
+                _view.AssemblyPath.Text);
 
             if (assemblyPath != null)
             {
-                selectedConfig.Assemblies[view.AssemblyList.SelectedIndex] = assemblyPath;
+                _selectedConfig.Assemblies[_view.AssemblyList.SelectedIndex] = assemblyPath;
                 SetAssemblyList();
             }
         }
@@ -232,212 +246,223 @@ namespace NUnit.ProjectEditor
 
         #region View Change Events
 
-        private void OnProjectBaseChange()
+        private void view_Selected()
         {
-            string projectBase = view.ProjectBase.Text;
-
-            if (projectBase == string.Empty)
-                view.ProjectBase.Text = projectBase = Path.GetDirectoryName(model.ProjectPath);
-
-            if (ValidateDirectoryPath("ProjectBase", projectBase))
-                model.BasePath = projectBase;
+            if (_model.Project.RootNode != null)
+                LoadViewFromModel();
         }
 
-        private void OnProcessModelChange()
+        private void ProjectBase_Validated()
         {
-            model.ProcessModel = view.ProcessModel.SelectedItem;
-            view.DomainUsage.SelectionList = view.ProcessModel.SelectedItem == "Multiple"
+            string projectBase = _view.ProjectBase.Text;
+
+            if (projectBase == string.Empty)
+                _view.ProjectBase.Text = projectBase = Path.GetDirectoryName(_model.ProjectPath);
+
+            if (ValidateDirectoryPath("ProjectBase", projectBase))
+                _model.BasePath = projectBase;
+        }
+
+        private void ProcessModel_SelectionChanged()
+        {
+            _model.ProcessModel = _view.ProcessModel.SelectedItem;
+            _view.DomainUsage.SelectionList = _view.ProcessModel.SelectedItem == "Multiple"
                 ? new string[] { "Default", "Single" }
                 : new string[] { "Default", "Single", "Multiple" };
         }
 
-        private void OnDomainUsageChange()
+        private void DomainUsage_SelectionChanged()
         {
-            model.DomainUsage = view.DomainUsage.SelectedItem;
+            _model.DomainUsage = _view.DomainUsage.SelectedItem;
         }
 
-        private void OnSelectedConfigChange()
+        private void ConfigList_SelectionChanged()
         {
-            IProjectConfig selectedConfig = view.ConfigList.SelectedIndex >= 0
-                ? model.Configs[view.ConfigList.SelectedIndex]
+            IProjectConfig selectedConfig = _view.ConfigList.SelectedIndex >= 0
+                ? _model.Configs[_view.ConfigList.SelectedIndex]
                 : null;
 
             if (selectedConfig != null)
             {
                 RuntimeFramework framework = selectedConfig.RuntimeFramework;
-                view.Runtime.SelectedItem = framework.Runtime.ToString();
-                view.RuntimeVersion.Text = framework.Version == new Version()
+                _view.Runtime.SelectedItem = framework.Runtime.ToString();
+                _view.RuntimeVersion.Text = framework.Version == new Version()
                     ? string.Empty
                     : framework.Version.ToString();
 
-                view.ApplicationBase.Text = selectedConfig.RelativeBasePath;
-                view.ConfigurationFile.Text = selectedConfig.ConfigurationFile;
-                view.BinPathType.SelectedIndex = (int)selectedConfig.BinPathType;
-                if (selectedConfig.BinPathType == BinPathType.Manual)
-                    view.PrivateBinPath.Text = selectedConfig.PrivateBinPath;
+                if (selectedConfig.BasePath == null)
+                    _view.ApplicationBase.Text = _model.EffectiveBasePath;
                 else
-                    view.PrivateBinPath.Text = string.Empty;
+                    _view.ApplicationBase.Text = PathUtils.RelativePath(
+                        Path.Combine(_model.EffectiveBasePath, selectedConfig.BasePath),
+                        selectedConfig.BasePath);
+                _view.ConfigurationFile.Text = selectedConfig.ConfigurationFile;
+                _view.BinPathType.SelectedIndex = (int)selectedConfig.BinPathType;
+                if (selectedConfig.BinPathType == BinPathType.Manual)
+                    _view.PrivateBinPath.Text = selectedConfig.PrivateBinPath;
+                else
+                    _view.PrivateBinPath.Text = string.Empty;
 
                 SetAssemblyList();
             }
             else
             {
-                view.Runtime.SelectedItem = "Any";
-                view.RuntimeVersion.Text = string.Empty;
+                _view.Runtime.SelectedItem = "Any";
+                _view.RuntimeVersion.Text = string.Empty;
 
-                view.ApplicationBase.Text = null;
-                view.ConfigurationFile.Text = string.Empty;
-                view.PrivateBinPath.Text = string.Empty;
-                view.BinPathType.SelectedIndex = (int)BinPathType.Auto;
+                _view.ApplicationBase.Text = null;
+                _view.ConfigurationFile.Text = string.Empty;
+                _view.PrivateBinPath.Text = string.Empty;
+                _view.BinPathType.SelectedIndex = (int)BinPathType.Auto;
 
-                view.AssemblyList.SelectionList = new string[0];
-                view.AssemblyPath.Text = string.Empty;
+                _view.AssemblyList.SelectionList = new string[0];
+                _view.AssemblyPath.Text = string.Empty;
             }
         }
 
         #region Changes Pertaining to Selected Config
 
-        private void OnRuntimeChange()
+        private void RunTime_SelectionChanged()
         {
             try
             {
-                if (selectedConfig != null)
-                    selectedConfig.RuntimeFramework = new RuntimeFramework(
-                        (RuntimeType)Enum.Parse(typeof(RuntimeType), view.Runtime.SelectedItem),
-                        selectedConfig.RuntimeFramework.Version);
+                if (_selectedConfig != null)
+                    _selectedConfig.RuntimeFramework = new RuntimeFramework(
+                        (RuntimeType)Enum.Parse(typeof(RuntimeType), _view.Runtime.SelectedItem),
+                        _selectedConfig.RuntimeFramework.Version);
             }
             catch(Exception ex)
             {
                 // Note: Should not be called with an invalid value,
                 // but we catch and report the error in any case
-                view.MessageDisplay.Error("Invalid Runtime: " + ex.Message);
+                _view.MessageDisplay.Error("Invalid Runtime: " + ex.Message);
             }
         }
 
-        private void OnRuntimeVersionChange()
+        private void RuntimeVersion_TextValidated()
         {
-            if (selectedConfig != null)
+            if (_selectedConfig != null)
             {
                 try
                 {
-                    Version version = string.IsNullOrEmpty(view.RuntimeVersion.Text)
+                    Version version = string.IsNullOrEmpty(_view.RuntimeVersion.Text)
                         ? new Version()
-                        : new Version(view.RuntimeVersion.Text);
-                    selectedConfig.RuntimeFramework = new RuntimeFramework(
-                        selectedConfig.RuntimeFramework.Runtime,
+                        : new Version(_view.RuntimeVersion.Text);
+                    _selectedConfig.RuntimeFramework = new RuntimeFramework(
+                        _selectedConfig.RuntimeFramework.Runtime,
                         version);
                 }
                 catch (Exception ex)
                 {
                     // User entered an bad value for the version
-                    view.MessageDisplay.Error("Invalid RuntimeVersion: " + ex.Message);
+                    _view.MessageDisplay.Error("Invalid RuntimeVersion: " + ex.Message);
                 }
             }
         }
 
-        private void OnApplicationBaseChange()
+        private void ApplicationBase_Validated()
         {
-            if (selectedConfig != null)
+            if (_selectedConfig != null)
             {
                 string basePath = null;
 
-                if (view.ApplicationBase.Text != String.Empty)
+                if (_view.ApplicationBase.Text != String.Empty)
                 {
-                    if (!ValidateDirectoryPath("ApplicationBase", view.ApplicationBase.Text))
+                    if (!ValidateDirectoryPath("ApplicationBase", _view.ApplicationBase.Text))
                         return;
 
-                    basePath = Path.Combine(model.BasePath, view.ApplicationBase.Text);
-                    if (PathUtils.SamePath(model.BasePath, basePath))
+                    basePath = Path.Combine(_model.BasePath, _view.ApplicationBase.Text);
+                    if (PathUtils.SamePath(_model.BasePath, basePath))
                         basePath = null;
                 }
 
-                selectedConfig.BasePath = basePath;
+                _selectedConfig.BasePath = basePath;
 
-                // TODO: Test what happens if we set it the same as doc base
+                // TODO: Test what happens if we set it the same as project base
                 //if (index.RelativeBasePath == null)
-                //    view.ApplicationBase.Text = string.Empty;
+                //    _view.ApplicationBase.Text = string.Empty;
                 //else
-                //    view.ApplicationBase.Text = index.RelativeBasePath;
+                //    _view.ApplicationBase.Text = index.RelativeBasePath;
             }
         }
 
-        private void OnConfigurationFileChange()
+        private void ConfigurationFile_Validated()
         {
-            if (selectedConfig != null)
+            if (_selectedConfig != null)
             {
-                string configFile = view.ConfigurationFile.Text;
+                string configFile = _view.ConfigurationFile.Text;
 
                 if (configFile == string.Empty)
-                    selectedConfig.ConfigurationFile = null;
+                    _selectedConfig.ConfigurationFile = null;
                 else if (ValidateFilePath("DefaultConfigurationFile", configFile))
                 {
                     if (configFile == Path.GetFileName(configFile))
-                        selectedConfig.ConfigurationFile = view.ConfigurationFile.Text;
+                        _selectedConfig.ConfigurationFile = _view.ConfigurationFile.Text;
                     else
-                        view.MessageDisplay.Error("ConfigurationFile must be specified as a file name only - without directory path. The configuration file is always located in the application base directory.");
+                        _view.MessageDisplay.Error("ConfigurationFile must be specified as a file name only - without directory path. The configuration file is always located in the application base directory.");
                 }
             }
         }
 
-        private void OnBinPathTypeChange()
+        private void BinPathType_SelectionChanged()
         {
-            if (selectedConfig != null)
-                selectedConfig.BinPathType = (BinPathType)view.BinPathType.SelectedIndex;
-            view.PrivateBinPath.Enabled = view.BinPathType.SelectedIndex == (int)BinPathType.Manual;
+            if (_selectedConfig != null)
+                _selectedConfig.BinPathType = (BinPathType)_view.BinPathType.SelectedIndex;
+            _view.PrivateBinPath.Enabled = _view.BinPathType.SelectedIndex == (int)BinPathType.Manual;
         }
 
-        private void OnPrivateBinPathChange()
+        private void PrivateBinPath_Validated()
         {
-            if (selectedConfig != null)
+            if (_selectedConfig != null)
             {
-                if (view.PrivateBinPath.Text == string.Empty)
-                    selectedConfig.PrivateBinPath = null;
+                if (_view.PrivateBinPath.Text == string.Empty)
+                    _selectedConfig.PrivateBinPath = null;
                 else
                 {
-                    foreach (string dir in view.PrivateBinPath.Text.Split(Path.PathSeparator))
+                    foreach (string dir in _view.PrivateBinPath.Text.Split(Path.PathSeparator))
                     {
                         if (!ValidateDirectoryPath("PrivateBinPath", dir))
                             return;
                         if (Path.IsPathRooted(dir))
                         {
-                            view.MessageDisplay.Error("Path " + dir + " is an absolute path. PrivateBinPath components must all be relative paths.");
+                            _view.MessageDisplay.Error("Path " + dir + " is an absolute path. PrivateBinPath components must all be relative paths.");
                             return;
                         }
                     }
 
-                    selectedConfig.PrivateBinPath = view.PrivateBinPath.Text;
+                    _selectedConfig.PrivateBinPath = _view.PrivateBinPath.Text;
                 }
             }
         }
 
-        private void OnSelectedAssemblyChange()
+        private void AssemblyList_SelectionChanged()
         {
-            if (view.AssemblyList.SelectedIndex == -1)
+            if (_view.AssemblyList.SelectedIndex == -1)
             {
-                view.AssemblyPath.Text = null;
-                view.AddAssemblyCommand.Enabled = true;
-                view.RemoveAssemblyCommand.Enabled = false;
-                view.MoveUpAssemblyCommand.Enabled = false;
-                view.MoveDownAssemblyCommand.Enabled = false;
-                view.BrowseAssemblyPathCommand.Enabled = false;
+                _view.AssemblyPath.Text = null;
+                _view.AddAssemblyCommand.Enabled = true;
+                _view.RemoveAssemblyCommand.Enabled = false;
+                _view.MoveUpAssemblyCommand.Enabled = false;
+                _view.MoveDownAssemblyCommand.Enabled = false;
+                _view.BrowseAssemblyPathCommand.Enabled = false;
             }
-            else if (selectedConfig != null)
+            else if (_selectedConfig != null)
             {
-                view.AssemblyPath.Text =
-                    selectedConfig.Assemblies[view.AssemblyList.SelectedIndex];
-                view.AddAssemblyCommand.Enabled = true;
-                view.RemoveAssemblyCommand.Enabled = true;
-                view.MoveUpAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex > 0;
-                view.MoveDownAssemblyCommand.Enabled = view.AssemblyList.SelectedIndex < view.AssemblyList.SelectionList.Length-1;
-                view.BrowseAssemblyPathCommand.Enabled = true;
+                _view.AssemblyPath.Text =
+                    _selectedConfig.Assemblies[_view.AssemblyList.SelectedIndex];
+                _view.AddAssemblyCommand.Enabled = true;
+                _view.RemoveAssemblyCommand.Enabled = true;
+                _view.MoveUpAssemblyCommand.Enabled = _view.AssemblyList.SelectedIndex > 0;
+                _view.MoveDownAssemblyCommand.Enabled = _view.AssemblyList.SelectedIndex < _view.AssemblyList.SelectionList.Length-1;
+                _view.BrowseAssemblyPathCommand.Enabled = true;
             }
         }
 
-        private void OnAssemblyPathChange()
+        private void AssemblyPath_Validated()
         {
-            if (selectedConfig != null && ValidateFilePath("AssemblyPath", view.AssemblyPath.Text))
+            if (_selectedConfig != null && ValidateFilePath("AssemblyPath", _view.AssemblyPath.Text))
             {
-                selectedConfig.Assemblies[view.AssemblyList.SelectedIndex] = view.AssemblyPath.Text;
+                _selectedConfig.Assemblies[_view.AssemblyList.SelectedIndex] = _view.AssemblyPath.Text;
                 SetAssemblyList();
             }
         }
@@ -448,16 +473,16 @@ namespace NUnit.ProjectEditor
 
         #region Model Change Events
 
-        private void OnProjectCreated()
+        private void Project_Created()
         {
-            view.Visible = true;
-            if (model.Document.RootNode != null)
+            _view.Visible = true;
+            if (_model.Project.RootNode != null)
                 LoadViewFromModel();
         }
 
-        private void OnProjectClosed()
+        private void Project_Closed()
         {
-            view.Visible = false;
+            _view.Visible = false;
         }
 
         #endregion
@@ -470,15 +495,15 @@ namespace NUnit.ProjectEditor
 
             if (appbase != String.Empty)
             {
-                basePath = Path.Combine(model.BasePath, appbase);
-                if (PathUtils.SamePath(model.BasePath, basePath))
+                basePath = Path.Combine(_model.BasePath, appbase);
+                if (PathUtils.SamePath(_model.BasePath, basePath))
                     basePath = null;
             }
 
-            IProjectConfig selectedConfig = model.Configs[view.ConfigList.SelectedIndex];
-            view.ApplicationBase.Text = selectedConfig.BasePath = basePath;
+            IProjectConfig selectedConfig = _model.Configs[_view.ConfigList.SelectedIndex];
+            _view.ApplicationBase.Text = selectedConfig.BasePath = basePath;
 
-            // TODO: Test what happens if we set it the same as doc base
+            // TODO: Test what happens if we set it the same as project base
             //if (index.RelativeBasePath == null)
             //    applicationBaseTextBox.Text = string.Empty;
             //else
@@ -487,22 +512,22 @@ namespace NUnit.ProjectEditor
 
         private void SetAssemblyList()
         {
-            IProjectConfig config = model.Configs[view.ConfigList.SelectedIndex];
+            IProjectConfig config = _model.Configs[_view.ConfigList.SelectedIndex];
             var list = new string[config.Assemblies.Count];
             
             for (int i = 0; i < list.Length; i++)
                 list[i] = config.Assemblies[i];
 
-            view.AssemblyList.SelectionList = list;
+            _view.AssemblyList.SelectionList = list;
             if (list.Length > 0)
             {
-                view.AssemblyList.SelectedIndex = 0;
-                view.AssemblyPath.Text = list[0];
+                _view.AssemblyList.SelectedIndex = 0;
+                _view.AssemblyPath.Text = list[0];
             }
             else
             {
-                view.AssemblyList.SelectedIndex = -1;
-                view.AssemblyPath.Text = string.Empty;
+                _view.AssemblyList.SelectedIndex = -1;
+                _view.AssemblyPath.Text = string.Empty;
             }
         }
 
@@ -515,7 +540,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.MessageDisplay.Error(string.Format("Invalid directory path for {0}: {1}", property, ex.Message));
+                _view.MessageDisplay.Error(string.Format("Invalid directory path for {0}: {1}", property, ex.Message));
                 return false;
             }
         }
@@ -529,7 +554,7 @@ namespace NUnit.ProjectEditor
             }
             catch (Exception ex)
             {
-                view.MessageDisplay.Error(string.Format("Invalid file path for {0}: {1}", property, ex.Message));
+                _view.MessageDisplay.Error(string.Format("Invalid file path for {0}: {1}", property, ex.Message));
                 return false;
             }
         }
@@ -538,7 +563,7 @@ namespace NUnit.ProjectEditor
         {
             get
             {
-                ConfigList configs = model.Configs;
+                ConfigList configs = _model.Configs;
 
                 string[] configList = new string[configs.Count];
                 for (int i = 0; i < configs.Count; i++)

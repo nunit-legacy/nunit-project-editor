@@ -33,7 +33,7 @@ namespace NUnit.ProjectEditor
 {
 	/// <summary>
 	/// ConfigurationEditor form is designed for adding, deleting
-	/// and renaming configurations from a doc.
+	/// and renaming configurations from a project.
 	/// </summary>
 	public partial class ConfigurationEditorDialog : System.Windows.Forms.Form, IConfigurationEditorDialog
     {
@@ -65,8 +65,6 @@ namespace NUnit.ProjectEditor
         public ICommand ActiveCommand { get; private set; }
 
         public ISelectionList ConfigList { get; private set; }
-
-        public IViewElement NewName { get; private set; }
 
         public IAddConfigurationDialog AddConfigurationDialog
         {

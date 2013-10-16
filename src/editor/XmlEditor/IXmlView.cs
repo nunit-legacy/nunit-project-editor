@@ -30,7 +30,7 @@ namespace NUnit.ProjectEditor
     /// IXmlView is the interface implemented by the XmlView
     /// and consumed by the XmlPresenter.
     /// </summary>
-    public interface IXmlView : IView
+    public interface IXmlView : ISelectableView
     {
         /// <summary>
         /// Gets or sets the XML text
@@ -38,14 +38,14 @@ namespace NUnit.ProjectEditor
         ITextElement Xml { get; }
 
         /// <summary>
-        /// Display an error message at bottom of the view,
+        /// Display an error message at bottom of the _view,
         /// adjusting the text to make edit box to make room.
         /// </summary>
         /// <param name="message">The message to display</param>
         void DisplayError(string message);
 
         /// <summary>
-        /// Display an error message at bottom of the view,
+        /// Display an error message at bottom of the _view,
         /// adjusting the text to make edit box to make room
         /// and highlighting the text that caused the error.
         /// </summary>
@@ -55,7 +55,7 @@ namespace NUnit.ProjectEditor
         void DisplayError(string message, int lineNumber, int linePosition);
 
         /// <summary>
-        /// Remove any error message from the view, adjusting
+        /// Remove any error message from the _view, adjusting
         /// the edit box so it uses all the space.
         /// </summary>
         void RemoveError();

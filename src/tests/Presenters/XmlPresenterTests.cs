@@ -30,9 +30,8 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 {
     public class XmlPresenterTests
     {
-        private IProjectModel doc;
-        private IXmlView xmlView;
-        private XmlPresenter presenter;
+        private IProjectModel model;
+        private IXmlView view;
 
         private static readonly string initialText = "<NUnitProject />";
         private static readonly string changedText = "<NUnitProject processModel=\"Separate\" />";
@@ -40,39 +39,54 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [SetUp]
         public void Initialize()
         {
-            doc = new ProjectModel();
-            doc.LoadXml(initialText);
-            xmlView = Substitute.For<IXmlView>();
-            presenter = new XmlPresenter(doc, xmlView);
-            presenter.LoadViewFromModel();
+            model = new ProjectModel();
+            model.LoadXml(initialText);
+            view = Substitute.For<IXmlView>();
+            new XmlPresenter(model, view);
+        }
+
+        [Test]
+        public void ViewSelected_WhenNoProjectIsOpen_RemainsHidden()
+        {
+            view.Selected += Raise.Event<ActionHandler>();
+            Assert.False(view.Visible);
+        }
+
+        [Test]
+        public void ViewSelected_WhenProjectIsOpen_BecomesVisible()
+        {
+            model.CreateNewProject();
+            view.Selected += Raise.Event<ActionHandler>();
+            Assert.True(view.Visible);
         }
 
         [Test]
         public void XmlText_OnLoad_IsInitializedCorrectly()
         {
-            Assert.AreEqual(initialText, xmlView.Xml.Text);
+            view.Selected += Raise.Event<ActionHandler>();
+            Assert.AreEqual(initialText, view.Xml.Text);
         }
 
         [Test]
         public void XmlText_WhenChanged_ModelIsUpdated()
         {
-            xmlView.Xml.Text = changedText;
-            xmlView.Xml.Validated += Raise.Event<ActionDelegate>();
-            Assert.AreEqual(changedText, doc.XmlText);
+            view.Xml.Text = changedText;
+            view.Xml.Validated += Raise.Event<ActionHandler>();
+            Assert.AreEqual(changedText, model.XmlText);
         }
 
         [Test]
         public void BadXmlSetsException()
         {
-            xmlView.Xml.Text = "<NUnitProject>"; // Missing slash
-            xmlView.Xml.Validated += Raise.Event<ActionDelegate>();
+            view.Xml.Text = "<NUnitProject>"; // Missing slash
+            view.Xml.Validated += Raise.Event<ActionHandler>();
             
-            Assert.AreEqual("<NUnitProject>", doc.XmlText);
-            Assert.NotNull(doc.Exception);
-            Assert.IsInstanceOf<XmlException>(doc.Exception);
+            Assert.AreEqual("<NUnitProject>", model.XmlText);
+            Assert.NotNull(model.Exception);
+            Assert.IsInstanceOf<XmlException>(model.Exception);
 
-            var ex = doc.Exception as XmlException;
-            xmlView.Received().DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
+            var ex = model.Exception as XmlException;
+            view.Received().DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
         }
     }
 }

@@ -83,6 +83,6 @@ namespace NUnit.ProjectEditor.ViewElements
             }
         }
 
-        public event ActionDelegate SelectionChanged;
+        public event ActionHandler SelectionChanged;
     }
 }

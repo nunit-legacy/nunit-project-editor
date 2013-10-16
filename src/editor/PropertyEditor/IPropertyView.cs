@@ -27,7 +27,7 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    public interface IPropertyView : IView
+    public interface IPropertyView : ISelectableView
     {
         #region Properties
 

@@ -44,11 +44,6 @@ namespace NUnit.ProjectEditor
         /// </summary>
         private XmlNode configNode;
         
-		/// <summary>
-		/// IProject interface of containing doc
-		/// </summary>
-		private IPropertyModel project;
-
         /// <summary>
         /// List of the test assemblies in this config
         /// </summary>
@@ -58,9 +53,8 @@ namespace NUnit.ProjectEditor
 
 		#region Constructor
 
-        public ProjectConfig(IPropertyModel project, XmlNode configNode)
+        public ProjectConfig(XmlNode configNode)
         {
-            this.project = project;
             this.configNode = configNode;
             this.assemblies = new AssemblyList(configNode);
         }
@@ -72,15 +66,7 @@ namespace NUnit.ProjectEditor
         public string Name
         {
             get { return GetAttribute("name"); }
-            set 
-            {
-                bool itWasActive = Name == project.ActiveConfigName;
-
-                SetAttribute("name", value);
-
-                if (itWasActive)
-                    project.ActiveConfigName = value;
-            }
+            set { SetAttribute("name", value); }
         }
 
         /// <summary>
@@ -93,40 +79,7 @@ namespace NUnit.ProjectEditor
             set { SetAttribute("appbase", value); }
         }
 
-        /// <summary>
-        /// The base path relative to the doc base. This is what
-        /// is stored in the document unless the user edits the
-        /// xml directly.
-        /// </summary>
-        public string RelativeBasePath
-        {
-            get
-            {
-                return PathUtils.RelativePath(project.EffectiveBasePath, EffectiveBasePath);
-            }
-        }
-
-        /// <summary>
-        /// The actual base path used in loading the tests. Its
-        /// value depends on the appbase entry of the config element
-        /// as well as the project EffectiveBasePath.
-        /// </summary>
-        public string EffectiveBasePath
-        {
-            get
-            {
-                string basePath = BasePath;
-
-                if (project == null) 
-                    return basePath;
-
-                if (basePath == null)
-                    return project.EffectiveBasePath;
-
-                return Path.Combine(project.EffectiveBasePath, basePath);
-            }
-        }
-
+ 
         public string ConfigurationFile
         {
             get { return GetAttribute("configfile"); }

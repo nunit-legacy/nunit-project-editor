@@ -35,7 +35,6 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         IProjectModel doc;
         private IPropertyModel model;
         private IPropertyView view;
-        private PropertyPresenter presenter;
 
         [SetUp]
         public void SetUp()
@@ -53,8 +52,23 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             view.RuntimeVersion.Returns(new SelectionStub("RuntimeVersion"));
             view.AssemblyList.Returns(new SelectionStub("AssemblyList"));
 
-            presenter = new PropertyPresenter(model, view);
-            presenter.LoadViewFromModel();
+            new PropertyPresenter(model, view);
+            view.Selected += Raise.Event<ActionHandler>();
+        }
+
+        //[Test]
+        //public void ViewSelected_WhenNoProjectIsOpen_RemainsHidden()
+        //{
+        //    _view.Selected += Raise.Event<ActionHandler>();
+        //    Assert.False(_view.Visible);
+        //}
+
+        [Test]
+        public void ViewSelected_WhenProjectIsOpen_BecomesVisible()
+        {
+            model.Project.CreateNewProject();
+            view.Selected += Raise.Event<ActionHandler>();
+            Assert.True(view.Visible);
         }
 
         [Test]
@@ -226,7 +240,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             view.ProjectBase.Text = "test.nunit";
 
-            view.ProjectBase.Validated += Raise.Event<ActionDelegate>();
+            view.ProjectBase.Validated += Raise.Event<ActionHandler>();
             Assert.That(model.BasePath, Is.EqualTo("test.nunit"));
         }
 
@@ -268,7 +282,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             Assert.That(view.RuntimeVersion.SelectionList, Is.EqualTo(
                 new string[] { "1.0.3705", "1.1.4322", "2.0.50727", "4.0.21006" }));
-            //Assert.That(xmlView.RuntimeVersion.SelectedItem, Is.EqualTo("2.0.50727"));
+            //Assert.That(_view.RuntimeVersion.SelectedItem, Is.EqualTo("2.0.50727"));
         }
 
         [Test]

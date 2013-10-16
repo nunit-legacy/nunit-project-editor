@@ -26,7 +26,7 @@ using System;
 namespace NUnit.ProjectEditor.ViewElements
 {
     /// <summary>
-    /// IComboBox is implemented by view elements that associate
+    /// IComboBox is implemented by _view elements that associate
     /// an editable TextBox with a SelectionList. The classic
     /// implementation is System.Windows.Forms.ComboBox. This 
     /// interface is only intended for use when the TextBox
@@ -45,6 +45,6 @@ namespace NUnit.ProjectEditor.ViewElements
         /// Event that is raised when the text has changed
         /// and the focus is moved away.
         /// </summary>
-        event ActionDelegate TextValidated;
+        event ActionHandler TextValidated;
     }
 }

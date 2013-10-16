@@ -32,6 +32,6 @@ namespace NUnit.ProjectEditor.ViewElements
         /// to execute the command with which this menu
         /// item is associated.
         /// </summary>
-        event CommandDelegate Execute;
+        event CommandHandler Execute;
     }
 }

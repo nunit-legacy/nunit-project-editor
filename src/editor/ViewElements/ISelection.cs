@@ -35,6 +35,6 @@ namespace NUnit.ProjectEditor.ViewElements
         /// <summary>
         /// Event raised when the selection is changed by the user
         /// </summary>
-        event ActionDelegate SelectionChanged;
+        event ActionHandler SelectionChanged;
     }
 }

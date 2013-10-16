@@ -45,7 +45,7 @@ namespace NUnit.ProjectEditor.Tests.Model
             doc.CreateNewProject();
             project = new PropertyModel(doc);
 
-            doc.ProjectChanged += OnProjectChange;
+            doc.Changed += OnProjectChange;
             gotChangeNotice = false;
         }
 

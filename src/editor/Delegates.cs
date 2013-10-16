@@ -25,9 +25,27 @@ using System;
 
 namespace NUnit.ProjectEditor
 {
-    public delegate void ActionDelegate();
+    /// <summary>
+    /// ActionHandler is used to signal that something has happened
+    /// </summary>
+    public delegate void ActionHandler();
 
-    public delegate void CommandDelegate();
+    /// <summary>
+    /// CommandHandler is used to request an action
+    /// </summary>
+    public delegate void CommandHandler();
 
-    public delegate bool ActionStartingDelegate();
+    /// <summary>
+    /// Event arguments for ActionStartingHandler
+    /// </summary>
+    public class ActionStartingEventArgs : EventArgs
+    {
+        public bool Cancel { get; set; }
+    }
+
+    /// <summary>
+    /// ActionStartingHandler is used to signal that an action
+    /// is about to happen and allow the handler to cancel it.
+    /// </summary>
+    public delegate void ActionStartingHandler(ActionStartingEventArgs e);
 }

@@ -42,7 +42,7 @@ namespace NUnit.ProjectEditor.ViewElements
                 { if (Execute != null) Execute(); };
         }
 
-        public event CommandDelegate Execute;
+        public event CommandHandler Execute;
 
         public string Name
         {

@@ -74,6 +74,6 @@ namespace NUnit.ProjectEditor
             }
         }
 
-        public event ActionDelegate SelectionChanged;
+        public event ActionHandler SelectionChanged;
     }
 }

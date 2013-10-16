@@ -26,14 +26,14 @@ using System;
 namespace NUnit.ProjectEditor
 {
     /// <summary>
-    /// The IViewElement interface is exposed by the view
+    /// The IViewElement interface is exposed by the _view
     /// for an individual gui element. It is the base of
     /// other more specific interfaces.
     /// </summary>
     public interface IViewElement
     {
         /// <summary>
-        /// Gets the name of the element in the view
+        /// Gets the name of the element in the _view
         /// </summary>
         string Name { get; }
 

@@ -30,18 +30,8 @@ namespace NUnit.ProjectEditor.Tests.Views
     public class PropertyViewTests
     {
         [Test]
-        public void AllViewElementsAreInitialized()
+        public void ChangingTabViewToXmlSignalsChangingFromXmlView()
         {
-            PropertyView view = new PropertyView();
-
-            foreach (PropertyInfo prop in typeof(PropertyView).GetProperties())
-            {
-                if (typeof(IViewElement).IsAssignableFrom(prop.PropertyType))
-                {
-                    if (prop.GetValue(view, new object[0]) == null)
-                        Assert.Fail("{0} was not initialized", prop.Name);
-                }
-            }
         }
     }
 }

@@ -40,7 +40,7 @@ namespace NUnit.ProjectEditor.Tests.Model
         {
             doc = new ProjectModel();
             doc.CreateNewProject();
-            doc.ProjectChanged += new ActionDelegate(OnProjectChange);
+            doc.Changed += new ActionHandler(OnProjectChange);
 
             gotChangeNotice = false;
         }

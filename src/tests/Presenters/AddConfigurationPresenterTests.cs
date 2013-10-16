@@ -33,7 +33,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void AddButton_AddNewConfig_IsAddedToList()
         {
             dlg.ConfigToCreate.Returns("New");
-            dlg.OkButton.Execute += Raise.Event<CommandDelegate>();
+            dlg.OkButton.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.ConfigNames, Is.EqualTo(new[] {"Debug", "Release", "New"}));
         }
@@ -42,7 +42,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         public void AddButton_AddExistingConfig_FailsWithErrorMessage()
         {
             dlg.ConfigToCreate.Returns("Release");
-            dlg.OkButton.Execute += Raise.Event<CommandDelegate>();
+            dlg.OkButton.Execute += Raise.Event<CommandHandler>();
 
             dlg.MessageDisplay.Received().Error("A configuration with that name already exists");
             Assert.That(model.ConfigNames, Is.EqualTo(new[] { "Debug", "Release" }));
@@ -54,7 +54,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             dlg.ConfigToCreate.Returns("New");
             dlg.ConfigToCopy.Returns("<none>");
 
-            dlg.OkButton.Execute += Raise.Event<CommandDelegate>();
+            dlg.OkButton.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.ConfigNames, Is.EqualTo(new[] { "Debug", "Release", "New" }));
             Assert.That(model.Configs[2].BasePath, Is.EqualTo(null));
@@ -67,7 +67,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             dlg.ConfigToCreate.Returns("New");
             dlg.ConfigToCopy.Returns("Release");
 
-            dlg.OkButton.Execute += Raise.Event<CommandDelegate>();
+            dlg.OkButton.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.ConfigNames, Is.EqualTo(new[] { "Debug", "Release", "New" }));
             Assert.That(model.Configs[2].BasePath, Is.EqualTo("bin" + Path.DirectorySeparatorChar + "release"));

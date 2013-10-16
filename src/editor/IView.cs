@@ -39,7 +39,7 @@ namespace NUnit.ProjectEditor
         IMessageDisplay MessageDisplay { get; }
 
         /// <summary>
-        /// Gets or sets the visibility of the view
+        /// Gets or sets the visibility of the _view
         /// </summary>
         bool Visible { get; set; }
     }

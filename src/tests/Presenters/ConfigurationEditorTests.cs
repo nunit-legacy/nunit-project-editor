@@ -113,13 +113,13 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         {
             view.AddConfigurationDialog.ShowDialog().Returns(delegate
             {
-                view.AddConfigurationDialog.OkButton.Execute += Raise.Event<CommandDelegate>();
+                view.AddConfigurationDialog.OkButton.Execute += Raise.Event<CommandHandler>();
                 return DialogResult.OK;
             });
             view.AddConfigurationDialog.ConfigToCreate.Returns("New");
             view.AddConfigurationDialog.ConfigToCopy.Returns("Release");
 
-            view.AddCommand.Execute += Raise.Event<CommandDelegate>();
+            view.AddCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.Configs.Count, Is.EqualTo(3));
             Assert.That(model.ConfigNames, Is.EqualTo(new[] { "Debug", "Release", "New" }));
@@ -128,7 +128,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
         [Test]
         public void RemoveButton_WhenClicked_RemovesConfig()
         {
-            view.RemoveCommand.Execute += Raise.Event<CommandDelegate>();
+            view.RemoveCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.Configs.Count, Is.EqualTo(1));
             Assert.That(model.Configs[0].Name, Is.EqualTo("Release"));
@@ -136,7 +136,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
 
         private void RaiseExecute(ICommand command)
         {
-            command.Execute += Raise.Event<CommandDelegate>();
+            command.Execute += Raise.Event<CommandHandler>();
         }
 
         [Test]
@@ -146,11 +146,11 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             view.RenameConfigurationDialog.ShowDialog().Returns(delegate
             {
                 view.RenameConfigurationDialog.ConfigurationName.Text = "NewName";
-                view.RenameConfigurationDialog.OkButton.Execute += Raise.Event<CommandDelegate>();
+                view.RenameConfigurationDialog.OkButton.Execute += Raise.Event<CommandHandler>();
                 return DialogResult.OK;
             });
 
-            view.RenameCommand.Execute += Raise.Event<CommandDelegate>();
+            view.RenameCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.Configs[0].Name, Is.EqualTo("NewName"));
         }

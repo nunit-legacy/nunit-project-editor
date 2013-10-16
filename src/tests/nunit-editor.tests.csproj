@@ -89,7 +89,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\AddConfigurationDialogTests.cs" />
     <Compile Include="Views\ConfigurationEditorViewTests.cs" />
+    <Compile Include="Views\MainViewTests.cs" />
     <Compile Include="Views\PropertyViewTests.cs" />
+    <Compile Include="Views\CommonViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\editor\nunit-editor.csproj">

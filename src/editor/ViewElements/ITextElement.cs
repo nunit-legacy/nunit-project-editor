@@ -37,12 +37,12 @@ namespace NUnit.ProjectEditor.ViewElements
         /// <summary>
         /// Changed event is raised whenever the text changes
         /// </summary>
-        event ActionDelegate Changed;
+        event ActionHandler Changed;
         
         /// <summary>
         /// Validated event is raised when the text has been
         /// changed and focus has left the UI element.
         /// </summary>
-        event ActionDelegate Validated;
+        event ActionHandler Validated;
     }
 }

@@ -31,100 +31,70 @@ namespace NUnit.ProjectEditor
 {
     /// <summary>
     /// MainPresenter is the top-level presenter with subordinate 
-    /// presenters for each view of the doc. It directly handles
-    /// the menu commands from the top-level view and coordinates 
+    /// presenters for each _view of the project. It directly handles
+    /// the menu commands from the top-level _view and coordinates 
     /// changes in the two different submodels.
     /// </summary>
     public class MainPresenter
     {
-        private IMainView view;
-        private IProjectModel doc;
-
-        private PropertyPresenter propertyPresenter;
-        private XmlPresenter xmlPresenter;
+        private IMainView _view;
+        private IProjectModel _model;
 
         #region Constructor
 
-        public MainPresenter(IProjectModel doc, IMainView view)
+        public MainPresenter(IProjectModel model, IMainView view)
         {
-            this.doc = doc;
-            this.view = view;
+            _model = model;
+            _view = view;
 
-            // Set up property editor triad
-            PropertyModel project = new PropertyModel(doc);
-            IPropertyView propertyView = view.PropertyView;
-            this.propertyPresenter = new PropertyPresenter(project, propertyView);
+            InitializeView();
+            WireUpEvents();
+        }
 
-            // Set up XML editor triad
-            IXmlView xmlView = view.XmlView;
-            this.xmlPresenter = new XmlPresenter(doc, xmlView);
-
+        private void InitializeView()
+        {
             // Enable and disable menu items
-            view.NewProjectCommand.Enabled = true;
-            view.OpenProjectCommand.Enabled = true;
-            view.CloseProjectCommand.Enabled = false;
-            view.SaveProjectCommand.Enabled = false;
-            view.SaveProjectAsCommand.Enabled = false;
-
-            // Set up handlers for view events
-            view.FormClosing += OnFormClosing;
-
-            view.NewProjectCommand.Execute += CreateNewProject;
-            view.OpenProjectCommand.Execute += OpenProject;
-            view.SaveProjectCommand.Execute += SaveProject;
-            view.SaveProjectAsCommand.Execute += SaveProjectAs;
-            view.CloseProjectCommand.Execute += CloseProject;
-            view.ActiveViewChanging += this.ValidateActiveViewChange;
-            view.ActiveViewChanged += this.ActiveViewChanged;
-
-            // Set up handlers for model events
-            doc.ProjectCreated += OnProjectCreated;
-            doc.ProjectClosed += OnProjectClosed;
+            _view.NewProjectCommand.Enabled = true;
+            _view.OpenProjectCommand.Enabled = true;
+            _view.CloseProjectCommand.Enabled = false;
+            _view.SaveProjectCommand.Enabled = false;
+            _view.SaveProjectAsCommand.Enabled = false;
         }
 
-        public void OnFormClosing(object sender, FormClosingEventArgs e)
+        private void WireUpEvents()
         {
-            CloseProject();
-        }
+            // View events
+            _view.FormClosing += view_FormClosing;
 
-        public bool ValidateActiveViewChange()
-        {
-            if (doc.IsValid || doc.IsEmpty)
-                return true;
+            // View command events
+            _view.NewProjectCommand.Execute += NewProjectCommand_Execute;
+            _view.OpenProjectCommand.Execute += OpenProjectCommand_Execute;
+            _view.SaveProjectCommand.Execute += SaveProjectCommand_Execute;
+            _view.SaveProjectAsCommand.Execute += SaveProjectAsCommand_Execute;
+            _view.CloseProjectCommand.Execute += CloseProjectCommand_Execute;
 
-            view.SaveProjectCommand.Enabled = false;
-            view.SaveProjectAsCommand.Enabled = false;
-
-            return view.SelectedView == SelectedView.XmlView;
-        }
-
-        public void ActiveViewChanged()
-        {
-            switch (view.SelectedView)
-            {
-                case SelectedView.PropertyView:
-                    if (doc.RootNode != null)
-                        propertyPresenter.LoadViewFromModel();
-                    break;
-
-                case SelectedView.XmlView:
-                    xmlPresenter.LoadViewFromModel();
-                    break;
-            }
+            // Model events
+            _model.Created += model_ProjectCreated;
+            _model.Closed += model_ProjectClosed;
         }
 
         #endregion
 
-        #region Command Event Handlers
+        #region View EventHandlers
 
-        private void CreateNewProject()
+        private void view_FormClosing(object sender, FormClosingEventArgs e)
         {
-            doc.CreateNewProject();
+            CloseProjectCommand_Execute();
         }
 
-        private void OpenProject()
+        private void NewProjectCommand_Execute()
         {
-            string path = view.DialogManager.GetFileOpenPath(
+            _model.CreateNewProject();
+        }
+
+        private void OpenProjectCommand_Execute()
+        {
+            string path = _view.DialogManager.GetFileOpenPath(
                 "Open Project", 
                 "Test Projects (*.nunit)|*.nunit",
                 null);
@@ -133,46 +103,46 @@ namespace NUnit.ProjectEditor
             {
                 try
                 {
-                    doc.OpenProject(path);
+                    _model.OpenProject(path);
                 }
                 catch (Exception ex)
                 {
-                    view.MessageDisplay.Error(ex.Message);
+                    _view.MessageDisplay.Error(ex.Message);
                 }
             }
         }
 
-        private void CloseProject()
+        private void CloseProjectCommand_Execute()
         {
-            if (doc.IsValid && doc.HasUnsavedChanges &&
-                view.MessageDisplay.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", doc.Name)))
-                    SaveProject();
+            if (_model.IsValid && _model.HasUnsavedChanges &&
+                _view.MessageDisplay.AskYesNoQuestion(string.Format("Do you want to save changes to {0}?", _model.Name)))
+                    SaveProjectCommand_Execute();
 
-            doc.CloseProject();
+            _model.CloseProject();
         }
 
-        private void SaveProject()
+        private void SaveProjectCommand_Execute()
         {
-            if (IsValidWritableProjectPath(doc.ProjectPath))
+            if (IsValidWritableProjectPath(_model.ProjectPath))
             {
-                doc.SaveProject();
+                _model.SaveProject();
             }
             else
             {
-                this.SaveProjectAs();
+                this.SaveProjectAsCommand_Execute();
             }
         }
 
-        private void SaveProjectAs()
+        private void SaveProjectAsCommand_Execute()
         {
-            string path = view.DialogManager.GetSaveAsPath(
+            string path = _view.DialogManager.GetSaveAsPath(
                 "Save As",
                 "Test Projects (*.nunit)|*.nunit");
 
             if (path != null)
             {
-                doc.SaveProject(path);
-                view.PropertyView.ProjectPath.Text = doc.ProjectPath;
+                _model.SaveProject(path);
+                _view.PropertyView.ProjectPath.Text = _model.ProjectPath;
             }
         }
 
@@ -180,28 +150,24 @@ namespace NUnit.ProjectEditor
 
         #region Model EventHandlers
 
-        private void OnProjectCreated()
+        private void model_ProjectCreated()
         {
-            view.CloseProjectCommand.Enabled = true;
+            _view.CloseProjectCommand.Enabled = true;
 
-            if (doc.IsValid)
-            {
-                view.SaveProjectCommand.Enabled = true;
-                view.SaveProjectAsCommand.Enabled = true;
-            }
-            else
-            {
-                view.SaveProjectCommand.Enabled = false;
-                view.SaveProjectAsCommand.Enabled = false;
-                view.SelectedView = SelectedView.XmlView;
-            }
+            bool validXml = _model.IsValid;
+            _view.SaveProjectCommand.Enabled = validXml;
+            _view.SaveProjectAsCommand.Enabled = validXml;
+ 
+            // Force display of XmlView with invalid XML
+            if (!validXml)
+                _view.SelectedView = EditorView.XmlView;
         }
 
-        private void OnProjectClosed()
+        private void model_ProjectClosed()
         {
-            view.CloseProjectCommand.Enabled = false;
-            view.SaveProjectCommand.Enabled = false;
-            view.SaveProjectAsCommand.Enabled = false;
+            _view.CloseProjectCommand.Enabled = false;
+            _view.SaveProjectCommand.Enabled = false;
+            _view.SaveProjectAsCommand.Enabled = false;
         }
 
         #endregion

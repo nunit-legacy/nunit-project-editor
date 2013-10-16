@@ -40,7 +40,7 @@ namespace NUnit.ProjectEditor.Tests.Model
             doc = new ProjectModel(xmlfile);
             project = new PropertyModel(doc);
 
-            doc.ProjectChanged += OnProjectChange;
+            doc.Changed += OnProjectChange;
             gotChangeNotice = false;
         }
 
@@ -63,17 +63,6 @@ namespace NUnit.ProjectEditor.Tests.Model
             doc.LoadXml(NUnitProjectXml.NormalProject);
             project.Configs[0].Name = "New";
             Assert.IsTrue(gotChangeNotice);
-        }
-
-        [Test]
-        public void RenamingActiveConfigChangesActiveConfigName()
-        {
-            doc.LoadXml(NUnitProjectXml.NormalProject);
-            project.ActiveConfigName = "Debug";
-
-            project.Configs[0].Name = "New";
-
-            Assert.AreEqual("New", project.ActiveConfigName);
         }
 
         [Test]

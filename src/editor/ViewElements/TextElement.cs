@@ -34,8 +34,8 @@ namespace NUnit.ProjectEditor.ViewElements
             textBox.Select(offset, length);
         }
 
-        public event ActionDelegate Changed;
+        public event ActionHandler Changed;
 
-        public event ActionDelegate Validated;
+        public event ActionHandler Validated;
     }
 }

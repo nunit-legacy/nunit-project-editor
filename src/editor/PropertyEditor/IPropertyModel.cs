@@ -29,7 +29,7 @@ namespace NUnit.ProjectEditor
     {
         #region Properties
 
-        IProjectModel Document { get; }
+        IProjectModel Project { get; }
 
         string ProjectPath { get; set; }
         string BasePath { get; set; }

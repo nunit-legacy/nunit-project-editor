@@ -29,7 +29,7 @@ namespace NUnit.ProjectEditor
 {
     /// <summary>
     /// ComboBoxElement is used to wrap a ComboBox. If the
-    /// text is editable by the user, the view should expose
+    /// text is editable by the user, the _view should expose
     /// the element using the IComboBox interface. Otherwise,
     /// the ISelectionInterface provides all the needed
     /// functionality.
@@ -100,11 +100,11 @@ namespace NUnit.ProjectEditor
         /// <summary>
         /// Event raised when the selection in the associated ComboBox changes
         /// </summary>
-        public event ActionDelegate SelectionChanged;
+        public event ActionHandler SelectionChanged;
 
         /// <summary>
         /// Event raised when the Text of the associated ComboBox is validated
         /// </summary>
-        public event ActionDelegate TextValidated;
+        public event ActionHandler TextValidated;
     }
 }

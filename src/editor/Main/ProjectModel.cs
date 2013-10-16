@@ -54,15 +54,15 @@ namespace NUnit.ProjectEditor
         #region Instance Fields
 
         /// <summary>
-        /// The original text from which the doc was loaded.
-        /// Updated from the doc when the xml view is displayed
-        /// and from the view when the user edits it.
+        /// The original text from which the project was loaded.
+        /// Updated from the project when the xml _view is displayed
+        /// and from the _view when the user edits it.
         /// </summary>
         string xmlText;
 
         /// <summary>
-        /// The XmlDocument representing the loaded doc. It
-        /// is generated from the text when the doc is loaded
+        /// The XmlDocument representing the loaded project. It
+        /// is generated from the text when the project is loaded
         /// unless an exception is thrown. It is modified as the
         /// user makes changes.
         /// </summary>
@@ -75,17 +75,17 @@ namespace NUnit.ProjectEditor
         Exception exception;
 
         /// <summary>
-        /// Path to the file storing this doc
+        /// Path to the file storing this project
         /// </summary>
         private string projectPath;
 
         /// <summry>
-        /// True if the Xml Document has been changed
+        /// True if the Xml Project has been changed
         /// </summary>
         private DocumentState documentState = DocumentState.Empty;
 
         /// <summary>
-        /// True if the doc has been changed and not yet saved
+        /// True if the project has been changed and not yet saved
         /// </summary>
         private bool hasUnsavedChanges = false;
 
@@ -111,16 +111,16 @@ namespace NUnit.ProjectEditor
 
         #region Events
 
-        public event ActionDelegate ProjectCreated;
-        public event ActionDelegate ProjectClosed;
-        public event ActionDelegate ProjectChanged;
+        public event ActionHandler Created;
+        public event ActionHandler Closed;
+        public event ActionHandler Changed;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// The name of the doc.
+        /// The name of the project.
         /// </summary>
         public string Name
         {
@@ -128,7 +128,7 @@ namespace NUnit.ProjectEditor
         }
 
         /// <summary>
-        /// Gets or sets the path to which a doc will be saved.
+        /// Gets or sets the path to which a project will be saved.
         /// </summary>
         public string ProjectPath
         {
@@ -203,8 +203,8 @@ namespace NUnit.ProjectEditor
 
             hasUnsavedChanges = false;
 
-            if (ProjectCreated != null)
-                ProjectCreated();
+            if (Created != null)
+                Created();
         }
 
         public void OpenProject(string fileName)
@@ -215,16 +215,16 @@ namespace NUnit.ProjectEditor
 
             this.projectPath = Path.GetFullPath(fileName);
 
-            if (ProjectCreated != null)
-                ProjectCreated();
+            if (Created != null)
+                Created();
 
             hasUnsavedChanges = false;
         }
 
         public void CloseProject()
         {
-            if (ProjectClosed != null)
-                ProjectClosed();
+            if (Closed != null)
+                Closed();
         }
 
         public void SaveProject()
@@ -356,8 +356,8 @@ namespace NUnit.ProjectEditor
             if (this.IsValid)
                 xmlText = this.ToXml();
 
-            if (this.ProjectChanged != null)
-                ProjectChanged();
+            if (this.Changed != null)
+                Changed();
         }
 
         #endregion

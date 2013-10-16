@@ -28,55 +28,64 @@ namespace NUnit.ProjectEditor
 {
     public class XmlPresenter
     {
-        private IProjectModel doc;
-        private IXmlView view;
+        private IProjectModel _model;
+        private IXmlView _view;
 
-        public XmlPresenter(IProjectModel doc, IXmlView view)
+        public XmlPresenter(IProjectModel model, IXmlView view)
         {
-            this.doc = doc;
-            this.view = view;
+            _model = model;
+            _view = view;
 
-            view.Xml.Validated += delegate
+            _view.Deselecting += delegate
             {
-                UpdateModelFromView();
-
-                if (!doc.IsValid)
-                {
-                    var ex = doc.Exception as XmlException;
-                    if (ex != null)
-                        view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
-                    else
-                        view.DisplayError(doc.Exception.Message);
-                }
             };
 
-            doc.ProjectCreated += delegate
+            _view.Selected += delegate
             {
-                view.Visible = true;
                 LoadViewFromModel();
             };
 
-            doc.ProjectClosed += delegate
+            _view.Xml.Validated += delegate
             {
-                view.Xml.Text = null;
-                view.Visible = false;
+                UpdateModelFromView();
+
+                if (!_model.IsValid)
+                {
+                    var ex = model.Exception as XmlException;
+                    if (ex != null)
+                        view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
+                    else
+                        view.DisplayError(model.Exception.Message);
+                }
+            };
+
+            _model.Created += delegate
+            {
+                _view.Visible = true;
+                LoadViewFromModel();
+            };
+
+            _model.Closed += delegate
+            {
+                _view.Xml.Text = null;
+                _view.Visible = false;
             };
         }
 
         public void LoadViewFromModel()
         {
-            view.Xml.Text = doc.XmlText;
+            _view.Xml.Text = _model.XmlText;
 
-            if (doc.Exception != null)
+            if (_model.Exception != null)
             {
-                var ex = doc.Exception as XmlException;
+                var ex = _model.Exception as XmlException;
                 if (ex != null)
-                    view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
+                    _view.DisplayError(ex.Message, ex.LineNumber, ex.LinePosition);
                 else
-                    view.DisplayError(doc.Exception.Message);
+                    _view.DisplayError(_model.Exception.Message);
             }
             else
-                view.RemoveError();
+                _view.RemoveError();
         }
 
         private int GetOffset(int lineNumber, int charPosition)
@@ -85,7 +94,7 @@ namespace NUnit.ProjectEditor
 
             for (int lineCount = 1; lineCount < lineNumber; lineCount++ )
             {
-                int next = doc.XmlText.IndexOf(Environment.NewLine, offset);
+                int next = _model.XmlText.IndexOf(Environment.NewLine, offset);
                 if (next < 0) break;
 
                 offset = next + Environment.NewLine.Length;
@@ -96,7 +105,7 @@ namespace NUnit.ProjectEditor
 
         public void UpdateModelFromView()
         {
-            doc.XmlText = view.Xml.Text;
+            _model.XmlText = _view.Xml.Text;
         }
     }
 }

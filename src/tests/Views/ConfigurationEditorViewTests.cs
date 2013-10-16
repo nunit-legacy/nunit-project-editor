@@ -29,7 +29,7 @@ namespace NUnit.ProjectEditor.Tests.Views
     public class ConfigurationEditorViewTests
     {
         [Test]
-        public void AllViewElementsAreWrapped()
+        public void AllViewElementsAreWrapped() // Redundant: tested by CommonViewTests
         {
             ConfigurationEditorDialog view = new ConfigurationEditorDialog();
 

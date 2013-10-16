@@ -27,11 +27,10 @@ using NUnit.ProjectEditor.ViewElements;
 
 namespace NUnit.ProjectEditor
 {
-    public delegate bool ActiveViewChangingHandler();
-    public delegate void ActiveViewChangedHandler();
+    //public delegate bool ActiveViewChangingHandler();
 
     /// <summary>
-    /// IMainView represents the top level view for the
+    /// IMainView represents the top level _view for the
     /// Project editor. It provides a menu commands and several
     /// utility methods used in opening and saving files. It
     /// aggregates the property and xml views.
@@ -46,18 +45,15 @@ namespace NUnit.ProjectEditor
         ICommand SaveProjectCommand { get; }
         ICommand SaveProjectAsCommand { get; }
 
-        event ActiveViewChangingHandler ActiveViewChanging;
-        event ActiveViewChangedHandler ActiveViewChanged;
-
         event FormClosingEventHandler FormClosing;
 
         IPropertyView PropertyView { get; }
         IXmlView XmlView { get; }
 
-        SelectedView SelectedView { get; set;  }
+        EditorView SelectedView { get; set; }
     }
 
-    public enum SelectedView
+    public enum EditorView
     {
         PropertyView = 0,
         XmlView = 1

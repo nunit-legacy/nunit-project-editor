@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2010 Charlie Poole
+// Copyright (c) 2013 Charlie Poole
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,23 +22,12 @@
 // ***********************************************************************
 
 using System;
+using System.Reflection;
+using NUnit.Framework;
 
-namespace NUnit.ProjectEditor
+namespace NUnit.ProjectEditor.Tests.Views
 {
-    public interface IProjectConfig
+    public class MainViewTests
     {
-        string Name { get; set; }
-
-        string BasePath { get; set; }
-
-        string ConfigurationFile { get; set; }
-
-        string PrivateBinPath { get; set; }
-
-        BinPathType BinPathType { get; set; }
-
-        AssemblyList Assemblies { get; }
-
-        RuntimeFramework RuntimeFramework { get; set; }
     }
 }

@@ -21,12 +21,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using NUnit.ProjectEditor.ViewElements;
 
@@ -78,7 +72,6 @@ namespace NUnit.ProjectEditor
         #region IPropertyView Members
 
         public IDialogManager DialogManager { get; private set; }
-        public IMessageDisplay MessageDisplay { get; private set; }
         public IConfigurationEditorDialog ConfigurationEditorDialog {
             get { return new ConfigurationEditorDialog(); }
         }
@@ -114,6 +107,37 @@ namespace NUnit.ProjectEditor
         public ISelectionList AssemblyList { get; private set; }
 
         public ITextElement AssemblyPath { get; private set; }
+
+        #endregion
+
+        #region ISelectableView Members
+
+        public event ActionStartingHandler Deselecting;
+        public event ActionHandler Selected;
+
+        void ISelectableView.NotifySelected()
+        {
+            if (Selected != null)
+                Selected();
+        }
+
+        public bool CanDeselect()
+        {
+            if (Deselecting != null)
+            {
+                var eventArgs = new ActionStartingEventArgs();
+                Deselecting(eventArgs);
+                return !eventArgs.Cancel;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region IView Members
+
+        public IMessageDisplay MessageDisplay { get; private set; }
 
         #endregion
 

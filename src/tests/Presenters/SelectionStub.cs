@@ -58,7 +58,7 @@ namespace NUnit.ProjectEditor.Tests
             }
         }
 
-        public event ActionDelegate TextValidated;
+        public event ActionHandler TextValidated;
 
         #endregion
 
@@ -132,14 +132,14 @@ namespace NUnit.ProjectEditor.Tests
         /// <summary>
         /// Event raised when the selection is changed by the user
         /// </summary>
-        public event ActionDelegate SelectionChanged;
+        public event ActionHandler SelectionChanged;
 
         #endregion
 
         #region IViewElement Members
 
         /// <summary>
-        /// Gets the name of the element in the xmlView
+        /// Gets the name of the element in the _view
         /// </summary>
         public string Name { get; set; }
 
