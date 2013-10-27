@@ -75,8 +75,8 @@ namespace NUnit.ProjectEditor
         /// </summary>
         public string BasePath
         {
-            get { return GetAttribute("appbase"); }
-            set { SetAttribute("appbase", value); }
+            get { return StandardizeSeparators(GetAttribute("appbase")); }
+            set { SetAttribute("appbase", StandardizeSeparators(value)); }
         }
 
  
@@ -92,8 +92,8 @@ namespace NUnit.ProjectEditor
         /// </summary>
         public string PrivateBinPath
         {
-            get { return GetAttribute("binpath"); }
-            set { SetAttribute("binpath", value); }
+            get { return StandardizeSeparators(GetAttribute("binpath")); }
+            set { SetAttribute("binpath", StandardizeSeparators(value)); }
         }
 
         /// <summary>
@@ -148,6 +148,13 @@ namespace NUnit.ProjectEditor
                 XmlHelper.RemoveAttribute(configNode, name);
             else
                 XmlHelper.SetAttribute(configNode, name, value);
+        }
+
+        private string StandardizeSeparators(string path)
+        {
+            return path != null
+                ? path.Replace('\\', '/')
+                : null;
         }
 
         #endregion

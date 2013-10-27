@@ -70,7 +70,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             dlg.OkButton.Execute += Raise.Event<CommandHandler>();
 
             Assert.That(model.ConfigNames, Is.EqualTo(new[] { "Debug", "Release", "New" }));
-            Assert.That(model.Configs[2].BasePath, Is.EqualTo("bin" + Path.DirectorySeparatorChar + "release"));
+            Assert.That(model.Configs[2].BasePath, Is.EqualTo("bin/release"));
             Assert.That(model.Configs[2].Assemblies.Count, Is.EqualTo(2));
         }
     }

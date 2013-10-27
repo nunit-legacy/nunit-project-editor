@@ -43,11 +43,11 @@ namespace NUnit.ProjectEditor.Tests
         public static readonly string NormalProject =
             "<NUnitProject>" + System.Environment.NewLine +
             "  <Settings activeconfig=\"Debug\" />" + System.Environment.NewLine +
-            "  <Config name=\"Debug\" appbase=\"bin" + Path.DirectorySeparatorChar + "debug\" binpathtype=\"Auto\">" + System.Environment.NewLine +
+            "  <Config name=\"Debug\" appbase=\"bin/debug\" binpathtype=\"Auto\">" + System.Environment.NewLine +
             "    <assembly path=\"assembly1.dll\" />" + System.Environment.NewLine +
             "    <assembly path=\"assembly2.dll\" />" + System.Environment.NewLine +
             "  </Config>" + System.Environment.NewLine +
-            "  <Config name=\"Release\" appbase=\"bin" + Path.DirectorySeparatorChar + "release\" binpathtype=\"Auto\">" + System.Environment.NewLine +
+            "  <Config name=\"Release\" appbase=\"bin/release\" binpathtype=\"Auto\">" + System.Environment.NewLine +
             "    <assembly path=\"assembly1.dll\" />" + System.Environment.NewLine +
             "    <assembly path=\"assembly2.dll\" />" + System.Environment.NewLine +
             "  </Config>" + System.Environment.NewLine +

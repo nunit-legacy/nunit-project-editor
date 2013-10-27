@@ -27,7 +27,7 @@ using NUnit.Framework;
 namespace NUnit.ProjectEditor.Tests.Model
 {
     [TestFixture]
-    public class ProjectModelLoadtests
+    public class PropertyModelLoadtests
     {
         static readonly string xmlfile = "MyProject.nunit";
 

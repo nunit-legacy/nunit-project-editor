@@ -55,8 +55,8 @@ namespace NUnit.ProjectEditor
         /// </summary>
         public string BasePath
         {
-            get { return project.GetSettingsAttribute("appbase"); }
-            set { project.SetSettingsAttribute("appbase", value); }
+            get { return StandardizeSeparators(project.GetSettingsAttribute("appbase")); }
+            set { project.SetSettingsAttribute("appbase", StandardizeSeparators(value)); }
         }
 
         /// <summary>
@@ -150,6 +150,13 @@ namespace NUnit.ProjectEditor
             }
 
             return -1;
+        }
+
+        private string StandardizeSeparators(string path)
+        {
+            return path != null
+                ? path.Replace('\\', '/')
+                : null;
         }
 
         #endregion

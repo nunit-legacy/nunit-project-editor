@@ -71,14 +71,15 @@
   <ItemGroup>
     <Compile Include="FormTester.cs" />
     <Compile Include="Model\AssemblyListTests.cs" />
-    <Compile Include="Model\ProjectDocumentTests.cs" />
+    <Compile Include="Model\ProjectModelTests.cs" />
     <Compile Include="Model\ProjectCreationTests.cs" />
     <Compile Include="Model\NUnitProjectSave.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\ProjectModelChangeTests.cs" />
-    <Compile Include="Model\ProjectModelLoadtests.cs" />
+    <Compile Include="Model\PropertyModelChangeTests.cs" />
+    <Compile Include="Model\PropertyModelLoadtests.cs" />
     <Compile Include="NUnitProjectXml.cs" />
+    <Compile Include="PathUtilTests.cs" />
     <Compile Include="Presenters\AddConfigurationPresenterTests.cs" />
     <Compile Include="Presenters\ConfigurationEditorTests.cs" />
     <Compile Include="Presenters\MainPresenterTests.cs" />

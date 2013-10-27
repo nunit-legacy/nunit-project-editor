@@ -22,11 +22,10 @@
 // ***********************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Reflection;
-using System.Collections;
-using System.Runtime.InteropServices;
+using System.Text;
 
 namespace NUnit.ProjectEditor
 {
@@ -39,9 +38,17 @@ namespace NUnit.ProjectEditor
 		public const uint FILE_ATTRIBUTE_DIRECTORY  = 0x00000010;  
 		public const uint FILE_ATTRIBUTE_NORMAL     = 0x00000080;  
 		public const int MAX_PATH = 256;
+        public static readonly char[] SEPARATORS;
 
-		protected static char DirectorySeparatorChar = Path.DirectorySeparatorChar;
-		protected static char AltDirectorySeparatorChar = Path.AltDirectorySeparatorChar;
+        // We use a slash unless it's not valid - currently, it is valid on all known platforms
+        protected static char PreferredDirectorySeparatorChar =
+            Path.DirectorySeparatorChar == '/' || Path.AltDirectorySeparatorChar == '/'
+                ? '/' : Path.DirectorySeparatorChar;
+
+        static PathUtils()
+        {
+            SEPARATORS = new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
+        }
 
 		#region Public methods
 
@@ -61,6 +68,9 @@ namespace NUnit.ProjectEditor
 				throw new ArgumentNullException (from);
 			if (to == null)
 				throw new ArgumentNullException (to);
+
+            from = Canonicalize(from);
+            to = Canonicalize(to);
 
             string toPathRoot = Path.GetPathRoot(to);
             if (toPathRoot == null || toPathRoot == string.Empty)
@@ -89,28 +99,27 @@ namespace NUnit.ProjectEditor
 				sb.Append ("..");
 			for (int i = last_common + 1; i < _from.Length; ++i) 
 			{
-				sb.Append (PathUtils.DirectorySeparatorChar).Append ("..");
+				sb.Append (PathUtils.PreferredDirectorySeparatorChar).Append ("..");
 			}
 
 			if (sb.Length > 0)
-				sb.Append (PathUtils.DirectorySeparatorChar);
+				sb.Append (PathUtils.PreferredDirectorySeparatorChar);
 			if (last_common < _to.Length)
 				sb.Append (_to [last_common]);
 			for (int i = last_common + 1; i < _to.Length; ++i) 
 			{
-				sb.Append (PathUtils.DirectorySeparatorChar).Append (_to [i]);
+				sb.Append (PathUtils.PreferredDirectorySeparatorChar).Append (_to [i]);
 			}
 
 			return sb.ToString ();
 		}
 
 		/// <summary>
-		/// Return the canonical form of a path.
+		/// Return the canonical form of a path, using '/' as the directory separator
 		/// </summary>
 		public static string Canonicalize( string path )
 		{
-			ArrayList parts = new ArrayList(
-				path.Split( DirectorySeparatorChar, AltDirectorySeparatorChar ) );
+			List<string> parts = new List<string>( path.Split( SEPARATORS ) );
 
 			for( int index = 0; index < parts.Count; )
 			{
@@ -119,13 +128,17 @@ namespace NUnit.ProjectEditor
 				switch( part )
 				{
 					case ".":
-						parts.RemoveAt( index );
+                        parts.RemoveAt(index);
 						break;
 				
 					case "..":
-						parts.RemoveAt( index );
-						if ( index > 0 )
-							parts.RemoveAt( --index );
+                        if (index > 0 && parts[index-1] != "..")
+                        {
+                            parts.RemoveAt(index);
+                            parts.RemoveAt(--index);
+                        }
+                        else
+                            index++;
 						break;
 					default:
 						index++;
@@ -133,7 +146,7 @@ namespace NUnit.ProjectEditor
 				}
 			}
 	
-			return String.Join( DirectorySeparatorChar.ToString(), (string[])parts.ToArray( typeof( string ) ) );
+			return String.Join( PreferredDirectorySeparatorChar.ToString(), parts.ToArray() );
 		}
 
 		/// <summary>
@@ -141,9 +154,9 @@ namespace NUnit.ProjectEditor
 		/// to the same file or directory using different network
 		/// shares or drive letters are not treated as equal.
 		/// </summary>
-		public static bool SamePath( string path1, string path2 )
+		public static bool SamePath( string path1, string path2, bool ignoreCase = false )
 		{
-			return string.Compare( Canonicalize(path1), Canonicalize(path2), PathUtils.IsWindows() ) == 0;
+			return string.Compare( Canonicalize(path1), Canonicalize(path2), ignoreCase ) == 0;
 		}
 
 		/// <summary>
@@ -153,7 +166,7 @@ namespace NUnit.ProjectEditor
 		/// considered unrelated, even if they end up referencing
 		/// the same subtrees in the file system.
 		/// </summary>
-		public static bool SamePathOrUnder( string path1, string path2 )
+		public static bool SamePathOrUnder( string path1, string path2, bool ignoreCase = false )
 		{
 			path1 = Canonicalize( path1 );
 			path2 = Canonicalize( path2 );
@@ -167,105 +180,35 @@ namespace NUnit.ProjectEditor
 
 			// if lengths are the same, check for equality
 			if ( length1 == length2 )
-				return string.Compare( path1, path2, IsWindows() ) == 0;
+				return PathsEqual( path1, path2 );
 
 			// path 2 is longer than path 1: see if initial parts match
-			if ( string.Compare( path1, path2.Substring( 0, length1 ), IsWindows() ) != 0 )
+			if ( !PathsEqual( path1, path2.Substring( 0, length1 ) ) )
 				return false;
 			
 			// must match through or up to a directory separator boundary
-			return	path2[length1-1] == DirectorySeparatorChar ||
-				path2[length1] == DirectorySeparatorChar;
+			return	path2[length1-1] == PreferredDirectorySeparatorChar ||
+				path2[length1] == PreferredDirectorySeparatorChar;
 		}
 
-		public static string Combine( string path1, params string[] morePaths )
-		{
-			string result = path1;
-			foreach( string path in morePaths )
-				result = Path.Combine( result, path );
-			return result;
-		}
-
-		// TODO: This logic should be in shared source
-		public static string GetAssemblyPath( Assembly assembly )
-		{
-			string uri = assembly.CodeBase;
-
-			// If it wasn't loaded locally, use the Location
-			if ( !uri.StartsWith( Uri.UriSchemeFile ) )
-				return assembly.Location;
-
-			return GetAssemblyPathFromFileUri( uri );
-		}
-
-		// Separate method for testability
-		public static string GetAssemblyPathFromFileUri( string uri )
-		{
-			// Skip over the file://
-			int start = Uri.UriSchemeFile.Length + Uri.SchemeDelimiter.Length;
-			
-			if ( PathUtils.DirectorySeparatorChar == '\\' )
-			{
-				if ( uri[start] == '/' && uri[start+2] == ':' )
-					++start;
-			}
-			else
-			{
-				if ( uri[start] != '/' )
-					--start;
-			}
-
-			return uri.Substring( start );
-		}
 		#endregion
 
 		#region Helper Methods
 
-		private static bool IsWindows()
-		{
-			return PathUtils.DirectorySeparatorChar == '\\';
-		}
-
+        // Split a path, removing any empty entries
         private static string[] SplitPath(string path)
         {
-            char[] separators = new char[] { PathUtils.DirectorySeparatorChar, PathUtils.AltDirectorySeparatorChar };
-
-#if NET_2_0
-            return path.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-#else
-            string[] trialSplit = path.Split(separators);
-            
-            int emptyEntries = 0;
-            foreach(string piece in trialSplit)
-                if (piece == string.Empty)
-                    emptyEntries++;
-
-            if (emptyEntries == 0)
-                return trialSplit;
-
-            string[] finalSplit = new string[trialSplit.Length - emptyEntries];
-            int index = 0;
-            foreach(string piece in trialSplit)
-                if (piece != string.Empty)
-                    finalSplit[index++] = piece;
-
-            return finalSplit;
-#endif
+            return path.Split(SEPARATORS, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        // Compare two paths or path segments for equality. If both paths
+        // start with X:, we ignore case for the whole comparison
         private static bool PathsEqual(string path1, string path2)
         {
-#if NET_2_0
-            if (PathUtils.IsWindows())
+            if (path1.Length >= 2 && path1[1] == ':' && path2.Length >= 2 && path2[1] == ':')
                 return path1.Equals(path2, StringComparison.InvariantCultureIgnoreCase);
             else
                 return path1.Equals(path2, StringComparison.InvariantCulture);
-#else
-            if (PathUtils.IsWindows())
-                return path1.ToLower().Equals(path2.ToLower());
-            else
-                return path1.Equals(path2);
-#endif
         }
 
         #endregion

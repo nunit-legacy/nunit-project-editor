@@ -26,7 +26,7 @@ using NUnit.Framework;
 
 namespace NUnit.ProjectEditor.Tests.Model
 {
-    class ProjectModelChangeTests
+    class PropertyModelChangeTests
     {
         static readonly string xmlfile = "MyProject.nunit";
 
