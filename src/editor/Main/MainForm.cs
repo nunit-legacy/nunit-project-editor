@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using NUnit.ProjectEditor.ViewElements;
@@ -43,7 +44,8 @@ namespace NUnit.ProjectEditor
 
             this.MessageDisplay = new MessageDisplay("Nunit Project Editor");
             this.DialogManager = new DialogManager("NUnit Project Editor");
-            this.Icon = new Icon("nunit.ico");
+            var iconPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/nunit.ico";
+            this.Icon = new Icon(iconPath);
 
             this.NewProjectCommand = new MenuElement(newToolStripMenuItem);
             this.OpenProjectCommand = new MenuElement(openToolStripMenuItem);

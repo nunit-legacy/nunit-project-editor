@@ -3,4 +3,12 @@ obj
 *.user
 *.suo
 ./bin
+package/
+
+# NUnit
+TestResult.xml
+
+# NuGet
 packages/
+tools/*
+!tools/packages.config

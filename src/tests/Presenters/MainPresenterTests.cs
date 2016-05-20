@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.IO;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -30,8 +31,8 @@ namespace NUnit.ProjectEditor.Tests.Presenters
     [TestFixture]
     public class MainPresenterTests
     {
-        private static readonly string GOOD_PROJECT = "../../NUnitTests.nunit";
-        private static readonly string BAD_PROJECT = "../../BadProject.nunit";
+        private static readonly string GOOD_PROJECT = Path.Combine(TestContext.CurrentContext.TestDirectory, "NUnitTests.nunit");
+        private static readonly string BAD_PROJECT = Path.Combine(TestContext.CurrentContext.TestDirectory, "BadProject.nunit");
         private static readonly string NONEXISTENT_PROJECT = "NonExistent.nunit";
 
         private IMainView view;
@@ -80,7 +81,7 @@ namespace NUnit.ProjectEditor.Tests.Presenters
             view.NewProjectCommand.Execute += Raise.Event<CommandHandler>();
 
             Assert.IsNotNull(model.RootNode);
-            Assert.That(model.Name, Is.StringMatching("Project\\d"));
+            Assert.That(model.Name, Does.Match("Project\\d"));
         }
 
         [Test]

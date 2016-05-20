@@ -124,7 +124,7 @@ namespace NUnit.ProjectEditor.Tests.Model
         [Test]
         public void DefaultProjectName()
         {
-            Assert.That(doc.Name, Is.StringMatching(@"Project\d"));
+            Assert.That(doc.Name, Does.Match(@"Project\d"));
         }
 
         [Test]
