@@ -36,7 +36,7 @@ namespace NUnit.ProjectEditor.Tests.Views
     [TestFixture(typeof(ConfigurationEditorDialog))]
     public class CommonViewTests<T> where T: IView, new()
     {
-        [TestCaseSource("viewProps")]
+        [TestCaseSource("ViewProps")]
         public void ViewElementsAreInitialized(PropertyInfo prop)
         {
             var view = new T();
@@ -45,7 +45,7 @@ namespace NUnit.ProjectEditor.Tests.Views
                 Assert.Fail("{0} was not initialized", prop.Name);
         }
 
-        private IEnumerable<PropertyInfo> viewProps()
+        private static IEnumerable<PropertyInfo> ViewProps()
         {
             foreach (PropertyInfo prop in typeof(T).GetProperties())
             {
