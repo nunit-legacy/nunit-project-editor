@@ -43,6 +43,7 @@ namespace NUnit.ProjectEditor
 
             this.MessageDisplay = new MessageDisplay("Nunit Project Editor");
             this.DialogManager = new DialogManager("NUnit Project Editor");
+            this.Icon = new Icon("nunit.ico");
 
             this.NewProjectCommand = new MenuElement(newToolStripMenuItem);
             this.OpenProjectCommand = new MenuElement(openToolStripMenuItem);
