@@ -120,6 +120,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Presenters\TestProjects\BadProject.nunit">
+      <Link>BadProject.nunit</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Presenters\TestProjects\NUnitTests.nunit">
+      <Link>NUnitTests.nunit</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Presenters\TestProjects\BadProject.nunit" />
+    <None Include="Presenters\TestProjects\NUnitTests.nunit" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

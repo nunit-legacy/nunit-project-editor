@@ -27,9 +27,9 @@ using NUnit.Framework;
 
 namespace NUnit.ProjectEditor.Tests
 {
-	[TestFixture]
-	public class PathUtilTests : PathUtils
-	{
+    [TestFixture]
+    public class PathUtilTests : PathUtils
+    {
         [TestCase(".", ExpectedResult="")]
         [TestCase("./.", ExpectedResult="")]
         [TestCase("././.", ExpectedResult="")]
@@ -38,17 +38,23 @@ namespace NUnit.ProjectEditor.Tests
         [TestCase("../../..", ExpectedResult = "../../..")]
         [TestCase("./..", ExpectedResult= "..")]
         [TestCase("../.", ExpectedResult= "..")]
-	    [TestCase(@"C:\folder1\.\folder2\..\file.tmp", ExpectedResult="C:/folder1/file.tmp")]
-		[TestCase(@"folder1\.\folder2\..\file.tmp", ExpectedResult="folder1/file.tmp")]
-		[TestCase(@"folder1\folder2\.\..\file.tmp", ExpectedResult="folder1/file.tmp")]
-		[TestCase(@"folder1\folder2\..\.\..\file.tmp", ExpectedResult="file.tmp")]
-		[TestCase(@"folder1\folder2\..\..\..\file.tmp", ExpectedResult=@"../file.tmp")]
-		[TestCase("/folder1/./folder2/../file.tmp", ExpectedResult="/folder1/file.tmp")]
-		[TestCase("folder1/./folder2/../file.tmp", ExpectedResult="folder1/file.tmp")]
-		[TestCase("folder1/folder2/./../file.tmp", ExpectedResult="folder1/file.tmp")]
-		[TestCase("folder1/folder2/.././../file.tmp", ExpectedResult="file.tmp")]
-		[TestCase("folder1/folder2/../../../file.tmp", ExpectedResult="../file.tmp")]
+        [TestCase("/folder1/./folder2/../file.tmp", ExpectedResult = "/folder1/file.tmp")]
+        [TestCase("folder1/./folder2/../file.tmp", ExpectedResult = "folder1/file.tmp")]
+        [TestCase("folder1/folder2/./../file.tmp", ExpectedResult = "folder1/file.tmp")]
+        [TestCase("folder1/folder2/.././../file.tmp", ExpectedResult = "file.tmp")]
+        [TestCase("folder1/folder2/../../../file.tmp", ExpectedResult = "../file.tmp")]
         public string CanonicalizeTest(string path)
+        {
+            return PathUtils.Canonicalize(path);
+        }
+
+        [TestCase(@"C:\folder1\.\folder2\..\file.tmp", ExpectedResult = "C:/folder1/file.tmp")]
+        [TestCase(@"folder1\.\folder2\..\file.tmp", ExpectedResult = "folder1/file.tmp")]
+        [TestCase(@"folder1\folder2\.\..\file.tmp", ExpectedResult = "folder1/file.tmp")]
+        [TestCase(@"folder1\folder2\..\.\..\file.tmp", ExpectedResult = "file.tmp")]
+        [TestCase(@"folder1\folder2\..\..\..\file.tmp", ExpectedResult = "../file.tmp")]
+        [Platform(Exclude = "Linux")]
+        public string CanonicalizeTest_Windows(string path)
         {
             return PathUtils.Canonicalize(path);
         }
@@ -99,6 +105,11 @@ namespace NUnit.ProjectEditor.Tests
         [TestCase("/folder1/folder2", "/folder1/./folder22/junk/../folder3", ExpectedResult = false)]
         [TestCase("/", "/", ExpectedResult = true)]
         [TestCase("/", "/bin/debug", ExpectedResult = true)]
+        public bool SamePathOrUnderTest(string path1, string path2)
+        {
+            return PathUtils.SamePathOrUnder(path1, path2);
+        }
+
         [TestCase(@"C:\folder1\folder2\folder3", @"c:\folder1\.\folder2\junk\..\folder3", ExpectedResult = true)]
         [TestCase(@"C:\folder1\folder2\", @"c:\folder1\.\folder2\junk\..\folder3", ExpectedResult = true)]
         [TestCase(@"C:\folder1\folder2", @"c:\folder1\.\folder2\junk\..\folder3", ExpectedResult = true)]
@@ -108,7 +119,8 @@ namespace NUnit.ProjectEditor.Tests
         [TestCase(@"C:\", @"D:\", ExpectedResult = false)]
         [TestCase(@"C:\", @"c:\", ExpectedResult = true)]
         [TestCase(@"C:\", @"c:\bin\debug", ExpectedResult = true)]
-        public bool SamePathOrUnderTest(string path1, string path2)
+        [Platform(Exclude = "Linux")]
+        public bool SamePathOrUnderTest_Windows(string path1, string path2)
         {
             return PathUtils.SamePathOrUnder(path1, path2);
         }
