@@ -26,10 +26,8 @@ var TOOLS_DIR = PROJECT_DIR + "tools/";
 var BIN_DIR = PROJECT_DIR + "bin/" + configuration + "/";
 
 var SOLUTION = PROJECT_DIR + "nunit-editor.sln";
-var TESTS = BIN_DIR + "nunit-editor.tests.dll";
-
-var SRC_PACKAGE = PACKAGE_DIR + "NUnit-Project-Editor-" + packageVersion + "-src.zip";
-var ZIP_PACKAGE = PACKAGE_DIR + "NUnit-Project-Editor-" + packageVersion + dbgSuffix + ".zip";
+var TESTS_NAME = "nunit-editor.tests.dll";
+var TESTS = BIN_DIR + TESTS_NAME;
 
 var NUNIT3_CONSOLE = TOOLS_DIR + "NUnit.ConsoleRunner/tools/nunit3-console.exe";
 
@@ -51,7 +49,8 @@ Task("InitializeBuild")
 .Does(() =>
 {
     NuGetRestore(SOLUTION);
-    if (BuildSystem.IsRunningOnAppVeyor)
+
+    if (isAppveyor)
     {
         var tag = AppVeyor.Environment.Repository.Tag;
 
@@ -105,10 +104,13 @@ Task("Test")
 .IsDependentOn("Build")
 .Does(() =>
 {
-    StartProcess(NUNIT3_CONSOLE, new ProcessSettings()
+    int rc = StartProcess(NUNIT3_CONSOLE, new ProcessSettings()
     {
         Arguments = TESTS
     });
+
+    if (rc != 0)
+        throw new Exception(string.Format("NUnit test run for {0} returned code {1}.", TESTS_NAME, rc)); 
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -118,13 +120,18 @@ Task("Test")
 Task("PackageSource")
 .Does(() =>
 {
+    var path = PACKAGE_DIR + "NUnit-Project-Editor-" + packageVersion + "-src.zip";
+
     CreateDirectory(PACKAGE_DIR);
-    RunGitCommand(string.Format("archive -o {0} HEAD", SRC_PACKAGE));
-    });
+    
+    RunGitCommand(string.Format("archive -o {0} HEAD", path));
+});
 
 Task("PackageZip")
 .Does(() =>
 {
+    var path = PACKAGE_DIR + "NUnit-Project-Editor-" + packageVersion + dbgSuffix + ".zip";
+
     CreateDirectory(PACKAGE_DIR);
 
     CopyFileToDirectory("LICENSE.txt", BIN_DIR);
@@ -138,7 +145,7 @@ Task("PackageZip")
         BIN_DIR + "nunit.ico"
     };
 
-    Zip(BIN_DIR, File(ZIP_PACKAGE), zipFiles);
+    Zip(BIN_DIR, File(path), zipFiles);
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -172,8 +179,7 @@ Task("Appveyor")
 
 Task("Travis")
 .IsDependentOn("Build")
-.IsDependentOn("Test")
-.IsDependentOn("Package");
+.IsDependentOn("Test");
 
 Task("Default")
 .IsDependentOn("Build");

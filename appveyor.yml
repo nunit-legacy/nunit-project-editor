@@ -1,5 +1,12 @@
 build_script: 
   - ps: .\build.ps1 -Target "Appveyor"
 
+artifacts:
+- path: package\*.zip
+- path: package\*.nupkg
+
+# AppVeyor defaults to just its build number
+version: '{build}'
+
 # disable built-in tests.
 test: off
