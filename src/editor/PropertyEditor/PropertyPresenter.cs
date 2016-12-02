@@ -127,9 +127,13 @@ namespace NUnit.ProjectEditor
 
         private void BrowseConfigBaseCommand_Execute()
         {
+            string config = "unset";
+            if (_view.ConfigList.SelectedIndex >= 0)
+                config = _model.Configs[_view.ConfigList.SelectedIndex].Name;
+
             string message = string.Format(
                 "Select ApplicationBase for the {0} configuration, if different from the model as a whole.",
-                _model.Configs[_view.ConfigList.SelectedIndex].Name);
+                config);
             string initialFolder = _view.ApplicationBase.Text;
             if (initialFolder == string.Empty)
                 initialFolder = _view.ProjectBase.Text;
