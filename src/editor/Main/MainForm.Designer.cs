@@ -47,8 +47,8 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.propertyView = new NUnit.ProjectEditor.PropertyView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.xmlView = new NUnit.ProjectEditor.XmlView();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -154,30 +154,30 @@
             // contentsToolStripMenuItem
             // 
             this.contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.contentsToolStripMenuItem.Text = "&Contents";
             // 
             // indexToolStripMenuItem
             // 
             this.indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            this.indexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.indexToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.indexToolStripMenuItem.Text = "&Index";
             // 
             // searchToolStripMenuItem
             // 
             this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            this.searchToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.searchToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.searchToolStripMenuItem.Text = "&Search";
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -187,36 +187,23 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(594, 427);
             this.tabControl1.TabIndex = 1;
-            //this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Selecting);
-            //this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
             // 
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Gray;
             this.tabPage1.Controls.Add(this.propertyView);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(586, 401);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Properties";
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.BackColor = System.Drawing.Color.Gray;
-            this.tabPage2.Controls.Add(this.xmlView);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(586, 393);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "XML View";
             // 
             // propertyView
             // 
@@ -224,19 +211,30 @@
             this.propertyView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.propertyView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyView.Location = new System.Drawing.Point(0, 0);
-            this.propertyView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.propertyView.Margin = new System.Windows.Forms.Padding(2);
             this.propertyView.Name = "propertyView";
             this.propertyView.Size = new System.Drawing.Size(586, 401);
             this.propertyView.TabIndex = 0;
             this.propertyView.Visible = false;
             // 
+            // tabPage2
+            // 
+            this.tabPage2.BackColor = System.Drawing.Color.Gray;
+            this.tabPage2.Controls.Add(this.xmlView);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(586, 401);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "XML View";
+            // 
             // xmlView
             // 
             this.xmlView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.xmlView.Location = new System.Drawing.Point(0, 0);
-            this.xmlView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.xmlView.Margin = new System.Windows.Forms.Padding(2);
             this.xmlView.Name = "xmlView";
-            this.xmlView.Size = new System.Drawing.Size(586, 393);
+            this.xmlView.Size = new System.Drawing.Size(586, 401);
             this.xmlView.TabIndex = 0;
             this.xmlView.Visible = false;
             // 
@@ -248,8 +246,9 @@
             this.ClientSize = new System.Drawing.Size(594, 451);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "NUnit Project Editor";
