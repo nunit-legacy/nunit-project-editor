@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("NUnit Software")]
 [assembly: AssemblyProduct("NUnit Project Editor")]
-[assembly: AssemblyCopyright("Copyright ©  2011 Charlie Poole")]
+[assembly: AssemblyCopyright("Copyright © 2016 Charlie Poole")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
