@@ -85,6 +85,7 @@ Task("Build")
         MSBuild(SOLUTION, new MSBuildSettings()
             .SetConfiguration(configuration)
             .SetVerbosity(Verbosity.Minimal)
+			.SetPlatformTarget(PlatformTarget.MSIL)
             .SetNodeReuse(false));
     }
     else
