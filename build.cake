@@ -142,7 +142,7 @@ Task("PackageZip")
 Task("PackageChocolatey")
 .Does(() =>
 {
-	EnsureDirextoryExists("PACKAGE_DIR");
+	EnsureDirectoryExists("PACKAGE_DIR");
 
 	ChocolateyPack("nunit-project-editor.nuspec", 
 		new ChocolateyPackSettings()
