@@ -1,0 +1,28 @@
+﻿<!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>nunit-project-editor</id>
+    <version>1.0</version>
+    <packageSourceUrl>https://github.com/nunit/nunit-project-editor/chocolatey/</packageSourceUrl>
+    <owners>Charlie Poole</owners>
+
+    <title>NUnit Project Editor</title>
+    <authors>Charlie Poole</authors>
+    <!-- projectUrl is required for the community feed -->
+    <projectUrl>https://github.com/nunit/nunit-project-editor</projectUrl>
+    <iconUrl>http://cdn.rawgit.com/nunit/resources/master/images/icon/nunit_64.png</iconUrl>
+    <copyright>2016 Charlie Poole</copyright>
+    <licenseUrl>http://github.com/nunit/nunit-project-editor/LICENSE.txt</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/nunit/nunit-project-editor</projectSourceUrl>
+    <docsUrl>https://github.com/nunit/docs/wiki/Project-Editor</docsUrl>
+    <tags>nunit project editor unit testing</tags>
+    <summary>Editor for NUnit Test Projects</summary>
+    <description>NUnit supports NUnit projects (extension .nunit) to define a collection of test assemblies that are loaded and run together. This tool is used to edit the contents of an NUnit Test Project.</description>
+    <releaseNotes>This is the first independent production release of the editor, which was previously bundled with NUnit V2.</releaseNotes>
+
+    <!--<provides>NOT YET IMPLEMENTED</provides>-->
+    <!--<conflicts>NOT YET IMPLEMENTED</conflicts>-->
+    <!--<replaces>NOT YET IMPLEMENTED</replaces>-->
+  </metadata>
+</package>

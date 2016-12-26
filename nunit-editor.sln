@@ -1,9 +1,17 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit-editor", "src\editor\nunit-editor.csproj", "{ED57DCEC-3C16-4A90-BD3C-4D5BE5AD70FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit-editor.tests", "src\tests\nunit-editor.tests.csproj", "{A9E1C1E9-AE97-4510-AD94-EAFADE425FBE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B391C3C8-08C3-4638-A1BC-9FE5C094D9F9}"
+	ProjectSection(SolutionItems) = preProject
+		build.cake = build.cake
+		nunit-project-editor.nuspec = nunit-project-editor.nuspec
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

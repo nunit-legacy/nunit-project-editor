@@ -139,6 +139,25 @@ Task("PackageZip")
     Zip(BIN_DIR, File(path), zipFiles);
 });
 
+Task("PackageChocolatey")
+.Does(() =>
+{
+	CreateDirectory("PACKAGE_DIR");
+
+	ChocolateyPack("nunit-project-editor.nuspec", 
+		new ChocolateyPackSettings()
+		{
+			OutputDirectory = PACKAGE_DIR,
+			Files = new []
+			{
+				new ChocolateyNuSpecContent { Source = "LICENSE.txt" },
+				new ChocolateyNuSpecContent { Source = "CHANGES.txt" },
+				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit-editor.exe", Target = "bin" },
+				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit.ico", Target = "bin" }
+			}
+		});
+}); 
+
 //////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////
@@ -160,7 +179,8 @@ Task("Rebuild")
 .IsDependentOn("Build");
 
 Task("Package")
-.IsDependentOn("PackageZip");
+.IsDependentOn("PackageZip")
+.IsDependentOn("PackageChocolatey");
 
 Task("Appveyor")
 .IsDependentOn("Build")
