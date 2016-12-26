@@ -85,6 +85,7 @@ Task("Build")
         MSBuild(SOLUTION, new MSBuildSettings()
             .SetConfiguration(configuration)
             .SetVerbosity(Verbosity.Minimal)
+			.SetPlatformTarget(PlatformTarget.MSIL)
             .SetNodeReuse(false));
     }
     else
@@ -116,16 +117,6 @@ Task("Test")
 //////////////////////////////////////////////////////////////////////
 // PACKAGE
 //////////////////////////////////////////////////////////////////////
-
-Task("PackageSource")
-.Does(() =>
-{
-    var path = PACKAGE_DIR + "NUnit-Project-Editor-" + packageVersion + "-src.zip";
-
-    CreateDirectory(PACKAGE_DIR);
-    
-    RunGitCommand(string.Format("archive -o {0} HEAD", path));
-});
 
 Task("PackageZip")
 .Does(() =>
@@ -169,7 +160,6 @@ Task("Rebuild")
 .IsDependentOn("Build");
 
 Task("Package")
-.IsDependentOn("PackageSource")
 .IsDependentOn("PackageZip");
 
 Task("Appveyor")
