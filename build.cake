@@ -121,7 +121,7 @@ Task("Test")
 Task("PackageZip")
 .Does(() =>
 {
-    var path = PACKAGE_DIR + "NUnit-Project-Editor-" + packageVersion + dbgSuffix + ".zip";
+    var path = PACKAGE_DIR + "nunit-project-editor-" + packageVersion + dbgSuffix + ".zip";
 
     CreateDirectory(PACKAGE_DIR);
 
