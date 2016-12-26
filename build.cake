@@ -123,7 +123,7 @@ Task("PackageZip")
 {
     var path = PACKAGE_DIR + "nunit-project-editor-" + packageVersion + dbgSuffix + ".zip";
 
-    CreateDirectory(PACKAGE_DIR);
+    EnsureDirectoryExists(PACKAGE_DIR);
 
     CopyFileToDirectory("LICENSE.txt", BIN_DIR);
     CopyFileToDirectory("CHANGES.txt", BIN_DIR);
@@ -142,7 +142,7 @@ Task("PackageZip")
 Task("PackageChocolatey")
 .Does(() =>
 {
-	CreateDirectory("PACKAGE_DIR");
+	EnsureDirextoryExists("PACKAGE_DIR");
 
 	ChocolateyPack("nunit-project-editor.nuspec", 
 		new ChocolateyPackSettings()
