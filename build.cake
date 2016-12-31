@@ -70,7 +70,7 @@ Task("InitializeBuild")
             }
             else
             {
-                var suffix = "-ci" + buildNumber + dbgSuffix;
+                var suffix = "-ci-" + buildNumber + dbgSuffix;
 
                 if (isPullRequest)
                 suffix += "-pr-" + AppVeyor.Environment.PullRequest.Number;
