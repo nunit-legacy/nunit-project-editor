@@ -1,0 +1,25 @@
+﻿<!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>nunit-project-editor</id>
+    <version>0.0.0</version>
+    <packageSourceUrl>https://github.com/nunit/nunit-project-editor</packageSourceUrl>
+    <owners>Charlie Poole</owners>
+
+    <title>NUnit Project Editor</title>
+    <authors>Charlie Poole</authors>
+    <projectUrl>https://github.com/nunit/nunit-project-editor</projectUrl>
+    <iconUrl>http://cdn.rawgit.com/nunit/resources/master/images/icon/nunit_256.png</iconUrl>
+    <copyright>2016 Charlie Poole</copyright>
+    <licenseUrl>http://github.com/nunit/nunit-project-editor/blob/master/LICENSE.txt</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/nunit/nunit-project-editor</projectSourceUrl>
+    <docsUrl>https://github.com/nunit/docs/wiki/Project-Editor</docsUrl>
+    <mailingListUrl>https://groups.google.com/forum/#!forum/nunit-discuss</mailingListUrl>
+    <bugTrackerUrl>https://github.com/nunit/nunit-project-editor/issues</bugTrackerUrl>
+    <tags>nunit project editor unit testing</tags>
+    <summary>Editor for NUnit Test Projects</summary>
+    <description>NUnit supports NUnit projects (extension .nunit) to define a collection of test assemblies that are loaded and run together. This tool is used to edit the contents of an NUnit Test Project.</description>
+    <releaseNotes>This is the first independent production release of the editor, which was previously bundled with NUnit V2.</releaseNotes>
+  </metadata>
+</package>

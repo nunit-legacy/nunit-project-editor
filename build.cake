@@ -9,7 +9,7 @@ var configuration = Argument("configuration", "Release");
 // SET PACKAGE VERSION
 //////////////////////////////////////////////////////////////////////
 
-var version = "0.9.1";
+var version = "1.0";
 var modifier = "";
 
 var isAppveyor = BuildSystem.IsRunningOnAppVeyor;
@@ -121,9 +121,9 @@ Task("Test")
 Task("PackageZip")
 .Does(() =>
 {
-    var path = PACKAGE_DIR + "NUnit-Project-Editor-" + packageVersion + dbgSuffix + ".zip";
+    var path = PACKAGE_DIR + "nunit-project-editor-" + packageVersion + dbgSuffix + ".zip";
 
-    CreateDirectory(PACKAGE_DIR);
+    EnsureDirectoryExists(PACKAGE_DIR);
 
     CopyFileToDirectory("LICENSE.txt", BIN_DIR);
     CopyFileToDirectory("CHANGES.txt", BIN_DIR);
@@ -138,6 +138,26 @@ Task("PackageZip")
 
     Zip(BIN_DIR, File(path), zipFiles);
 });
+
+Task("PackageChocolatey")
+.Does(() =>
+{
+	EnsureDirectoryExists("PACKAGE_DIR");
+
+	ChocolateyPack("nunit-project-editor.nuspec", 
+		new ChocolateyPackSettings()
+		{
+			Version = packageVersion,
+			OutputDirectory = PACKAGE_DIR,
+			Files = new []
+			{
+				new ChocolateyNuSpecContent { Source = "LICENSE.txt" },
+				new ChocolateyNuSpecContent { Source = "CHANGES.txt" },
+				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit-editor.exe", Target = "tools" },
+				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit.ico", Target = "tools" },
+			}
+		});
+}); 
 
 //////////////////////////////////////////////////////////////////////
 // HELPER METHODS
@@ -160,7 +180,8 @@ Task("Rebuild")
 .IsDependentOn("Build");
 
 Task("Package")
-.IsDependentOn("PackageZip");
+.IsDependentOn("PackageZip")
+.IsDependentOn("PackageChocolatey");
 
 Task("Appveyor")
 .IsDependentOn("Build")
