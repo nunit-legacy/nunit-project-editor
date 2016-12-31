@@ -9,7 +9,7 @@ var configuration = Argument("configuration", "Release");
 // SET PACKAGE VERSION
 //////////////////////////////////////////////////////////////////////
 
-var version = "0.9.1";
+var version = "1.0";
 var modifier = "";
 
 var isAppveyor = BuildSystem.IsRunningOnAppVeyor;
@@ -147,13 +147,13 @@ Task("PackageChocolatey")
 	ChocolateyPack("nunit-project-editor.nuspec", 
 		new ChocolateyPackSettings()
 		{
+			Version = packageVersion,
 			OutputDirectory = PACKAGE_DIR,
 			Files = new []
 			{
 				new ChocolateyNuSpecContent { Source = "LICENSE.txt" },
 				new ChocolateyNuSpecContent { Source = "CHANGES.txt" },
-				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit-editor.exe", Target = "bin" },
-				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit.ico", Target = "bin" }
+				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit-editor.exe", Target = "tools" },
 			}
 		});
 }); 
