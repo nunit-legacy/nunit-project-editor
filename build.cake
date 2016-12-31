@@ -154,6 +154,7 @@ Task("PackageChocolatey")
 				new ChocolateyNuSpecContent { Source = "LICENSE.txt" },
 				new ChocolateyNuSpecContent { Source = "CHANGES.txt" },
 				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit-editor.exe", Target = "tools" },
+				new ChocolateyNuSpecContent { Source = BIN_DIR + "nunit.ico", Target = "tools" },
 			}
 		});
 }); 
