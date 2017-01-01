@@ -1,1 +1,21 @@
-NUnit-Project-Editor 0.9.0
+NUnit Project Editor 1.0.0 - December 31, 2016
+
+First independent production release of the project editor. This release features a chocolatey install package.
+
+Issues Resolved
+
+ * 1	Project Editor needs an icon
+ * 2	Null reference exception on switching to XmlView
+ * 3	Move assemblies up and down in the list
+ * 5	Use forward slashes for paths in XML file
+ * 9	CI Server for nunit-project-editor
+ * 14	Update tests to NUnit3
+ * 15	Crash when changing ApplicationBase
+ * 17	Name and version appear twice in the About
+ * 21	Create Chocolatey package
+ * 22	Update package references
+ * 25	Standardize pre-release suffixes for editor packages
+
+NUnit-Project-Editor 0.9.0 - February 12, 2011
+
+Initial independent release of the project editor. This release is identical (except for the release number) to the version that was previously bundled with NUnit 2.6.4. It is classified as a pre-1.0 release because of changes needed for it to function well in conjunction with later versions of NUnit.
