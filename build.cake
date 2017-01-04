@@ -73,7 +73,7 @@ Task("InitializeBuild")
                 var suffix = "-ci-" + buildNumber + dbgSuffix;
 
                 if (isPullRequest)
-                suffix += "-pr-" + AppVeyor.Environment.PullRequest.Number;
+                    suffix += "-pr-" + AppVeyor.Environment.PullRequest.Number;
                 else if (branch.StartsWith("release"))
                     suffix += "-pre-" + buildNumber;
                 else
