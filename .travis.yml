@@ -1,10 +1,11 @@
 language: csharp
-
-#xvfb for GUI tests
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
-
+sudo: false
+os:
+  - linux
+  - osx
+mono:
+  - latest
+  - 4.6.2
 script: 
   - ./build.sh --target "Travis"
+
